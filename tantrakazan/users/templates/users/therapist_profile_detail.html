@@ -1,0 +1,75 @@
+{% extends 'users/user_profile_detail.html' %}
+{% load static %}
+
+
+{% block therapist %}
+<!-- service section -->
+
+  <section class="service_section layout_padding layout_padding-left">
+    <div class="container">
+      <div class="heading_container">
+        <h2>
+          Мои услуги
+        </h2>
+        <p>
+          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+        </p>
+      </div>
+      <div class="service_container">
+        <div class="box">
+          <div class="img-box">
+            <img src="{% static 'users/images/s-1.png' %}" alt="">
+          </div>
+          <div class="detail-box">
+            <h4>
+              Massage
+            </h4>
+            <p>
+              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+            </p>
+            <a href="">
+              Read More
+            </a>
+          </div>
+        </div>
+        <div class="box">
+          <div class="img-box">
+            <img src="{% static 'users/images/s-2.png' %}" alt="">
+          </div>
+          <div class="detail-box">
+            <h4>
+              Chiropractic
+            </h4>
+            <p>
+              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+            </p>
+            <a href="">
+              Read More
+            </a>
+          </div>
+        </div>
+        <div class="box">
+          <div class="img-box">
+            <img src="{% static 'users/images/s-3.png' %}" alt="">
+          </div>
+          <div class="detail-box">
+            <h4>
+              Aromatherapy
+            </h4>
+            <p>
+              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+            </p>
+            <a href="">
+              Read More
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end service section -->
+
+{% endblock therapist %}
+
+

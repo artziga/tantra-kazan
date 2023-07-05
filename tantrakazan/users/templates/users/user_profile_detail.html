@@ -1,0 +1,191 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+
+{% block content %}
+  <title>{{ title }}</title>
+
+  <section class="about_section  layout_padding-left">
+
+
+    <div class="detail-container">
+      {% if not request.user.is_staff %}
+    <a href="{% url 'users:massage_therapist_profile_form' username=request.user.username %}">
+                Заполнить анкету как массажист
+            </a>
+      {% endif %}
+{% if request.user.is_authenticated %}
+    <p>Welcome, {{ user }}!</p>
+
+{% else %}
+    <p>Please log in to continue.</p>
+{% endif %}
+      {% if user.profile %}
+        <p><img src="{{ user.profile.avatar.url }}" height="256"  alt="avatar"></p>
+        {% else %}
+        <p> Ваш профиль пока не заполнен.
+        <a href="{% url 'users:form' username=request.user.username %}">Заполнить анкету</a>
+            </p>
+        {% endif %}
+        </div>
+</section>
+{% block therapist %}
+{% endblock therapist %}
+
+
+<!-- spl section -->
+
+  <section class="spl_section layout_padding layout_padding-left">
+    <div class="container">
+      <div class="heading_container">
+        <h2>
+         Избранное
+        </h2>
+        <p>
+          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+        </p>
+      </div>
+    </div>
+    <div class="spl_container">
+      <div class="owl-carousel owl-theme">
+        <div class="item" style="">
+          <div class="box">
+            <div class="img-box">
+              <img src="images/spl-1.jpg" alt="">
+              <div class="social_container">
+                <div class="social-box">
+                  <a href="">
+                    <img src="images/facebook-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/twitter-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/linkedin.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/instagram.png" alt="">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <h5>
+                Flora Martin
+              </h5>
+              <p>
+                It is a long established fact that a
+                reader will be distracted by
+                the readable content of a page
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="item" style="">
+          <div class="box">
+            <div class="img-box">
+              <img src="images/spl-2.jpg" alt="">
+              <div class="social_container">
+                <div class="social-box">
+                  <a href="">
+                    <img src="images/facebook-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/twitter-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/linkedin.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/instagram.png" alt="">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <h5>
+                Abigail Hoover
+              </h5>
+              <p>
+                It is a long established fact that a
+                reader will be distracted by
+                the readable content of a page
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="item" style="">
+          <div class="box">
+            <div class="img-box">
+              <img src="images/spl-3.jpg" alt="">
+              <div class="social_container">
+                <div class="social-box">
+                  <a href="">
+                    <img src="images/facebook-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/twitter-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/linkedin.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/instagram.png" alt="">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <h5>
+                Alyson Mitchell
+              </h5>
+              <p>
+                It is a long established fact that a
+                reader will be distracted by
+                the readable content of a page
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="item" style="">
+          <div class="box">
+            <div class="img-box">
+              <img src="images/spl-4.jpg" alt="">
+              <div class="social_container">
+                <div class="social-box">
+                  <a href="">
+                    <img src="images/facebook-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/twitter-logo-button.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/linkedin.png" alt="">
+                  </a>
+                  <a href="">
+                    <img src="images/instagram.png" alt="">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <h5>
+                Abigail Hoover
+              </h5>
+              <p>
+                It is a long established fact that a
+                reader will be distracted by
+                the readable content of a page
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end spl section -->
+
+{% endblock content %}
+
+
