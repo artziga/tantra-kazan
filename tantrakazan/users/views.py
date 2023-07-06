@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
@@ -47,8 +47,13 @@ class LoginUserView(DataMixin, LoginView):
         return dict(list(context.items()) + list(context_def.items()))
 
     def get_success_url(self):
-        username = self.request.user.username
-        return reverse_lazy('users:user', kwargs={'username': username})
+        user = self.request.user
+        print(user.is_staff)
+        if user.is_staff:
+            direction = 'users:therapist'
+        else:
+            direction = 'users:user'
+        return reverse_lazy(direction, kwargs={'username': user.username})
 
 
 class UserFormCreateView(DataMixin, CreateView):
@@ -103,6 +108,17 @@ class UserProfileDetailView(DataMixin, DetailView):
 class TherapistProfileDetailView(UserProfileDetailView):
     template_name = 'users/therapist_profile_detail.html'
 
+    def get_offers(self):
+        user = User.objects.get(username=self.request.user)
+        offers = Offer.objects.filter(therapist_id=user.pk)
+        return offers
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        offers = self.get_offers()
+        context['offers'] = offers
+        return context
+
 
 class OfferCreateView(DataMixin, CreateView):
     model = Offer
@@ -110,6 +126,12 @@ class OfferCreateView(DataMixin, CreateView):
     template_name = 'users/profile.html'
 
     def form_valid(self, form):
+        form.instance.therapist = self.request.user
+        photo = self.request.FILES.get(
+            'photo')
+        if photo:
+            form.instance.photo = self.request.FILES.get(
+                'photo')
         user = User.objects.get(username=self.request.user)
         user.is_active = True
         user.save()
@@ -123,3 +145,10 @@ class OfferCreateView(DataMixin, CreateView):
     def get_success_url(self):
         username = self.request.user.username
         return reverse_lazy('users:therapist', kwargs={'username': username})
+
+
+def remove_offer(request, pk):
+    user = request.user
+    offer = Offer.objects.get(pk=pk)
+    offer.delete()
+    return redirect('users:therapist', username=user.username)

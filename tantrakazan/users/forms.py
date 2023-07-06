@@ -44,6 +44,8 @@ class LoginUserForm(AuthenticationForm):
 
 
 class CreateOfferForm(forms.ModelForm):
+    photo = forms.ImageField(label='АВАТАР', required=False)
+
     class Meta:
         model = Offer
         fields = '__all__'

@@ -4,71 +4,56 @@
 
 {% block therapist %}
 <!-- service section -->
-
-  <section class="service_section layout_padding layout_padding-left">
+  <section class="spl_section layout_padding layout_padding-left">
     <div class="container">
       <div class="heading_container">
         <h2>
           Мои услуги
         </h2>
-        <p>
-          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
+        <p>Самые лучшие массажи
         </p>
+        <a href="{% url 'users:create_offer' username=user.username %}">Добавить карточку услуги</a>
       </div>
-      <div class="service_container">
-        <div class="box">
-          <div class="img-box">
-            <img src="{% static 'users/images/s-1.png' %}" alt="">
-          </div>
-          <div class="detail-box">
-            <h4>
-              Massage
-            </h4>
-            <p>
-              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
-            </p>
-            <a href="">
-              Read More
-            </a>
-          </div>
-        </div>
-        <div class="box">
-          <div class="img-box">
-            <img src="{% static 'users/images/s-2.png' %}" alt="">
-          </div>
-          <div class="detail-box">
-            <h4>
-              Chiropractic
-            </h4>
-            <p>
-              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
-            </p>
-            <a href="">
-              Read More
-            </a>
-          </div>
-        </div>
-        <div class="box">
-          <div class="img-box">
-            <img src="{% static 'users/images/s-3.png' %}" alt="">
-          </div>
-          <div class="detail-box">
-            <h4>
-              Aromatherapy
-            </h4>
-            <p>
-              It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem
-            </p>
-            <a href="">
-              Read More
-            </a>
+    </div>
+    <div class="spl_container">
+      <div class="owl-carousel owl-theme">
+        {% for offer in offers %}
+        <div class="item" style="">
+          <div class="box">
+            <div class="img-box">
+              {% if offer.photo %}
+              <img src="{{ offer.photo.url }}" alt="Offer Photo">
+              {% else %}
+              <img src="{% static 'users/images/about-img.jpg' %}" alt="Default Offer Photo">
+              {% endif %}
+              <div class="social_container">
+                <div class="social-box">
+                  {{ offer.price }}
+                  <a href="">
+                    <img src="{% static 'users/images/facebook-logo-button.png' %}" alt="Редактировать">
+                  </a>
+                  <a href="{% url 'users:remove_offer' pk=offer.pk %}">
+                    <img src="{% static 'users/images/linkedin.png' %}" alt="Удалить">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <h5>
+                {{offer}}
+              </h5>
+              <p>
+                {{offer.description}}
+              </p>
+            </div>
           </div>
         </div>
+        {% endfor %}
       </div>
     </div>
   </section>
 
-  <!-- end service section -->
+  <!-- end spl section -->
 
 {% endblock therapist %}
 

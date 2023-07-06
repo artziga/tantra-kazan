@@ -27,7 +27,7 @@ class MassageTherapistProfile(models.Model):
         User,
         on_delete=models.CASCADE,
         editable=False,
-        related_name='massage_therapist_profile')
+        related_name='therapist_profile')
     experience = models.PositiveSmallIntegerField(verbose_name='Опыт', null=True)
     address = models.CharField(max_length=40, verbose_name='Адрес', null=True)
     contact_number = models.CharField(max_length=20, verbose_name='Номер телефона', null=True)
@@ -36,10 +36,10 @@ class MassageTherapistProfile(models.Model):
     description = models.TextField(verbose_name='О себе', null=True)
 
     def get_absolute_url(self):
-        return reverse('users:therapist', kwargs={'username': self.user.name})
+        return reverse('users:therapist', kwargs={'username': self.user.username})
 
     def __str__(self):
-        return self.user.name
+        return self.user.username
 
 
 class Photo(models.Model):
@@ -66,6 +66,13 @@ class Service(models.Model):
 class Offer(models.Model):
     therapist = models.ForeignKey(User, on_delete=models.CASCADE, editable=False, verbose_name='Массажист')
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Услуга', related_name='service')
-    photo = models.ImageField(upload_to='img/offers', verbose_name='Фото профиля', default='img/offers/default.jpeg')
+    photo = models.ImageField(upload_to='img/offers', verbose_name='Фото карточки', null=True)
     description = models.TextField(verbose_name='Описание', null=True)
     price = models.PositiveSmallIntegerField(verbose_name='Цена')
+
+    def __str__(self):
+        return self.service.name
+
+    @staticmethod
+    def get_default_photo(self):
+        return 'img/offers/default.jpeg'
