@@ -41,11 +41,3 @@ class MassageTherapistProfileForm(forms.ModelForm):
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
     password = forms.CharField(label='Пароль', widget=forms.TextInput(attrs={'class': 'form-input'}))
-
-
-class CreateOfferForm(forms.ModelForm):
-    photo = forms.ImageField(label='АВАТАР', required=False)
-
-    class Meta:
-        model = Offer
-        fields = '__all__'

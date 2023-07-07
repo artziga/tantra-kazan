@@ -1,16 +1,11 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import CreateView, DetailView, ListView
-from users.models import MassageTherapistProfile, UserProfile
-from django.contrib.auth.models import User
+from django.views.generic import CreateView, DetailView
 from django.contrib.auth import login
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from users.models import *
-from users.forms import RegisterUserForm, UserProfileForm, LoginUserForm, MassageTherapistProfileForm, CreateOfferForm
-from users.utils import DataMixin
+from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm
+from tantrakazan.utils import DataMixin
 
 
 def index(request):
@@ -120,35 +115,3 @@ class TherapistProfileDetailView(UserProfileDetailView):
         return context
 
 
-class OfferCreateView(DataMixin, CreateView):
-    model = Offer
-    form_class = CreateOfferForm
-    template_name = 'users/profile.html'
-
-    def form_valid(self, form):
-        form.instance.therapist = self.request.user
-        photo = self.request.FILES.get(
-            'photo')
-        if photo:
-            form.instance.photo = self.request.FILES.get(
-                'photo')
-        user = User.objects.get(username=self.request.user)
-        user.is_active = True
-        user.save()
-        return super().form_valid(form)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context_def = self.get_user_context(title='Профиль')
-        return {**context, **context_def}
-
-    def get_success_url(self):
-        username = self.request.user.username
-        return reverse_lazy('users:therapist', kwargs={'username': username})
-
-
-def remove_offer(request, pk):
-    user = request.user
-    offer = Offer.objects.get(pk=pk)
-    offer.delete()
-    return redirect('users:therapist', username=user.username)

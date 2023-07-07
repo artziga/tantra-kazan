@@ -12,7 +12,5 @@ urlpatterns = [
     path('form/<str:username>', views.UserFormCreateView.as_view(), name='form'),
     path('form/massage_therapist/<str:username>',
          views.MassageTherapistCreateView.as_view(),
-         name='massage_therapist_profile_form'),
-    path('create_offer/<str:username>', views.OfferCreateView.as_view(), name='create_offer'),
-    path('remove_offer/<int:pk>', views.remove_offer, name='remove_offer'),
+         name='massage_therapist_profile_form')
 ]
