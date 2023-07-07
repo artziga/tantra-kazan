@@ -3,6 +3,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
+
+from listings.models import Offer
 from users.models import *
 from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm
 from tantrakazan.utils import DataMixin

@@ -11,7 +11,7 @@ from tantrakazan.utils import DataMixin
 class OfferCreateView(DataMixin, CreateView):
     model = Offer
     form_class = CreateOfferForm
-    template_name = 'users/profile.html'
+    template_name = 'listings/profile.html'
 
     def form_valid(self, form):
         form.instance.therapist = self.request.user
