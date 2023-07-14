@@ -3,4 +3,4 @@ from .models import *
 
 
 admin.site.register(Service)
-admin.site.register(Offer)
+admin.site.register(Listing)

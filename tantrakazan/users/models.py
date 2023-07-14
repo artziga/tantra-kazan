@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from image_cropping import ImageRatioField
+from listings.models import Service
 
 
 class UserProfile(models.Model):
@@ -10,10 +12,6 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile')
     avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', default='img/avatars/default.jpeg')
-    gender = models.BooleanField(verbose_name='Пол', null=True, choices=((True, 'Мужчина'), (False, 'Женщина')))
-    age = models.PositiveSmallIntegerField(verbose_name='Возраст', null=True)
-    height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True)
-    weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True)
 
     def get_absolute_url(self):
         return reverse('users:user', kwargs={'username': self.user.username})
@@ -22,18 +20,28 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-class MassageTherapistProfile(models.Model):
+class TherapistProfile(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        editable=False,
+
         related_name='therapist_profile')
+    gender = models.BooleanField(verbose_name='Пол', null=True, choices=((True, 'Мужчина'), (False, 'Женщина')))
+    birth_date = models.DateField(verbose_name='Возраст', null=True)
+    height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True)
+    weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True)
     experience = models.PositiveSmallIntegerField(verbose_name='Опыт', null=True)
     address = models.CharField(max_length=40, verbose_name='Адрес', null=True)
-    contact_number = models.CharField(max_length=20, verbose_name='Номер телефона', null=True)
+    show_address = models.BooleanField(default=True)
+    phone_number = models.CharField(max_length=20, verbose_name='Номер телефона', null=True)
+    show_phone_number = models.BooleanField(default=True)
     telegram_profile = models.CharField(max_length=20, verbose_name='Телеграмм', null=True)
+    show_telegram_profile = models.BooleanField(default=True)
     instagram_profile = models.CharField(max_length=20, verbose_name='Инстаграм', null=True)
+    show_instagram_profile = models.BooleanField(default=True)
     description = models.TextField(verbose_name='О себе', null=True)
+    services = models.ManyToManyField(Service, verbose_name='Услуги')
+    is_profile_active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         return reverse('users:therapist', kwargs={'username': self.user.username})
@@ -44,7 +52,7 @@ class MassageTherapistProfile(models.Model):
 
 class Photo(models.Model):
     profile = models.ForeignKey(
-        MassageTherapistProfile,
+        TherapistProfile,
         on_delete=models.CASCADE,
         verbose_name='Юзер',
         related_name='photos')

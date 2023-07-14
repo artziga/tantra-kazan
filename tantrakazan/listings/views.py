@@ -1,15 +1,16 @@
 from django.contrib.auth.models import User
+from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from listings.forms import CreateOfferForm
-from listings.models import Offer
+from listings.models import Listing
 from tantrakazan.utils import DataMixin
 
 
 class OfferCreateView(DataMixin, CreateView):
-    model = Offer
+    model = Listing
     form_class = CreateOfferForm
     template_name = 'listings/profile.html'
 
@@ -43,6 +44,18 @@ class OfferUpdateView(OfferCreateView, UpdateView):
 
 def remove_offer(request, pk):
     user = request.user
-    offer = Offer.objects.get(pk=pk)
+    offer = Listing.objects.get(pk=pk)
     offer.delete()
     return redirect('users:therapist', username=user.username)
+
+
+class ListingListView(DataMixin, ListView):
+    model = Listing
+    template_name = 'listings/listings_list.html'
+    context_object_name = 'listings'
+    queryset = Listing.objects.filter(is_active=True)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context_def = self.get_user_context(title='Профиль')
+        return {**context, **context_def}

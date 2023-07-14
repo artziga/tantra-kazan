@@ -1,0 +1,18 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+   <section class="contact_section layout_padding layout_padding-left">
+    <div class="container">
+      <div class="heading_container">
+{% for therapist in therapists %}
+        {% include 'users/profile_card.html' %}
+          {% endfor %}
+
+
+          </div>
+      </div>
+  </section>
+
+{% endblock content %}
+

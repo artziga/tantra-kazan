@@ -1,16 +1,15 @@
-
-
-menu = [{'title': 'Сгенерировать меню', 'url_name': 'collect_user_data'},
-        {'title': 'Показать меню', 'url_name': 'show_menu'},
-        {'title': 'Рецепты', 'url_name': 'dishes'},
-        {'title': 'Категории', 'url_name': 'cats'},
-        {'title': 'Ингридиенты', 'url_name': 'ingredients'},
-        {'title': 'О сайте', 'url_name': 'about'},
-        {'title': 'Контакты', 'url_name': 'contacts'}
-        ]
+menu = [
+    {'title': 'О нас', 'url_name': 'users:therapists'},
+    {'title': 'Связаться', 'url_name': 'users:therapists'},
+    {'title': 'Статьи', 'url_name': 'listings:listings'},
+    {'title': 'Услуги', 'url_name': 'listings:listings'},
+    {'title': 'Специалисты', 'url_name': 'users:therapists'},
+    {'title': 'Главная', 'url_name': 'home'},
+]
 
 
 class DataMixin:
     def get_user_context(self, **kwargs):
         context = kwargs
+        context['menu'] = menu
         return context

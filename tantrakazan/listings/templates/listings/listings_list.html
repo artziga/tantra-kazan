@@ -1,0 +1,21 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+  <section class="contact_section layout_padding layout_padding-left">
+    <div class="container">
+      <div class="heading_container">
+{% for listing in listings %}
+          {{listing.service.name}}
+          {{listing.therapist.username}}
+          {{listing.therapist.profile.avatar.url}}
+          <img src="{{ listing.photo.url }}" height="256">
+          {% endfor %}
+
+
+          </div>
+      </div>
+  </section>
+
+{% endblock content %}
+

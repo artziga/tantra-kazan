@@ -10,6 +10,7 @@ urlpatterns = [
     path('profile/<str:username>', views.UserProfileDetailView.as_view(), name='user'),
     path('profile/therapist/<str:username>', views.TherapistProfileDetailView.as_view(), name='therapist'),
     path('form/<str:username>', views.UserFormCreateView.as_view(), name='form'),
+    path('therapists/', views.TherapistListView.as_view(), name='therapists'),
     path('form/massage_therapist/<str:username>',
          views.MassageTherapistCreateView.as_view(),
          name='massage_therapist_profile_form')

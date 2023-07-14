@@ -12,6 +12,7 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
+  <meta name="monetization" content="$ilp.uphold.com/WUdKN2pAgLAG">
 
   <!-- slider stylesheet -->
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
@@ -26,7 +27,10 @@
   <!-- Custom styles for this template -->
   <link href="{% static 'users/css/style.css' %}" rel="stylesheet" />
   <link href="{% static 'users/css/profile_style.css' %}" rel="stylesheet" />
-<!--  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />-->
+  <!-- filter style -->
+  <!-- profile card style -->
+  <link href="{% static 'users/css/profile_card.css' %}" rel="stylesheet" />
+  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />
   <!-- responsive style -->
   <link href="{% static 'users/css/responsive.css' %}" rel="stylesheet" />
 <!--  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />-->
@@ -49,21 +53,11 @@
       </div>
       <div class="custom_sidenav-container">
         <ul class="navbar-nav">
+          {% for p in menu %}
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url p.url_name %}">{{ p.title }}<span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="about.html"> About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="service.html"> services </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="specialist.html">Specialists </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contact Us</a>
-          </li>
+          {% endfor %}
         </ul>
       </div>
 
@@ -87,21 +81,11 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
                 <ul class="navbar-nav  ">
+                  {% for p in menu %}
                   <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url p.url_name %}">{{ p.title }}<span class="sr-only">(current)</span></a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="about.html"> About</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="service.html"> services </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="specialist.html">Specialists </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="contact.html">Contact Us</a>
-                  </li>
+                  {% endfor %}
                 </ul>
                 <div class="user_option ">
                   <a href="{%url 'users:registration' %}">

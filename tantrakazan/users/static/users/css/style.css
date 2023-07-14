@@ -674,7 +674,7 @@ a:focus {
 }
 
 .health_section .detail-container .detail-box .detail .detail_img-box {
-  width: 90px;
+  width: 300px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -689,6 +689,8 @@ a:focus {
 
 .health_section .detail-container .detail-box .detail .text p {
   margin: 0;
+  font-size: 18px;
+
 }
 
 .health_section .detail-container a {
