@@ -28,11 +28,11 @@ class UserProfileForm(forms.Form):
     # avatar_crop = forms.ImageField(label='АВАТАР11', widget=ImageCropWidget())
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Имя'}))
-    last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(
+    last_name = forms.CharField(label='Фамилия',  required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Фамилия'}))
     gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
         choices=((None, 'Не выбрано'), (True, 'Мужчина'), (False, 'Женщина'))))
-    birth_date = forms.DateField(label='Дата рождения', required=False,
+    birth_date = forms.DateField(label='Дата рождения', initial=date(year=1991, month=12, day=21), required=False,
                                  widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Дата рождения'}))
     height = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Рост'}))
     weight = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Вес'}))

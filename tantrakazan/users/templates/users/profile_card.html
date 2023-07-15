@@ -1,4 +1,4 @@
-
+{% load static %}
 {% block profile_card %}
    <div class="card">
   <div class="additional">
@@ -9,7 +9,11 @@
       <div class="points center">
         5,312 Points
       </div>
-      <img src="{{ therapist.profile.avatar.url }}" alt="Фото">
+      {% if user.profile.avatar %}
+      <img src="{{ therapist.profile.avatar.url }}" title="" alt="">
+      {% else %}
+      <img src="{% static 'users/images/profile-icon.png' %}" title="" alt="">
+      {% endif %}
     </div>
     <div class="more-info">
       <h1>{{ therapist }}</h1>

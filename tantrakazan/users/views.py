@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, FormView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
+from django.views.generic.edit import FormMixin
 
 from listings.models import Listing
 from users.models import *
@@ -89,7 +90,55 @@ class UserFormCreateView(DataMixin, FormView):
 
 
 class UserFormUpdateView(UserFormCreateView):
-    pass
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        initial = self.get_initial()
+        form = UserProfileForm(initial=initial)
+        context = super().get_context_data(**kwargs)
+        context['form'] = form
+        return context
+
+    def get_initial(self):
+        user = User.objects.get(username=self.request.user)
+        user_data = {'first_name': user.first_name, 'last_name': user.last_name}
+        photo = UserProfile.objects.filter(user=user).values('avatar').first()
+        profile_data = TherapistProfile.objects.filter(user=user).values(
+            'gender',
+            'birth_date',
+            'height',
+            'experience',
+            'address',
+            'show_address',
+            'phone_number',
+            'show_phone_number',
+            'telegram_profile',
+            'show_telegram_profile',
+            'instagram_profile',
+            'show_instagram_profile',
+            'description',
+            'services',
+            'is_profile_active'
+        ).first()
+        return user_data | photo | profile_data
+
+    def form_valid(self, form):
+        user = User.objects.get(username=self.request.user)
+        user.first_name = form.cleaned_data.pop('first_name', None)
+        user.last_name = form.cleaned_data.pop('last_name', None)
+        form.cleaned_data.pop('avatar', None)
+        user.save()
+        photo = self.request.FILES.get('avatar')
+        up = UserProfile.objects.get(user=user)
+        up.avatar = photo
+        up.save()
+        services = form.cleaned_data.pop('services', None)
+        tp = TherapistProfile.objects.get(user=user)
+        for field in form.cleaned_data:
+            value = form.cleaned_data[field]
+            setattr(tp, field, value)
+        tp.services.set(services)
+        tp.save()
+        return FormMixin.form_valid(self, form)
 
 
 class MassageTherapistCreateView(UserFormCreateView):
