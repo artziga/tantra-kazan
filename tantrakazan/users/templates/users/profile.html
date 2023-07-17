@@ -22,8 +22,9 @@
   {% for field in form %}
     <div>
       {{ field.label_tag }}
-      {% if field.name == 'photo' %}
+      {% if field.name == 'avatar' %}
         {% if field.value %}
+<!--        {{ field.value}}-->
           <img src="{{ field.value.url }}" alt="Фото профиля">
         {% endif %}
       {% endif %}
@@ -39,9 +40,7 @@
   {% endfor %}
   <button class="contact_section contact_form-container button" type="submit">Сохранить</button>
 </form>
-            <a href="{% url 'users:massage_therapist_profile_form' username=request.user.username %}">
-                Заполнить анкету как массажист
-            </a>
+
             </div>
                 </div>
               </div>

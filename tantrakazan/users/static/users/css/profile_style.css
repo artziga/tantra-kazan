@@ -83,6 +83,7 @@ img {
 
 @media (max-width: 991px) {
   .about-avatar {
+    border-radius: 50%;
     margin-top: 30px;
   }
 }

@@ -9,11 +9,13 @@
       <div class="points center">
         5,312 Points
       </div>
-      {% if user.profile.avatar %}
+      <div class="round-image">
+      {% if therapist.profile.avatar %}
       <img src="{{ therapist.profile.avatar.url }}" title="" alt="">
       {% else %}
       <img src="{% static 'users/images/profile-icon.png' %}" title="" alt="">
       {% endif %}
+        </div>
     </div>
     <div class="more-info">
       <h1>{{ therapist }}</h1>

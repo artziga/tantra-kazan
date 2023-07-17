@@ -6,9 +6,12 @@ from django.contrib.auth.views import LoginView
 from django.views.generic.edit import FormMixin
 
 from listings.models import Listing
+from tantrakazan import settings
 from users.models import *
 from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm
-from tantrakazan.utils import DataMixin
+from tantrakazan.utils import DataMixin, crop_photo, find_face_center
+from django.core.files import File
+import os
 
 
 class IndexListView(DataMixin, ListView):
@@ -82,7 +85,8 @@ class UserFormCreateView(DataMixin, FormView):
         form.cleaned_data.pop('avatar', None)
         user.save()
         photo = self.request.FILES.get('avatar')
-        UserProfile.objects.create(user=user, avatar=photo)
+        cropped_photo = crop_photo(photo=photo)
+        UserProfile.objects.create(user=user, avatar=cropped_photo)
         services = form.cleaned_data.pop('services', None)
         tp = TherapistProfile.objects.create(user=user, **form.cleaned_data)
         tp.services.set(services)
@@ -93,6 +97,7 @@ class UserFormUpdateView(UserFormCreateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         initial = self.get_initial()
+        print(initial)
         form = UserProfileForm(initial=initial)
         context = super().get_context_data(**kwargs)
         context['form'] = form
@@ -101,11 +106,16 @@ class UserFormUpdateView(UserFormCreateView):
     def get_initial(self):
         user = User.objects.get(username=self.request.user)
         user_data = {'first_name': user.first_name, 'last_name': user.last_name}
+        av = {}
         photo = UserProfile.objects.filter(user=user).values('avatar').first()
+        # photo_path = os.path.join(settings.MEDIA_ROOT, photo)
+        # av['avatar'] = File(open(photo_path), 'rb')
+        services = TherapistProfile.objects.get(user=user).services.values_list('pk', flat=True).all()
         profile_data = TherapistProfile.objects.filter(user=user).values(
             'gender',
             'birth_date',
             'height',
+            'weight',
             'experience',
             'address',
             'show_address',
@@ -116,9 +126,12 @@ class UserFormUpdateView(UserFormCreateView):
             'instagram_profile',
             'show_instagram_profile',
             'description',
-            'services',
             'is_profile_active'
         ).first()
+        bd = profile_data['birth_date']
+        if bd:
+            profile_data['birth_date'] = bd.isoformat()
+        profile_data['services'] = list(services)
         return user_data | photo | profile_data
 
     def form_valid(self, form):
@@ -128,9 +141,12 @@ class UserFormUpdateView(UserFormCreateView):
         form.cleaned_data.pop('avatar', None)
         user.save()
         photo = self.request.FILES.get('avatar')
-        up = UserProfile.objects.get(user=user)
-        up.avatar = photo
-        up.save()
+        if photo:
+            print('центр', find_face_center(photo) or 'нет лица')
+            cropped_photo = crop_photo(photo=photo)
+            up = UserProfile.objects.get(user=user)
+            up.avatar = cropped_photo
+            up.save()
         services = form.cleaned_data.pop('services', None)
         tp = TherapistProfile.objects.get(user=user)
         for field in form.cleaned_data:

@@ -78,10 +78,19 @@ html, body {
   top: 85%;
 }
 
-.card .additional .user-card img {
-  width: 100%;
-  top: 20%;
+.round-image {
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center; /* Центрирование по горизонтали */
+  align-items: center; /* Центрирование по вертикали */
+}
 
+.round-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
 }
 
 .card .additional .more-info {
