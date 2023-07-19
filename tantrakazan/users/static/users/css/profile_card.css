@@ -78,7 +78,7 @@ html, body {
   top: 85%;
 }
 
-.round-image {
+.card .additional .user-card .round-image {
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -86,7 +86,7 @@ html, body {
   align-items: center; /* Центрирование по вертикали */
 }
 
-.round-image img {
+.card .additional .user-card .round-image img {
   width: 100%;
   height: auto;
   object-fit: cover;

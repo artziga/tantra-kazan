@@ -9,7 +9,8 @@ from listings.models import Listing
 from tantrakazan import settings
 from users.models import *
 from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm
-from tantrakazan.utils import DataMixin, crop_photo, find_face_center
+from tantrakazan.utils import DataMixin
+from users.photo_processor import crop_face
 from django.core.files import File
 import os
 
@@ -85,7 +86,7 @@ class UserFormCreateView(DataMixin, FormView):
         form.cleaned_data.pop('avatar', None)
         user.save()
         photo = self.request.FILES.get('avatar')
-        cropped_photo = crop_photo(photo=photo)
+        cropped_photo = crop_face(uploaded_image=photo)
         UserProfile.objects.create(user=user, avatar=cropped_photo)
         services = form.cleaned_data.pop('services', None)
         tp = TherapistProfile.objects.create(user=user, **form.cleaned_data)
@@ -97,7 +98,6 @@ class UserFormUpdateView(UserFormCreateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         initial = self.get_initial()
-        print(initial)
         form = UserProfileForm(initial=initial)
         context = super().get_context_data(**kwargs)
         context['form'] = form
@@ -142,9 +142,10 @@ class UserFormUpdateView(UserFormCreateView):
         user.save()
         photo = self.request.FILES.get('avatar')
         if photo:
-            print('центр', find_face_center(photo) or 'нет лица')
-            cropped_photo = crop_photo(photo=photo)
+            # print('центр', find_face(photo) or 'нет лица')
+            cropped_photo = crop_face(uploaded_image=photo)
             up = UserProfile.objects.get(user=user)
+            print(cropped_photo)
             up.avatar = cropped_photo
             up.save()
         services = form.cleaned_data.pop('services', None)
