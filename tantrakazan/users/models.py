@@ -67,12 +67,3 @@ class TherapistProfile(models.Model):
             return today.year - born.year
 
 
-class Photo(models.Model):
-    profile = models.ForeignKey(
-        TherapistProfile,
-        on_delete=models.CASCADE,
-        verbose_name='Юзер',
-        related_name='photos')
-    image = models.ImageField(upload_to='img/', verbose_name='Фото')
-    caption = models.CharField(max_length=255, verbose_name='Описание')
-

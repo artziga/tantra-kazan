@@ -4,12 +4,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.files import File
 
-import listings.models
 from tantrakazan import settings
 from users.models import *
 from django.contrib.auth.models import User
 from listings.models import Service
-from image_cropping import ImageCropWidget
 
 
 class RegisterUserForm(UserCreationForm):
@@ -33,7 +31,7 @@ class UserProfileForm(forms.Form):
     avatar = forms.ImageField(label='АВАТАР', required=False, initial=initial_avatar, widget=forms.ClearableFileInput())
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Имя'}))
-    last_name = forms.CharField(label='Фамилия',  required=False, widget=forms.TextInput(
+    last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Фамилия'}))
     gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
         choices=((None, 'Не выбрано'), (True, 'Мужчина'), (False, 'Женщина'))))
