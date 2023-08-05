@@ -39,15 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'users.apps.UsersConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
-    'photologue',
-    'sortedm2m',
+    'sorl.thumbnail',
 ]
 
-SITE_ID = 2
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

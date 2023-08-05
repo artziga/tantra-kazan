@@ -1,12 +1,11 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.views.generic import FormView, CreateView
+from django.views.generic import FormView, CreateView, DetailView
 from gallery.forms import CreateGalleryForm, AddPhotoForm
 from tantrakazan.utils import DataMixin
 from gallery.models import Gallery, Photo
 from datetime import datetime
-from photologue.views import GalleryDetailView as GalleryDetailViewDefault
 from unidecode import unidecode
 
 
@@ -63,7 +62,7 @@ class AddPhotosView(DataMixin, FormView):
         return unique_file_name
 
 
-class GalleryDetailView(DataMixin, GalleryDetailViewDefault):
+class GalleryDetailView(DataMixin, DetailView):
     template_name = 'users/therapist_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):

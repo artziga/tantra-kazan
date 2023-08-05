@@ -25,5 +25,5 @@ class Listing(models.Model):
         return self.service.name
 
     @staticmethod
-    def get_default_photo(self):
+    def get_default_photo():
         return 'img/offers/default.jpeg'

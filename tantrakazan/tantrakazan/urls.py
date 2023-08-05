@@ -26,7 +26,6 @@ urlpatterns = [
     path('', views.IndexListView.as_view(), name='home'),
     path('users/', include('users.urls')),
     path('listings/', include('listings.urls')),
-    path('photologue/', include('photologue.urls')),
     path('gallery/', include('gallery.urls'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
