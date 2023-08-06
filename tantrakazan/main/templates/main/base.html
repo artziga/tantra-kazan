@@ -29,7 +29,8 @@
   <link href="{% static 'users/css/profile_style.css' %}" rel="stylesheet" />
   <!-- filter style -->
   <!-- profile card style -->
-  <link href="{% static 'users/css/profile_card.css' %}" rel="stylesheet" />
+<!--  <link href="{% static 'users/css/profile_card.css' %}" rel="stylesheet" />-->
+  <link rel="stylesheet" href="{% static 'users/css/card.css' %}">
   <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />
   <!-- responsive style -->
   <link href="{% static 'users/css/responsive.css' %}" rel="stylesheet" />
@@ -68,7 +69,7 @@
       <header class="header_section">
         <div class="container-fluid">
           <nav class="navbar navbar-expand-lg custom_nav-container">
-            <a class="navbar-brand" href="{% url 'home' %}"
+            <a class="navbar-brand" href="{% url 'main:home' %}"
             <img src="{% static 'users/images/logo.png' %}" alt="" />
               <span>
                 Tantra-Kazan
@@ -171,7 +172,7 @@
             </h6>
             <ul>
               <li class=" active">
-                <a class="" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                <a class="" href="{% url 'main:home' %}">Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="">
                 <a class="" href="about.html">About </a>

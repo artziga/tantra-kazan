@@ -16,18 +16,6 @@ from gallery.models import Gallery
 import os
 
 
-class IndexListView(DataMixin, ListView):
-    model = User
-    template_name = 'users/index.html'
-    context_object_name = 'therapists'
-    queryset = User.objects.filter(therapist_profile__is_profile_active=True)[:5]
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context_def = self.get_user_context(title='Главная')
-        return dict(list(context.items()) + list(context_def.items()))
-
-
 class RegisterUserCreateView(DataMixin, CreateView):
     model = User
     form_class = RegisterUserForm
@@ -40,16 +28,9 @@ class RegisterUserCreateView(DataMixin, CreateView):
         return dict(list(context.items()) + list(context_def.items()))
 
     def form_valid(self, form):
-        # Вызываем метод form_valid из родительского класса,
-        # чтобы выполнить сохранение данных пользователя
         response = super().form_valid(form)
-
-        # Получаем созданного пользователя
         user = form.instance
-
-        # Выполняем вход пользователя
         login(self.request, user)
-
         return response
 
 

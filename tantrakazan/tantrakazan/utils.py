@@ -5,7 +5,7 @@ menu = [
     {'title': 'Статьи', 'url_name': 'listings:listings'},
     {'title': 'Услуги', 'url_name': 'listings:listings'},
     {'title': 'Специалисты', 'url_name': 'users:therapists'},
-    {'title': 'Главная', 'url_name': 'home'},
+    {'title': 'Главная', 'url_name': 'main:home'},
 ]
 
 

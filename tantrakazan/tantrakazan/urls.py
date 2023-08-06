@@ -18,12 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from tantrakazan import settings
-from users import views
+from main import views
 from django.conf.urls.static import static
-# from django.contrib.auth.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.IndexListView.as_view(), name='home'),
+    path('', include('main.urls')),
     path('users/', include('users.urls')),
     path('listings/', include('listings.urls')),
     path('gallery/', include('gallery.urls'))
