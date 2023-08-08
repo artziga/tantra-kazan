@@ -6,5 +6,5 @@ class MassageTherapistProfileAdmin(admin.ModelAdmin):
     list_display = '__all__'
 
 
-admin.site.register(UserAvatar)
+# admin.site.register(UserAvatar)
 admin.site.register(TherapistProfile)

@@ -36,6 +36,7 @@
   <link href="{% static 'users/css/responsive.css' %}" rel="stylesheet" />
 <!--  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />-->
 </head>
+
 <body class="sub_page">
   <div class="hero_area layout_padding-left">
     <div class="custom_nav-box">
@@ -105,7 +106,7 @@
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% else %}
-              <a href="{% url 'users:user' username=request.user.username %}">
+              <a href="{% url 'users:profile'%}">
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% endif %}

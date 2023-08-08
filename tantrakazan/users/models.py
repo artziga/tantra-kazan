@@ -1,7 +1,7 @@
 from datetime import date
 
 from django.db import models
-from django.contrib.auth.models import User
+from main.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -11,25 +11,25 @@ from gallery.models import Gallery
 from listings.models import Service
 
 
-class UserAvatar(models.Model):
-    user = models.OneToOneField(
-        User,
-        editable=False,
-        on_delete=models.CASCADE,
-        related_name='profile')
-    avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
+# class UserAvatar(models.Model):
+#     user = models.OneToOneField(
+#         User,
+#         editable=False,
+#         on_delete=models.CASCADE,
+#         related_name='profile')
+#     avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
+#
+#     def get_absolute_url(self):
+#         return reverse('users:user', kwargs={'username': self.user.username})
+#
+#     def __str__(self):
+#         return self.user.username
 
-    def get_absolute_url(self):
-        return reverse('users:user', kwargs={'username': self.user.username})
 
-    def __str__(self):
-        return self.user.username
-
-
-@receiver(pre_delete, sender=UserAvatar)
-def delete_therapist_profile(sender, instance, **kwargs):
-    TherapistProfile.objects.filter(user=instance.user).delete()
-    Gallery.objects.filter(user=instance.user).delete()
+# @receiver(pre_delete, sender=UserAvatar)
+# def delete_therapist_profile(sender, instance, **kwargs):
+#     TherapistProfile.objects.filter(user=instance.user).delete()
+#     Gallery.objects.filter(user=instance.user).delete()
 
 
 class TherapistProfile(models.Model):

@@ -1,26 +1,32 @@
-from django.shortcuts import render
+import os
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, FormView
+from django.views.generic import CreateView, DetailView, ListView, FormView, TemplateView
 from django.contrib.auth import login
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.views.generic.edit import FormMixin
+from django.core.signing import BadSignature
+import logging
 
 from listings.models import Listing
 from tantrakazan import settings
+from users.apps import user_registered
 from users.models import *
-from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm, UserAvatarForm
+from users.forms import RegisterUserForm, UserProfileForm, MassageTherapistProfileForm, UserAvatarForm, LoginUserForm
 from tantrakazan.utils import DataMixin
+from users.utils import signer
 from users.photo_processor import crop_face
-from django.core.files import File
 from gallery.models import Gallery
-import os
 
 
 class RegisterUserCreateView(DataMixin, CreateView):
     model = User
     form_class = RegisterUserForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('users:registration_done')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,17 +35,56 @@ class RegisterUserCreateView(DataMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        user = form.instance
-        login(self.request, user)
+        user = self.object
+        user_registered.send(sender=self.__class__, instance=user)
         return response
 
 
 class RegisterTherapistCreateView(RegisterUserCreateView):
-    success_url = reverse_lazy('users:add_therapist_avatar')
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = self.object
+        TherapistProfile.objects.create(user=user)
+        return response
+
+
+class RegisterDone(DataMixin, TemplateView):
+    template_name = 'users/register_done.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context_def = self.get_user_context(title='Регистрация')
+        return {**context, **context_def}
+
+
+def user_activate(request, sign):
+    try:
+        username = signer.unsign(sign)
+    except BadSignature:
+        return render(request, 'users/bad_signature.html')
+
+    user = get_object_or_404(User, username=username)
+    if user.is_active:
+        template = 'users/user_is_activated.html'
+        return render(request, template)
+
+    user.is_active = True
+    user.save()
+    login(request, user)
+    return redirect('users:profile')
+
+
+
+
+class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('main:home')
+    success_message = 'Пароль изменен'
 
 
 class LoginUserView(DataMixin, LoginView):
     template_name = 'users/register.html'
+    # form_class = LoginUserForm
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,7 +93,6 @@ class LoginUserView(DataMixin, LoginView):
 
     def get_success_url(self):
         user = self.request.user
-        print(user.is_staff)
         if user.is_staff:
             direction = 'users:therapist'
         else:
@@ -56,8 +100,8 @@ class LoginUserView(DataMixin, LoginView):
         return reverse_lazy(direction, kwargs={'username': user.username})
 
 
-class AddAvatar(DataMixin, FormView):
-    model = UserAvatar
+class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
+    model = User
     form_class = UserAvatarForm
     template_name = 'users/profile.html'
 
@@ -67,7 +111,7 @@ class AddAvatar(DataMixin, FormView):
         return dict(list(context.items()) + list(context_def.items()))
 
     def get_success_url(self):
-        if self.request.GET.get('tp', None):
+        if TherapistProfile.objects.filrer(user=self.request.user).exists():
             return reverse_lazy('users:create_therapist_profile')
         return reverse_lazy('users:user', kwargs={'username': self.request.user})
 
@@ -76,7 +120,7 @@ class AddAvatar(DataMixin, FormView):
         form.cleaned_data['user'] = user
         photo = self.request.FILES.get('avatar')
         cropped_photo = crop_face(uploaded_image=photo)
-        UserAvatar.objects.create(user=user, avatar=cropped_photo)
+        user.avatar = cropped_photo
         return super().form_valid(form)
 
 
@@ -92,7 +136,7 @@ class AddTherapistAvatar(AddAvatar):
         return reverse_lazy('users:create_therapist_profile')
 
 
-class UserFormCreateView(DataMixin, FormView):
+class UserFormCreateView(LoginRequiredMixin, DataMixin, FormView):
     form_class = UserProfileForm
     template_name = 'users/profile.html'
 
@@ -137,10 +181,10 @@ class UserFormUpdateView(UserFormCreateView):
         return context
 
     def get_initial(self):
-        user = User.objects.get(username=self.request.user)
+        user = self.request.user
         user_data = {'first_name': user.first_name, 'last_name': user.last_name}
         av = {}
-        photo = UserAvatar.objects.filter(user=user).values('avatar').first()
+        photo = user.avatar
         # photo_path = os.path.join(settings.MEDIA_ROOT, photo)
         # av['avatar'] = File(open(photo_path), 'rb')
         services = TherapistProfile.objects.get(user=user).services.values_list('pk', flat=True).all()
@@ -177,10 +221,8 @@ class UserFormUpdateView(UserFormCreateView):
         if photo:
             # print('центр', find_face(photo) or 'нет лица')
             cropped_photo = crop_face(uploaded_image=photo)
-            up = UserAvatar.objects.get(user=user)
-            print(cropped_photo)
-            up.avatar = cropped_photo
-            up.save()
+            user.avatar = cropped_photo
+            user.save()
         services = form.cleaned_data.pop('services', None)
         tp = TherapistProfile.objects.get(user=user)
         for field in form.cleaned_data:
@@ -206,12 +248,10 @@ class MassageTherapistCreateView(UserFormCreateView):
         return reverse_lazy('users:therapist', kwargs={'username': username})
 
 
-class UserProfileDetailView(DataMixin, DetailView):
+class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
     model = User
     context_object_name = 'user'
     template_name = 'users/user_profile_detail.html'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -219,7 +259,7 @@ class UserProfileDetailView(DataMixin, DetailView):
         return {**context, **context_def}
 
 
-class TherapistProfileDetailView(UserProfileDetailView):
+class TherapistProfileDetailView(ProfileView):
     template_name = 'users/therapist_profile_detail.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):

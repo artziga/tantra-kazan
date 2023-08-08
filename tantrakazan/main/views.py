@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from main.models import User
 from django.views.generic import ListView
 
 from tantrakazan.utils import DataMixin

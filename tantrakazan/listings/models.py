@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from main.models import User
 from django.db import models
 
 
@@ -14,9 +14,11 @@ class Service(models.Model):
 
 
 class Listing(models.Model):
-    therapist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listing', related_query_name='listings', verbose_name='Массажист')
+    therapist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listing', related_query_name='listings',
+                                  verbose_name='Массажист')
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Услуга', related_name='service')
-    photo = models.ImageField(upload_to='img/offers', verbose_name='Фото карточки', null=True, default='img/offers/default.jpg')
+    photo = models.ImageField(upload_to='img/offers', verbose_name='Фото карточки', null=True,
+                              default='img/offers/default.jpg')
     description = models.TextField(verbose_name='Описание', null=True)
     price = models.PositiveSmallIntegerField(verbose_name='Цена')
     is_active = models.BooleanField(default=True)

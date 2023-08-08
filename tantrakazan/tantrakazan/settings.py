@@ -119,12 +119,15 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = []
+AUTH_USER_MODEL = 'main.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -133,6 +136,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_REDIRECT_URL = reverse_lazy('home')
-LOGOUT_REDIRECT_URL = reverse_lazy('home')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465  # Обычно порт 587 для SMTP с TLS
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'tantra-kazan@mail.ru'  # Ваш адрес электронной почты на mail.ru
+EMAIL_HOST_PASSWORD = 'TKy8JH3q6tTaf2HB96YL'  # Ваш пароль от почтового ящика
+DEFAULT_FROM_EMAIL = 'tantra-kazan@mail.ru'  # От какого адреса отправлять письма
+
+
+LOGIN_REDIRECT_URL = reverse_lazy('users:profile')
+LOGOUT_REDIRECT_URL = reverse_lazy('main:home')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
 

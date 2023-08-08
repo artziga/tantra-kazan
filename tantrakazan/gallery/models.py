@@ -4,7 +4,7 @@ import random
 
 from PIL import Image
 from django.conf import settings
-from django.contrib.auth.models import User
+from main.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.encoding import force_str, filepath_to_uri, smart_str
@@ -16,7 +16,6 @@ from django.utils.text import slugify
 from sortedm2m.fields import SortedManyToManyField
 from unidecode import unidecode
 from datetime import datetime
-from django.contrib.auth.models import User
 
 LATEST_LIMIT = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
 SAMPLE_SIZE = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
