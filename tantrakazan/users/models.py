@@ -77,3 +77,15 @@ class TherapistProfile(models.Model):
             return today.year - born.year - 1
         else:
             return today.year - born.year
+
+    def age_suffix(self):
+        last_digit = self.age % 10
+        if last_digit == 1:
+            return 'год'
+        elif last_digit in (2, 3, 4):
+            return 'года'
+        return 'лет'
+
+    @property
+    def str_age(self):
+        return str(self.age) + self.age_suffix()
