@@ -9,9 +9,16 @@ a {
 }
 
 .layout_padding {
-  padding-top: 125px;
-  padding-bottom: 125px;
+  padding-top: 30px;
+  padding-bottom: 100px;
 }
+
+.layout_padding_form {
+  display: flex;
+  justify-content: center; /* Горизонтальное выравнивание по центру */
+}
+
+
 
 .layout_padding2 {
   padding-top: 45px;
@@ -1162,6 +1169,39 @@ a:focus {
   -webkit-transform: rotate(-45deg) translate(7px, -10px);
           transform: rotate(-45deg) translate(7px, -10px);
 }
+
+.content_block {
+    min-height: 100vh; /* Минимальная высота 100% видимой области экрана */
+    margin: 20px 0;
+    padding: 20px 0;
+}
+
+.button-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px; /* Пространство между кнопками и остальными элементами */
+}
+
+.button-column a.reset_password {
+  background-color: #fee0cd; /* Цвет фона для кнопки "Восстановить пароль" */
+  color: #393938; /* Цвет текста для кнопки "Восстановить пароль" */
+  padding: 5px 10px; /* Опционально: настройте отступы по вашему вкусу */
+  font-size: 10px; /* Уменьшаем размер текста */
+  opacity: 0.6; /* Устанавливаем прозрачность */
+  border: none; /* Опционально: убираем границу */
+  text-decoration: none; /* Убираем подчеркивание для ссылки */
+  transition: background-color 0.3s, color 0.3s; /* Плавное изменение цвета */
+}
+
+.button-column a.reset_password:hover {
+  background-color: #fee0cd; /* Цвет фона для кнопки "Восстановить пароль" */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  color: white;
+}
+
+
 
 
 /*# sourceMappingURL=style.css.map */

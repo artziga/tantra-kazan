@@ -5,15 +5,11 @@
 {% block content %}
  <title>{{ title }}</title>
 
-  <section class="about_section  layout_padding-left">
+  <section class="layout_padding-left">
 
 
     <div class="detail-container">
-      {% if not user.is_staff %}
-    <a href="{% url 'users:massage_therapist_profile_form' username=request.user.username %}">
-                Заполнить анкету как массажист
-            </a>
-      {% endif %}
+
 {% if request.user.is_authenticated %}
     <section class="section about-section gray-bg" id="about">
                           <a href="{% url 'users:edit_form' %}">

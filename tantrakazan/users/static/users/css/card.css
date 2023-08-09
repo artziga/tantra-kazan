@@ -8,9 +8,9 @@
   position: relative;
   display: flex;
   width: 90%;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 300px;
+  background-color: #f0f0f0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   transition: transform 0.2s ease;
   margin: 10px;
@@ -22,7 +22,7 @@
   flex-direction: column;
   align-items: center;
   padding: 1%;
-  background-color: #f0f0f0;
+  background-color: #fee0cd;
   z-index: 2;
 }
 
@@ -38,21 +38,38 @@
   margin-bottom: 15px;
 }
 
+.contact-btn-container {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 1%; /* Привязываем кнопки к нижней части карточки */
+}
+
 .contact-btn {
-  width: 100%;
+  width: 70%;
   padding: 10px;
   margin-bottom: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #fee8db; /* Изменили цвет фона */
+  color: black;
   font-size: 14px;
   cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s; /* Плавное изменение цвета при наведении */
 }
 
 .contact-btn:last-child {
-  background-color: #28a745;
+  background-color: #fee8db; /* Изменили цвет фона для последней кнопки */
 }
+
+.contact-btn:hover {
+  background-color: #ffb07c; /* Изменили цвет фона при наведении */
+  color: white; /* Изменили цвет текста при наведении */
+}
+
 
 .contact-right {
   position: absolute;
@@ -62,8 +79,6 @@
   height: 100%;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  opacity: 1;
 }
 
 .contact-right p {
@@ -78,9 +93,8 @@
   width: 70%;
   height: 100%;
   padding: 20px;
-  background-color: #f0f0f0;
+  background-color: #fee0cd;
   transition: left 0.5s ease, opacity 0.5s ease; /* Добавим анимацию для свойств left и opacity */
-  opacity: 0;
   z-index: 1;
 }
 

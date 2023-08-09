@@ -102,11 +102,11 @@
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
               {% if request.user.is_staff %}
-              <a href="{% url 'users:therapist' username=request.user.username %}">
+              <a href="{% url 'users:my_therapist_profile' %}">
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% else %}
-              <a href="{% url 'users:profile'%}">
+              <a href="{% url 'users:my_profile'%}">
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% endif %}
@@ -134,8 +134,10 @@
     </div>
   </div>
 
+<div class="content_block layout_padding-left">
 {% block content %}
 {% endblock content %}
+</div>
 
 </div>
 </body>

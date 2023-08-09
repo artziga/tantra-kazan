@@ -1,14 +1,13 @@
 {% load static %}
 {% block profile_card %}
-
-
-
 <div class="contact-card">
     <div class="contact-left">
       <h3 class="contact-name">{{ therapist }}</h3>
       <img src="{{ therapist.profile.avatar.url }}" alt="Contact Photo">
+      <div class="contact-btn-container">
       <button class="contact-btn">Написать</button>
       <button class="contact-btn">Записаться</button>
+      </div>
     </div>
     <div class="contact-right">
       <p class="base-info">Возраст - 20 лет</p>

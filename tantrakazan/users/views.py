@@ -61,12 +61,12 @@ def user_activate(request, sign):
     try:
         username = signer.unsign(sign)
     except BadSignature:
-        return render(request, 'users/bad_signature.html')
+        return render(request, 'users/bad_signature.html', {'title': 'Активация не удалась'})
 
     user = get_object_or_404(User, username=username)
     if user.is_active:
         template = 'users/user_is_activated.html'
-        return render(request, template)
+        return render(request, template, {'title': 'Активация выполнена ранее'})
 
     user.is_active = True
     user.save()
@@ -74,17 +74,8 @@ def user_activate(request, sign):
     return redirect('users:profile')
 
 
-
-
-class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
-    template_name = 'users/register.html'
-    success_url = reverse_lazy('main:home')
-    success_message = 'Пароль изменен'
-
-
 class LoginUserView(DataMixin, LoginView):
-    template_name = 'users/register.html'
-    # form_class = LoginUserForm
+    template_name = 'registration/login.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,10 +85,16 @@ class LoginUserView(DataMixin, LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.is_staff:
-            direction = 'users:therapist'
+            direction = 'users:my_therapist_profile'
         else:
-            direction = 'users:user'
-        return reverse_lazy(direction, kwargs={'username': user.username})
+            direction = 'users:my_profile'
+        return reverse_lazy(direction)
+
+
+class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('main:home')
+    success_message = 'Пароль изменен'
 
 
 class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
@@ -121,6 +118,7 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
         photo = self.request.FILES.get('avatar')
         cropped_photo = crop_face(uploaded_image=photo)
         user.avatar = cropped_photo
+        user.save()
         return super().form_valid(form)
 
 

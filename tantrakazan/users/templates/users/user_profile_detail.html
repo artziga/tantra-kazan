@@ -5,15 +5,10 @@
 {% block content %}
   <title>{{ title }}</title>
 
-  <section class="about_section  layout_padding-left">
+  <section class="layout_padding-left">
 
 
     <div class="detail-container">
-      {% if not user.is_staff %}
-    <a href="{% url 'users:massage_therapist_profile_form' username=request.user.username %}">
-                Заполнить анкету как массажист
-            </a>
-      {% endif %}
 {% if request.user.is_authenticated %}
     <section class="section about-section gray-bg" id="about">
                           <a href="{% url 'users:edit_form' %}">
@@ -58,6 +53,7 @@
                                     </div>
                                     <div class="media">
                                         <label>Телеграм</label>
+
                                         <p>{{user.therapist_profile.telegram_profile}}</p>
                                     </div>
                                     <div class="media">
@@ -70,8 +66,9 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="about-avatar">
-                            {% if user.profile.avatar %}
-                            <img src="{{ user.profile.avatar.url }}" height="400" title="" alt="">
+
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" height="400" title="" alt="">
                             {% else %}
                             <img src="{% static 'users/images/profile-icon.png' %}" height="400" title="" alt="">
                             {% endif %}
