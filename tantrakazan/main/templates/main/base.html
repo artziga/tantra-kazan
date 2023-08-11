@@ -90,7 +90,7 @@
                   {% endfor %}
                 </ul>
                 <div class="user_option ">
-                  <a href="{%url 'users:registration' %}">
+                  <a href="{%url 'accounts:registration' %}">
                     ОЛОЛЛОЛОЛ!!!!!!!!
                   </a>
                   <form class="form-inline ">
@@ -110,15 +110,15 @@
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% endif %}
-              <a href="{%url 'users:logout' %}">
+              <a href="{%url 'accounts:logout' %}">
                 Выйти
               </a>
               <p>
               {% else %}
-              <a href="{%url 'users:my_login' %}">
+              <a href="{%url 'accounts:login' %}">
                 Вход
               </a>
-              <a href="{%url 'users:registration' %}">
+              <a href="{%url 'accounts:registration' %}">
                 Регистрация
               </a>
                 </p>

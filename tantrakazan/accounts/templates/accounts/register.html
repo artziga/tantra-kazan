@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!-- contact section -->
+  <title>{{ title }}</title>
+  <section class="contact_section layout_padding_form layout_padding-left">
+    <div class="container">
+      <div class="heading_container">
+        <h2>
+          {{ title }}
+        </h2>
+      </div>
+      <div class="">
+        <div class="row">
+          <div class="col-md-6 ">
+          <div class="contact_form-container">
+          <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% for field in form %}
+    <div>
+      {{ field }}
+      {% if field.errors %}
+        <ul class="errorlist">
+          {% for error in field.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endfor %}
+              <button class="contact_section contact_form-container button" type="submit">Сохранить</button>
+
+              </form>
+            </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-6 col-lg-5 offset-lg-1">
+            <div class="img-box">
+              <img src="images/contact-img.jpg" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+{% endblock content %}

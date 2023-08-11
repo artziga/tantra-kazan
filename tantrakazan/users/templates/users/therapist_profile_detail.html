@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="media">
                                         <label>Возраст</label>
-                                        <p>{{user.therapist_profile.age}}</p>
+                                        <p>{{user.therapist_profile.str_age}}</p>
                                     </div>
                                     {% endif %}
                                     <div class="media">
@@ -66,8 +66,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="about-avatar">
-                            {% if user.profile.avatar %}
-                            <img src="{{ user.profile.avatar.url }}" height="400" title="" alt="">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" height="400" title="" alt="">
                             {% else %}
                             <img src="{% static 'users/images/profile-icon.png' %}" height="400" title="" alt="">
                             {% endif %}

@@ -3,17 +3,68 @@
 <div class="contact-card">
     <div class="contact-left">
       <h3 class="contact-name">{{ therapist }}</h3>
-      <img src="{{ therapist.profile.avatar.url }}" alt="Contact Photo">
+      {% if therapist.avatar %}
+        <img src="{{ therapist.avatar.url }}"alt="">
+        {% else %}
+        <img src="{% static 'users/images/profile-icon.png' %}" height="258" title="" alt="">
+        {% endif %}
       <div class="contact-btn-container">
       <button class="contact-btn">Написать</button>
       <button class="contact-btn">Записаться</button>
       </div>
     </div>
-    <div class="contact-right">
-      <p class="base-info">Возраст - 20 лет</p>
-      <p class="base-info">Рост - 60 кг</p>
-      <!-- Add more basic information here -->
+<div class="contact-right">
+<div class="top-info">
+    <h4 class="user-info-title">Информация о пользователе</h4>
+    <div class="rating">
+      <p>Рейтинг: 5</p>
+      <p>Отзывов: 0</p>
     </div>
+    </div>
+        <div class="row about-list">
+            <div class="col-md-6">
+                {% if user.therapist_profile.birth_date %}
+                <div class="media">
+                    <label>День рождения</label>
+                    <p>{{therapist.therapist_profile.birth_date}}</p>
+                </div>
+                <div class="media">
+                    <label>Возраст</label>
+                    <p>{{therapist.therapist_profile.age}}</p>
+                </div>
+                {% endif %}
+                <div class="media">
+                    <label>Residence</label>
+                    <p>Canada</p>
+                </div>
+                <div class="media">
+                    <label>Адрес</label>
+                    <p>{{therapist.therapist_profile.address}}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="media">
+                    <label>E-mail</label>
+                    <p>{{therapist.email}}</p>
+                </div>
+                <div class="media">
+                    <label>Телефон</label>
+                    <p>{{therapist.therapist_profile.phone_number}}</p>
+                </div>
+                <div class="media">
+                    <label>Телеграм</label>
+                    <p>{{therapist.therapist_profile.telegram_profile}}</p>
+                </div>
+                <div class="media">
+                    <label>Инстаграм</label>
+                    <p>{{therapist.therapist_profile.instagram_profile}}</p>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+
     <div class="contact-description">
       <p>{{ therapist.therapist_profile.description }}</p>
     </div>

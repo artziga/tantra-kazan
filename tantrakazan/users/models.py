@@ -78,8 +78,9 @@ class TherapistProfile(models.Model):
         else:
             return today.year - born.year
 
-    def age_suffix(self):
-        last_digit = self.age % 10
+    @staticmethod
+    def years_suffix(years):
+        last_digit = years % 10 if years > 9 else years
         if last_digit == 1:
             return 'год'
         elif last_digit in (2, 3, 4):
@@ -87,5 +88,13 @@ class TherapistProfile(models.Model):
         return 'лет'
 
     @property
-    def str_age(self):
-        return str(self.age) + self.age_suffix()
+    def age_display(self):
+        return f'{str(self.age)} {self.years_suffix(self.age)}'
+
+    @property
+    def experience_display(self):
+        return f'{str(self.experience)} {self.years_suffix(int(self.experience))}'
+
+    @property
+    def gender_display(self):
+        return 'Мужчина' if self.gender is True else 'Женщина'

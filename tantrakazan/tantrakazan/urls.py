@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+import django.contrib.auth.urls
 
 from tantrakazan import settings
 from main import views
@@ -23,7 +24,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path('auth/', include('accounts.urls')),
     path('users/', include('users.urls')),
     path('listings/', include('listings.urls')),
     path('gallery/', include('gallery.urls'))

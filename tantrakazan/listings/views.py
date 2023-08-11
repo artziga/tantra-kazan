@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from main.models import User
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy

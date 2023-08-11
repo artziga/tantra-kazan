@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -13,3 +13,6 @@ class User(AbstractUser):
             "Unselect this instead of deleting accounts."
         ),
     )
+    is_therapist = models.BooleanField(verbose_name='Массажист', default=False)
+
+    objects = UserManager()

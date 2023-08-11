@@ -12,11 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -29,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,13 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts.apps.AccountsConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
     'sorl.thumbnail',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tantrakazan.urls'
+
+CACHE_MIDDLEWARE_SECONDS = 0
 
 TEMPLATES = [
     {
@@ -76,7 +76,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tantrakazan.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -106,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -117,9 +115,6 @@ TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 
 USE_TZ = True
-
-
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -145,7 +140,6 @@ EMAIL_HOST_USER = 'tantra-kazan@mail.ru'  # Ваш адрес электронн
 EMAIL_HOST_PASSWORD = 'TKy8JH3q6tTaf2HB96YL'  # Ваш пароль от почтового ящика
 DEFAULT_FROM_EMAIL = 'tantra-kazan@mail.ru'  # От какого адреса отправлять письма
 
-
 LOGIN_REDIRECT_URL = reverse_lazy('users:profile')
 LOGOUT_REDIRECT_URL = reverse_lazy('main:home')
 
@@ -163,5 +157,3 @@ LOGGING = {
         'level': 'INFO',
     },
 }
-
-
