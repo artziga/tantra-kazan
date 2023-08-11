@@ -2,12 +2,14 @@ from django.contrib.auth import views
 from django.urls import path, reverse_lazy
 
 from accounts.forms import UserPasswordResetForm
-from accounts.views import RegisterUserCreateView
+from accounts.views import RegisterUserCreateView, RegistrationDone, user_activate
 
 app_name = 'accounts'
 
 urlpatterns = [
     path("registration/", RegisterUserCreateView.as_view(), name="registration"),
+    path("registration/done", RegistrationDone.as_view(), name="registration_done"),
+    path("registration/activate/<str:sign>", user_activate, name="register_activate"),
     path("login/", views.LoginView.as_view(), name="login"),
     path("logout/", views.LogoutView.as_view(), name="logout"),
     path(

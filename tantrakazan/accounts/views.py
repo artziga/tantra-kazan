@@ -20,7 +20,7 @@ class RegisterUserCreateView(DataMixin, CreateView):
     model = User
     form_class = RegisterUserForm
     template_name = 'accounts/registration.html'
-    success_url = reverse_lazy('users:registration_done')
+    success_url = reverse_lazy('accounts:registration_done')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,7 +42,7 @@ class RegisterTherapistCreateView(RegisterUserCreateView):
         return response
 
 
-class RegisterDone(DataMixin, TemplateView):
+class RegistrationDone(DataMixin, TemplateView):
     template_name = 'accounts/registration_done.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -55,11 +55,11 @@ def user_activate(request, sign):
     try:
         username = signer.unsign(sign)
     except BadSignature:
-        return render(request, 'auth/bad_signature.html', {'title': 'Активация не удалась'})
+        return render(request, 'accounts/bad_signature.html', {'title': 'Активация не удалась'})
 
     user = get_object_or_404(User, username=username)
     if user.is_active:
-        template = 'auth/user_is_activated.html'
+        template = 'accounts/user_is_activated.html'
         return render(request, template, {'title': 'Активация выполнена ранее'})
 
     user.is_active = True

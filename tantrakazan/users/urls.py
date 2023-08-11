@@ -3,7 +3,7 @@ from users import views
 app_name = 'users'
 
 urlpatterns = [
-    path('profile/', views.ProfileView.as_view(), name='my_profile'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
     path('therapist/create_profile', views.UserFormCreateView.as_view(), name='create_therapist_profile'),
     path('therapist/create_profile', views.UserFormCreateView.as_view(), name='create_therapist_profile'),
     path('therapist/create_profile', views.UserFormCreateView.as_view(), name='therapist_registration'),

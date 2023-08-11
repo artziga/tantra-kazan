@@ -13,7 +13,7 @@ def send_activation_notification(user):
         host = 'localhost:8000'
 
     context = {'user': user, 'host': host, 'sign': signer.sign(user.username)}
-    subject = render_to_string('users/activation_letter_subject.txt', context)
-    body_text = render_to_string('users/activation_letter_body.txt', context)
+    subject = render_to_string('accounts/activation_letter_subject.txt', context)
+    body_text = render_to_string('accounts/activation_letter_body.txt', context)
 
     user.email_user(subject, body_text)
