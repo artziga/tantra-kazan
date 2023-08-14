@@ -102,7 +102,7 @@
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
               {% if request.user.is_staff %}
-              <a href="{% url 'users:my_therapist_profile' %}">
+              <a href="{% url 'users:therapist_profile' %}">
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% else %}

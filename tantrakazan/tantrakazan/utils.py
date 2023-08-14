@@ -18,11 +18,11 @@ class DataMixin:
                     'title': 'Зарегестрироваться как массажист',
                     }
         if user.is_authenticated:
-            if not TherapistProfile.objects.filter(user=user).exists():
-                create_therapist_profile_button['url_name'] = 'users:add_therapist_avatar'
+            if not user.is_therapist:
+                create_therapist_profile_button['url_name'] = 'users:therapist_profile_completion'
                 user_menu.insert(0, create_therapist_profile_button)
         else:
-            create_therapist_profile_button['url_name'] = 'users:therapist_registration'
+            create_therapist_profile_button['url_name'] = 'accounts:therapist_registration'
             user_menu.insert(0, create_therapist_profile_button)
         context = kwargs
         context['menu'] = user_menu

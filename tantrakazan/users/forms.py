@@ -1,7 +1,6 @@
 import os
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm
 from django.core.files import File
 
 from tantrakazan import settings
@@ -10,19 +9,24 @@ from main.models import User
 from listings.models import Service
 
 
-class UserAvatarForm(forms.Form):
-    photo_path = os.path.join(settings.MEDIA_ROOT, 'img/avatars/spl-4_hh5cmZm.jpg')
-    initial_avatar = File(open(photo_path, 'rb'))
-    avatar = forms.ImageField(label='АВАТАР', required=False, initial=initial_avatar, widget=forms.ClearableFileInput())
-
-
 class UserProfileForm(forms.Form):
+    avatar = forms.ImageField(label='АВАТАР', required=False, widget=forms.ClearableFileInput())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.cleaned_data.pop('avatar', None)
+        return cleaned_data
+
+
+class TherapistProfileForm(UserProfileForm):
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Имя'}))
     last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Фамилия'}))
     gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
         choices=((None, 'Не выбрано'), (True, 'Мужчина'), (False, 'Женщина'))))
+    massage_to_gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
+        choices=((None, 'Всем'), (True, 'Мужчинам'), (False, 'Женщинам'))))
     birth_date = forms.DateField(label='Дата рождения', required=False,
                                  widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Дата рождения'}))
     height = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Рост'}))
@@ -45,11 +49,15 @@ class UserProfileForm(forms.Form):
         attrs={'class': 'form-input', 'placeholder': 'Короткое описание'}))
     description = forms.CharField(required=False, label='О себе', widget=forms.Textarea(
         attrs={'class': 'form-input', 'placeholder': 'О себе'}))
-    services = forms.MultipleChoiceField(required=False, choices=Service.objects.all().values_list())
+    services = forms.MultipleChoiceField(required=False)
     is_profile_active = forms.BooleanField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['services'].choices = Service.objects.all().values_list()
 
-class MassageTherapistProfileForm(forms.ModelForm):
-    class Meta:
-        model = TherapistProfile
-        fields = '__all__'
+
+# class MassageTherapistProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = TherapistProfile
+#         fields = '__all__'

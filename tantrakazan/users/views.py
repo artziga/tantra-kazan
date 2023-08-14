@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
-from django.views.generic.edit import FormMixin
+from django.db.utils import IntegrityError
 
 from listings.models import Listing
 from users.models import *
-from users.forms import UserProfileForm, MassageTherapistProfileForm, UserAvatarForm
+from users.forms import TherapistProfileForm, UserProfileForm
 from tantrakazan.utils import DataMixin
 from users.photo_processor import crop_face
 from gallery.models import Gallery
@@ -13,7 +13,7 @@ from gallery.models import Gallery
 
 class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
     model = User
-    form_class = UserAvatarForm
+    form_class = UserProfileForm
     template_name = 'users/profile.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -48,10 +48,10 @@ class AddTherapistAvatar(AddAvatar):
         return reverse_lazy('users:create_therapist_profile')
 
 
-class UserFormCreateView(LoginRequiredMixin, DataMixin, FormView):
-    form_class = UserProfileForm
+class UserProfileCompletionView(LoginRequiredMixin, DataMixin, FormView):
     template_name = 'users/profile.html'
-    success_url = reverse_lazy('users:my_therapist_profile')
+    success_url = reverse_lazy('users:therapist_profile')
+    form_class = UserProfileForm
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,43 +59,65 @@ class UserFormCreateView(LoginRequiredMixin, DataMixin, FormView):
         return dict(list(context.items()) + list(context_def.items()))
 
     def form_valid(self, form):
-        user = User.objects.get(username=self.request.user)
-        user.first_name = form.cleaned_data.pop('first_name', None)
-        user.last_name = form.cleaned_data.pop('last_name', None)
-        form.cleaned_data.pop('avatar', None)
-        user.save()
-        services = form.cleaned_data.pop('services', None)
-        tp = TherapistProfile.objects.create(user=user, **form.cleaned_data)
-        tp.services.set(services)
-        self.create_license_gallery()
+        photo = self.request.FILES.get('avatar')
+        if photo:
+            user = self.request.user
+            cropped_photo = crop_face(uploaded_image=photo)
+            user.avatar = cropped_photo
+            user.save()
         return super().form_valid(form)
 
-    def create_license_gallery(self):
+
+class TherapistProfileFormBaseView(UserProfileCompletionView):
+    form_class = TherapistProfileForm
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.first_name = form.cleaned_data.pop('first_name', '')
+        user.last_name = form.cleaned_data.pop('last_name', '')
+        services = form.cleaned_data.pop('services', [])
+        tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=form.cleaned_data)
+        tp.services.set(services)
+        user.save()
+        tp.save()
+        return super().form_valid(form)
+
+
+class TherapistProfileCompletionView(TherapistProfileFormBaseView):
+    def form_valid(self, form):
+        try:
+            self.create_default_gallery()
+        except IntegrityError:
+            print('Галерея уже существует')
+        return super().form_valid(form)
+
+    def create_default_gallery(self):
         """Для всех пользователей создающих профиль массажиста создается
-        галерея сертификатов"""
-        user = User.objects.get(username=self.request.user)
-        license_gallery = Gallery.objects.create(user=user,
-                                                 slug=f'{user.username}s_licenses',
-                                                 title='Сертификаты',
-                                                 description='Мои сертификаты')
+        галерея сертификатов и одна галерея фото"""
+        user = self.request.user
+        Gallery.objects.create(user=user,
+                               slug=f'{user.username}s_licenses',
+                               title='Сертификаты',
+                               description='Мои сертификаты')
+
+        Gallery.objects.create(user=user,
+                               slug=f'{user.username}s_gallery',
+                               title='Фото',
+                               description='Мои фотографии')
 
 
-class UserFormUpdateView(UserFormCreateView):
+class UserFormUpdateView(TherapistProfileFormBaseView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         initial = self.get_initial()
-        form = UserProfileForm(initial=initial)
+        form = TherapistProfileForm(initial=initial)
         context = super().get_context_data(**kwargs)
         context['form'] = form
         return context
 
     def get_initial(self):
         user = self.request.user
-        user_data = {'first_name': user.first_name, 'last_name': user.last_name}
-        av = {}
-        photo = user.avatar
-        # photo_path = os.path.join(settings.MEDIA_ROOT, photo)
-        # av['avatar'] = File(open(photo_path), 'rb')
+        user_data = {'first_name': user.first_name, 'last_name': user.last_name, 'avatar': user.avatar}
         services = TherapistProfile.objects.get(user=user).services.values_list('pk', flat=True).all()
         profile_data = TherapistProfile.objects.filter(user=user).values(
             'gender',
@@ -118,48 +140,10 @@ class UserFormUpdateView(UserFormCreateView):
         if bd:
             profile_data['birth_date'] = bd.isoformat()
         profile_data['services'] = list(services)
-        return user_data | photo | profile_data
-
-    def form_valid(self, form):
-        user = User.objects.get(username=self.request.user)
-        user.first_name = form.cleaned_data.pop('first_name', None)
-        user.last_name = form.cleaned_data.pop('last_name', None)
-        form.cleaned_data.pop('avatar', None)
-        user.save()
-        photo = self.request.FILES.get('avatar')
-        if photo:
-            # print('центр', find_face(photo) or 'нет лица')
-            cropped_photo = crop_face(uploaded_image=photo)
-            user.avatar = cropped_photo
-            user.save()
-        services = form.cleaned_data.pop('services', None)
-        tp = TherapistProfile.objects.get(user=user)
-        for field in form.cleaned_data:
-            value = form.cleaned_data[field]
-            setattr(tp, field, value)
-        tp.services.set(services)
-        tp.save()
-        return FormMixin.form_valid(self, form)
-
-
-class MassageTherapistCreateView(UserFormCreateView):
-    model = TherapistProfile
-    form_class = MassageTherapistProfileForm
-
-    def form_valid(self, form):
-        user = User.objects.get(username=self.request.user)
-        user.is_staff = True
-        user.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        username = self.request.user.username
-        return reverse_lazy('users:my_therapist_profile')
+        return user_data | profile_data
 
 
 class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
-    model = User
-    context_object_name = 'user'
     template_name = 'users/user_profile_detail.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -180,7 +164,6 @@ class TherapistProfileDetailView(ProfileView):
         context['offers'] = offers
         context['galleries'] = galleries
         context['samples'] = samples
-
         return context
 
 

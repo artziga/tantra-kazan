@@ -1,15 +1,11 @@
 from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, LoginView, \
-    PasswordChangeView
-from django.contrib.messages.views import SuccessMessageMixin
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 
 from accounts.apps import user_registered
-from accounts.forms import RegisterUserForm, UserPasswordResetForm, LoginUserForm
+from accounts.forms import RegisterUserForm
 from main.models import User
 from tantrakazan.utils import DataMixin
 from accounts.utils import signer
@@ -38,6 +34,8 @@ class RegisterTherapistCreateView(RegisterUserCreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.object
+        user.is_therapist = True
+        user.save()
         TherapistProfile.objects.create(user=user)
         return response
 
@@ -66,42 +64,3 @@ def user_activate(request, sign):
     user.save()
     login(request, user)
     return redirect('users:profile')
-
-
-# class UserPasswordResetView(PasswordResetView):
-#     template_name = 'auth/password_reset_form.html'
-#     form_class = UserPasswordResetForm
-#     success_url = reverse_lazy('users:password_reset_done')
-#
-#
-# class UserPasswordResetConfirmView(PasswordResetConfirmView):
-#     template_name = 'auth/register.html'
-#
-#
-# class UserPasswordResetDoneView(PasswordResetDoneView):
-#     template_name = 'accounts/password_reset_done.html'
-#
-#
-# class LoginUserView(DataMixin, LoginView):
-#     form_class = LoginUserForm
-#     template_name = 'auth/login.html'
-#     success_url = 'users:profile'
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context_def = self.get_user_context(title='Вход')
-#         return dict(list(context.items()) + list(context_def.items()))
-#
-#     def get_success_url(self):
-#         user = self.request.user
-#         if user.is_staff:
-#             direction = 'users:my_therapist_profile'
-#         else:
-#             direction = 'users:my_profile'
-#         return reverse_lazy(direction)
-#
-#
-# class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
-#     template_name = 'auth/register.html'
-#     success_url = reverse_lazy('main:home')
-#     success_message = 'Пароль изменен'

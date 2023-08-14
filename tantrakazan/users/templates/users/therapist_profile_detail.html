@@ -12,7 +12,7 @@
 
 {% if request.user.is_authenticated %}
     <section class="section about-section gray-bg" id="about">
-                          <a href="{% url 'users:edit_form' %}">
+                          <a href="{% url 'users:edit_profile' %}">
 <!--                    <a target="_blank" href="https://icons8.com/icon/114092/create">Edit</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
                     <img src="{% static 'users/images/icons8-edit-64.png' %}" height="15" alt="Редактировать">
                   </a>
@@ -21,6 +21,7 @@
                     <div class="col-lg-6">
                         <div class="about-text go-to">
                             <h3 class="dark-color">{{user.username}}</h3>
+                            <h3 class="dark-color">{{user.is_therapist}}</h3>
                             <h6 class="theme-color lead">{{user.therapist_profile.short_description}}</h6>
                             <div class="row about-list">
                                 <div class="col-md-6">

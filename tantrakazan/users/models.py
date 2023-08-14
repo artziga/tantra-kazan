@@ -11,27 +11,6 @@ from gallery.models import Gallery
 from listings.models import Service
 
 
-# class UserAvatar(models.Model):
-#     user = models.OneToOneField(
-#         User,
-#         editable=False,
-#         on_delete=models.CASCADE,
-#         related_name='profile')
-#     avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
-#
-#     def get_absolute_url(self):
-#         return reverse('users:user', kwargs={'username': self.user.username})
-#
-#     def __str__(self):
-#         return self.user.username
-
-
-# @receiver(pre_delete, sender=UserAvatar)
-# def delete_therapist_profile(sender, instance, **kwargs):
-#     TherapistProfile.objects.filter(user=instance.user).delete()
-#     Gallery.objects.filter(user=instance.user).delete()
-
-
 class TherapistProfile(models.Model):
     user = models.OneToOneField(
         User,
@@ -40,6 +19,9 @@ class TherapistProfile(models.Model):
         related_name='therapist_profile')
     gender = models.BooleanField(verbose_name='Пол', null=True, blank=True,
                                  choices=((True, 'Мужчина'), (False, 'Женщина')))
+    massage_to_gender = models.BooleanField(verbose_name='массаж для:', null=True, blank=True,
+                                            choices=((True, 'Мужчина'), (False, 'Женщина')),
+                                            help_text='укажите кому вы делаете массаж (Мужчинам. Женщинам)')
     birth_date = models.DateField(verbose_name='Возраст', blank=True, null=True)
     height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True, blank=True)
     weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True, blank=True)
@@ -57,8 +39,9 @@ class TherapistProfile(models.Model):
     services = models.ManyToManyField(Service, verbose_name='Услуги', blank=True)
     is_profile_active = models.BooleanField(default=True)
 
-    def get_absolute_url(self):
-        return reverse('users:therapist', kwargs={'username': self.user.username})
+    @staticmethod
+    def get_absolute_url():
+        return reverse('users:therapist_profile')
 
     def __str__(self):
         return self.user.username
