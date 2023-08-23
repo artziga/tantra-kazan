@@ -1,14 +1,15 @@
 from datetime import date
 
 from django.db import models
+from django.contrib.gis.db.models import PointField
 from main.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from image_cropping import ImageRatioField
+from tantrakazan.utils import Locator
 
 from gallery.models import Gallery
-from listings.models import Service
 
 
 class TherapistProfile(models.Model):
@@ -19,14 +20,15 @@ class TherapistProfile(models.Model):
         related_name='therapist_profile')
     gender = models.BooleanField(verbose_name='Пол', null=True, blank=True,
                                  choices=((True, 'Мужчина'), (False, 'Женщина')))
-    massage_to_gender = models.BooleanField(verbose_name='массаж для:', null=True, blank=True,
-                                            choices=((True, 'Мужчина'), (False, 'Женщина')),
-                                            help_text='укажите кому вы делаете массаж (Мужчинам. Женщинам)')
+    massage_to_male = models.BooleanField(verbose_name='массаж мужчинам', default=True, blank=True)
+    massage_to_female = models.BooleanField(verbose_name='женщинам', default=True, blank=True)
     birth_date = models.DateField(verbose_name='Возраст', blank=True, null=True)
     height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True, blank=True)
     weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True, blank=True)
     experience = models.PositiveSmallIntegerField(verbose_name='Опыт', null=True, blank=True)
-    address = models.CharField(max_length=40, verbose_name='Адрес', null=True, blank=True)
+    address = models.CharField(max_length=200, verbose_name='Адрес', null=True, blank=True)
+    latitude = models.FloatField(verbose_name='широта', null=True, blank=True)
+    longitude = models.FloatField(verbose_name='долгота', null=True, blank=True)
     show_address = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20, verbose_name='Номер телефона', null=True, blank=True)
     show_phone_number = models.BooleanField(default=True)
@@ -36,7 +38,6 @@ class TherapistProfile(models.Model):
     show_instagram_profile = models.BooleanField(default=True)
     short_description = models.TextField(verbose_name='Короткое описание', null=True, blank=True)
     description = models.TextField(verbose_name='О себе', null=True, blank=True)
-    services = models.ManyToManyField(Service, verbose_name='Услуги', blank=True)
     is_profile_active = models.BooleanField(default=True)
 
     @staticmethod
@@ -81,3 +82,7 @@ class TherapistProfile(models.Model):
     @property
     def gender_display(self):
         return 'Мужчина' if self.gender is True else 'Женщина'
+
+    @property
+    def point(self):
+        return [self.latitude, self.longitude]

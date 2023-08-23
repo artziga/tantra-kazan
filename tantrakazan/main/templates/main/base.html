@@ -34,6 +34,12 @@
   <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />
   <!-- responsive style -->
   <link href="{% static 'users/css/responsive.css' %}" rel="stylesheet" />
+
+<!--  подключение яндекс карты-->
+      <script
+              src="https://api-maps.yandex.ru/2.1/?apikey={{API_KEY}}&lang=ru_RU" type="text/javascript">
+    </script>
+
 <!--  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />-->
 </head>
 
@@ -101,7 +107,7 @@
             </div>
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
-              {% if request.user.is_staff %}
+              {% if request.user.is_therapist %}
               <a href="{% url 'users:therapist_profile' %}">
                 <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
@@ -275,6 +281,8 @@
   </footer>
   <!-- footer section -->
 
+  <link rel="stylesheet" type="text/css" href="{% static '/vendor/select2/dist/css/select2.min.css' %}">
+
 
   <script src="{% static 'users/js/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'users/js/bootstrap.js' %}"></script>
@@ -307,6 +315,8 @@
       items: 3
     });
   </script>
+
+
 </body>
 
 </html>

@@ -5,8 +5,8 @@ from django.db.utils import IntegrityError
 
 from listings.models import Listing
 from users.models import *
-from users.forms import TherapistProfileForm, UserProfileForm
-from tantrakazan.utils import DataMixin
+from users.forms import TherapistProfileForm, UserProfileForm, TherapistFilterForm
+from tantrakazan.utils import DataMixin, FilterFormMixin
 from users.photo_processor import crop_face
 from gallery.models import Gallery
 
@@ -75,9 +75,9 @@ class TherapistProfileFormBaseView(UserProfileCompletionView):
         user = self.request.user
         user.first_name = form.cleaned_data.pop('first_name', '')
         user.last_name = form.cleaned_data.pop('last_name', '')
-        services = form.cleaned_data.pop('services', [])
+        # tags = form.cleaned_data.pop('tags', None)
         tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=form.cleaned_data)
-        tp.services.set(services)
+        # tp.tags.set(tags)
         user.save()
         tp.save()
         return super().form_valid(form)
@@ -85,6 +85,9 @@ class TherapistProfileFormBaseView(UserProfileCompletionView):
 
 class TherapistProfileCompletionView(TherapistProfileFormBaseView):
     def form_valid(self, form):
+        user = self.request.user
+        user.is_therapist = True
+        user.save()
         try:
             self.create_default_gallery()
         except IntegrityError:
@@ -118,7 +121,6 @@ class UserFormUpdateView(TherapistProfileFormBaseView):
     def get_initial(self):
         user = self.request.user
         user_data = {'first_name': user.first_name, 'last_name': user.last_name, 'avatar': user.avatar}
-        services = TherapistProfile.objects.get(user=user).services.values_list('pk', flat=True).all()
         profile_data = TherapistProfile.objects.filter(user=user).values(
             'gender',
             'birth_date',
@@ -139,7 +141,6 @@ class UserFormUpdateView(TherapistProfileFormBaseView):
         bd = profile_data['birth_date']
         if bd:
             profile_data['birth_date'] = bd.isoformat()
-        profile_data['services'] = list(services)
         return user_data | profile_data
 
 
@@ -167,14 +168,25 @@ class TherapistProfileDetailView(ProfileView):
         return context
 
 
-class TherapistListView(DataMixin, ListView):
+class TherapistListView(DataMixin, FilterFormMixin, ListView):
     model = User
     template_name = 'users/therapist_list.html'
     context_object_name = 'therapists'
-    queryset = User.objects.filter(therapist_profile__is_profile_active=True)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context_def = self.get_user_context(title='Профиль')
-
+        context_def = self.get_user_context(title='Специалисты')
+        filter_params, parameters = self.filter_parameters()
+        context['filter_form'] = TherapistFilterForm(initial=parameters),
         return {**context, **context_def}
+
+    def get_queryset(self):
+        queryset = User.objects.filter(therapist_profile__is_profile_active=True)
+        form = TherapistFilterForm(self.request.GET)
+        if form.is_valid():
+            queryset = form.filter(queryset)
+        return queryset
+
+
+class TherapistOnMapListView(TherapistListView):
+    template_name = 'users/therapists_on_map.html'

@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+from io import BytesIO
 
 from PIL import Image
 from django.conf import settings
@@ -34,17 +35,44 @@ CROP_ANCHOR_CHOICES = (
 IMAGE_DIR = getattr(settings, 'IMAGE_DIR', 'img/albums')
 
 
-#
-#
-def get_storage_path(instance, filename):
-    # Получаем текущего пользователя, предполагая, что у вас есть доступ к request.user.
+def get_storage_path(instance, filename: str) -> str:
     user = instance.gallery.user.username
     gallery = instance.gallery.title
-
-    # Генерируем путь для загрузки изображения в папку пользователя
-    # В данном случае, каждый пользователь будет иметь папку с его именем, в которой будут храниться его изображения.
-    # Файл будет назван как имя_файла
     return os.path.join(IMAGE_DIR, user, gallery, filename)
+
+
+class ThumbnailsMixin:
+
+    @property
+    def filename(self):
+        return os.path.basename(self.image.name)
+
+    def get_storage_path(self, filename: str) -> str:
+        user = self.gallery.user.username
+        gallery = self.gallery.title
+        print(filename)
+        print(os.path.join(IMAGE_DIR, user, gallery, filename))
+        return os.path.join(IMAGE_DIR, user, gallery, filename)
+
+    def generate_thumbnail_name(self, thumbnail_type: str) -> str:
+        return f"{thumbnail_type}_{self.filename}"
+
+    def create_thumbnail(self, thumbnail_type: str) -> None:
+        if self.image:
+            self.image.file.seek(0)
+            img_bytes = self.image.file.read()
+            img = Image.open(BytesIO(img_bytes))
+            img.thumbnail(size=thumbnails[thumbnail_type])
+            thumbnail_name = self.generate_thumbnail_name(thumbnail_type=thumbnail_type)
+            thumbnail_path = self.get_storage_path(filename=thumbnail_name)
+            os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
+            img.save(thumbnail_path, 'PNG')
+
+
+thumbnails = {
+    'admin_thumbnail': (100, 100),
+    'thumbnail': (250, 250)
+}
 
 
 class Gallery(models.Model):
@@ -68,7 +96,7 @@ class Gallery(models.Model):
 
     class Meta:
         unique_together = [('user', 'slug'), ('user', 'title')]
-        ordering = ['-date_added']
+        ordering = ['-date_added', '-pk']
         get_latest_by = 'date_added'
         verbose_name = 'альбом'
         verbose_name_plural = 'альбомы'
@@ -116,19 +144,34 @@ class Gallery(models.Model):
         return self.photos.filter(gallery=self)
 
 
-class Photo(models.Model):
-    image = models.ImageField(verbose_name='фото',
-                              max_length=IMAGE_FIELD_MAX_LENGTH,
-                              upload_to=get_storage_path)
+class Photo(ThumbnailsMixin, models.Model):
+    title = models.CharField(max_length=100, verbose_name='название')
+    slug = models.SlugField('слаг',
+                            unique=True,
+                            max_length=250,
+                            help_text='A "slug" is a unique URL-friendly title for an object.')
     gallery = models.ForeignKey(Gallery,
                                 on_delete=models.CASCADE,
                                 verbose_name='альбом',
+                                related_query_name='photos',
                                 related_name='photos')
-    crop_from = models.CharField(verbose_name='способ обрезки',
-                                 blank=True,
-                                 max_length=10,
-                                 default='center',
-                                 choices=CROP_ANCHOR_CHOICES)
+    description = models.CharField(max_length=150, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(verbose_name='фото',
+                              max_length=IMAGE_FIELD_MAX_LENGTH,
+                              upload_to=get_storage_path)
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.slug = slugify(unidecode(self.title))
+            for thumbnail in thumbnails:
+                self.create_thumbnail(thumbnail_type=thumbnail)
+        super().save()
+
+    def delete(self, *args, **kwargs):
+        super().delete()
 
     class Meta:
-        pass
+        ordering = ['-created_at', '-pk']
+        get_latest_by = 'created_at'
+        verbose_name = 'фото'

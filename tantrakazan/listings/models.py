@@ -1,16 +1,9 @@
+from taggit.models import Tag
+
 from main.models import User
 from django.db import models
 
-
-class Service(models.Model):
-    name = models.CharField(max_length=255, verbose_name='категория массажа')
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'категория'
-        verbose_name_plural = 'категории'
+from taggit.managers import TaggableManager
 
 
 class Listing(models.Model):
@@ -20,15 +13,16 @@ class Listing(models.Model):
                                   related_query_name='listings',
                                   verbose_name='Массажист')
     title = models.CharField(max_length=50, verbose_name='название')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE,
-                                verbose_name='категория',
-                                related_name='service',
-                                help_text='можно выбрать несколько')
+    tags = TaggableManager()
     photo = models.ImageField(upload_to='img/offers', verbose_name='фото карточки', null=True,
                               default='img/offers/default.jpg')
     description = models.TextField(verbose_name='описание', null=True)
     price = models.PositiveSmallIntegerField(verbose_name='цена')
     is_active = models.BooleanField(default=True, verbose_name='опубликовать')
 
+    class Meta:
+        verbose_name = 'услуга'
+        verbose_name_plural = 'услуги'
+
     def __str__(self):
-        return self.service.name
+        return self.title

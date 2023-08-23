@@ -2,11 +2,21 @@ from main.models import User
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, ListView
+from django.views.generic import CreateView, UpdateView, ListView, FormView
+
+from dal import autocomplete
 
 from listings.forms import CreateOfferForm
-from listings.models import Listing
+from listings.models import Listing, Tag
 from tantrakazan.utils import DataMixin
+
+
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Tag.objects.all()
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs
 
 
 class OfferCreateView(DataMixin, CreateView):
@@ -16,16 +26,16 @@ class OfferCreateView(DataMixin, CreateView):
     success_url = reverse_lazy('users:therapist_profile')
 
     def form_valid(self, form):
-        form.instance.therapist = self.request.user
-        photo = self.request.FILES.get(
-            'photo')
-        if photo:
-            form.instance.photo = self.request.FILES.get(
-                'photo')
-        user = User.objects.get(username=self.request.user)
-        user.is_active = True
-        user.save()
+        listing = form.save(commit=False)
+        listing.therapist = self.request.user
+        self.add_listing_image(listing)
+        listing.save()
         return super().form_valid(form)
+
+    def add_listing_image(self, listing):
+        photo = self.request.FILES.get('photo')
+        if photo:
+            listing.photo = photo
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -34,9 +44,7 @@ class OfferCreateView(DataMixin, CreateView):
 
 
 class OfferUpdateView(OfferCreateView, UpdateView):
-    def get_success_url(self):
-        username = self.request.user.username
-        return reverse_lazy('users:therapist', kwargs={'username': username})
+    pass
 
 
 def remove_offer(request, pk):

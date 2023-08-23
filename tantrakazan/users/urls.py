@@ -15,6 +15,7 @@ urlpatterns = [
     path('fill_therapist_profile/', views.AddTherapistAvatar.as_view(), name='add_therapist_avatar'),
     path('edit_profile/', views.UserFormUpdateView.as_view(), name='edit_profile'),
     path('therapists/', views.TherapistListView.as_view(), name='therapists'),
+    path('therapists/on_map', views.TherapistOnMapListView.as_view(), name='therapists_on_map'),
 ]
 
 # from django.contrib.auth.urls

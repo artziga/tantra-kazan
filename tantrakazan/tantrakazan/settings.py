@@ -31,12 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
+    'taggit',
     'accounts.apps.AccountsConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
@@ -157,3 +161,6 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+
+YANDEX_GEOCODER_API_KEY = 'b5c66d4f-b818-46bf-8299-11bb0dd62256'

@@ -61,8 +61,8 @@
   color: white;
 }
 
-.contact-left img {
-  width: auto;
+.contact-card .contact-left img {
+  width: 80%;
   border-radius: 50%;
   margin-bottom: 2%; /* Отступ сверху для разделения фото и имени пользователя */
 }

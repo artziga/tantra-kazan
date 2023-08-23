@@ -1,0 +1,49 @@
+{% load static %}
+{% block map %}
+
+<script type="text/javascript">
+    // Функция ymaps.ready() будет вызвана, когда
+    // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+    ymaps.ready(init);
+    function init() {
+    var myMap = new ymaps.Map("map", {
+            center: [55.823462, 49.131547],
+            zoom: 13
+        }, {
+            searchControlProvider: 'yandex#search'
+        });
+
+
+{% for user in therapists %}
+
+            // Создаём макет содержимого.
+MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+    '<div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;"><img src="{{ user.avatar.url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;"></div>'
+),
+
+
+myPlacemark = new ymaps.Placemark(
+    {{user.therapist_profile.point}},
+    {
+        hintContent: '{{ user.therapist_profile.address }}',
+        balloonContent: '{{ user }}',
+
+    },
+    {
+        iconLayout: 'default#imageWithContent',
+        iconImageSize: [50, 50],
+        iconImageOffset: [-15, -15],
+        iconContentLayout: MyIconContentLayout
+    }
+);
+
+
+
+    myMap.geoObjects
+        .add(myPlacemark);
+        {% endfor %}
+
+}
+</script>
+{% endblock map %}
+

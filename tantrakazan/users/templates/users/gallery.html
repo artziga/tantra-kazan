@@ -1,42 +1,17 @@
 {% load static %}
 
 {% block gallery %}
-{% for gallery in galleries %}
-<div class="container">
-      <div class="heading_container">
 
-    <h3>
-        {{gallery}}
-        </h3>
-    <p>{{gallery.description}}
-        {{ gallery.title}}
-        {{ 111 }}
-        {% with gallery.title as gallery_title%}
-        {{samples}}
-        {% endwith %}
-                {{ 111 }}
 
-        {{gallery}}
-
-        </p>
-      </div>
-    </div>
     <div class="spl_container">
       <div class="owl-carousel owl-theme">
+                  {{gallery}}
 
-        {% for sample in samples.gallery_title %}
-
-        <div class="item" style="">
-          <div class="box">
-            <div class="img-box">
-                {{sample}}
-              <img src="{{ sample.url }}" alt="Photo">
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-           </div>
-        </div>
-        {% endfor %}
+        {{ gallery.description }}
+          {% for photo in gallery.photos.all %}
+          <img src="{{ photo.image.url }}" height="250" title="" alt="">
+          {% endfor %}
+      </div>
+    </div>
 
 {% endblock gallery %}

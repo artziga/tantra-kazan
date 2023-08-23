@@ -61,6 +61,7 @@ def user_activate(request, sign):
         return render(request, template, {'title': 'Активация выполнена ранее'})
 
     user.is_active = True
+    user.is_activated = True
     user.save()
     login(request, user)
     return redirect('users:profile')

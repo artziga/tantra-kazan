@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+
+{% block content %}
+ <title>{{ title }}</title>
+
+  <section class="layout_padding-left">
+
+
+    <div class="detail-container">
+        {% include 'users/filter_form.html' %}
+        <a href="{% url 'users:therapists_on_map' %}"><button type="submit">Сбросить фильтр</button></a>
+        <a href="{% url 'users:therapists' %}?{{ request.GET.urlencode }}">Показать списком</a>
+<!--map section-->
+<div id="map" style="width: 65%; height: 65vh;;" >
+{% include 'users/map.html' %}
+</div>
+<!--end map section-->
+    </div>
+  </section>
+{% endblock content %}
