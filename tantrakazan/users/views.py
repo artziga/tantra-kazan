@@ -99,12 +99,12 @@ class TherapistProfileCompletionView(TherapistProfileFormBaseView):
         галерея сертификатов и одна галерея фото"""
         user = self.request.user
         Gallery.objects.create(user=user,
-                               slug=f'{user.username}s_licenses',
+                               slug=f'licenses',
                                title='Сертификаты',
                                description='Мои сертификаты')
 
         Gallery.objects.create(user=user,
-                               slug=f'{user.username}s_gallery',
+                               slug=f'gallery',
                                title='Фото',
                                description='Мои фотографии')
 
@@ -161,7 +161,7 @@ class TherapistProfileDetailView(ProfileView):
         user = self.request.user
         offers = Listing.objects.filter(therapist_id=user.pk)
         galleries = Gallery.objects.filter(user=user)
-        samples = {gallery.title: gallery.sample(user=user, count=5) for gallery in galleries}
+        samples = {gallery.title: gallery.sample(count=1) for gallery in galleries}
         context['offers'] = offers
         context['galleries'] = galleries
         context['samples'] = samples

@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="heading_container">
+        <h2>{{gallery}}</h2>
+        <h3>{{ gallery.description }}</h3>
+        <div class="buttons">
+            <a href="{% url 'gallery:update_gallery' slug=gallery.slug %}" class="btn">Редактировать альбом</a>
+            <a href="{% url 'gallery:delete_gallery' slug=gallery.slug %}" class="btn btn-danger">Удалить альбом</a>
+            <a href="{% url 'gallery:add_photos' slug=gallery.slug %}" class="btn">Добавить фото</a>
+        </div>
+    </div>
+    <div class="gallery_container">
+        {% for photo in photos %}
+        <a href="{% url 'gallery:photo' slug=photo.slug %}">
+            <img src="{{photo.thumbnail}}" title="" alt="{{photo.image}}">
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

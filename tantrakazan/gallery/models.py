@@ -19,7 +19,7 @@ from unidecode import unidecode
 from datetime import datetime
 
 LATEST_LIMIT = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
-SAMPLE_SIZE = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
+SAMPLE_SIZE = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', 3)
 IMAGE_FIELD_MAX_LENGTH = getattr(settings, 'PHOTOLOGUE_IMAGE_FIELD_MAX_LENGTH', 100)
 #
 CROP_ANCHOR_CHOICES = (
@@ -32,12 +32,13 @@ CROP_ANCHOR_CHOICES = (
 #
 # logger = logging.getLogger('gallery.models')
 #
-IMAGE_DIR = getattr(settings, 'IMAGE_DIR', 'img/albums')
+IMAGE_DIR = 'img/albums'
+IMAGE_DIR_FOR_THUMB = 'media/img/albums'
 
 
 def get_storage_path(instance, filename: str) -> str:
     user = instance.gallery.user.username
-    gallery = instance.gallery.title
+    gallery = instance.gallery.slug
     return os.path.join(IMAGE_DIR, user, gallery, filename)
 
 
@@ -49,13 +50,22 @@ class ThumbnailsMixin:
 
     def get_storage_path(self, filename: str) -> str:
         user = self.gallery.user.username
-        gallery = self.gallery.title
-        print(filename)
-        print(os.path.join(IMAGE_DIR, user, gallery, filename))
-        return os.path.join(IMAGE_DIR, user, gallery, filename)
+        gallery = self.gallery.slug
+        return os.path.join(IMAGE_DIR_FOR_THUMB, user, gallery, filename)
 
     def generate_thumbnail_name(self, thumbnail_type: str) -> str:
-        return f"{thumbnail_type}_{self.filename}"
+        return f"{thumbnail_type}_{self.slug}"
+
+    @property
+    def admin_thumbnail(self):
+        thumbnail_name = self.generate_thumbnail_name('admin_thumbnail')
+        return f'/{self.get_storage_path(thumbnail_name)}'
+
+    @property
+    def thumbnail(self):
+        thumbnail_name = self.generate_thumbnail_name('thumbnail')
+        # print(f'/{self.get_storage_path(thumbnail_name)}')
+        return f'/{self.get_storage_path(thumbnail_name)}'
 
     def create_thumbnail(self, thumbnail_type: str) -> None:
         if self.image:
@@ -105,43 +115,34 @@ class Gallery(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('photologue:pl-gallery', args=[self.slug])
+        return reverse('gallery:gallery', args=[self.slug])
 
-    def latest(self, user, limit=LATEST_LIMIT, public=True):
+    def latest(self, limit=LATEST_LIMIT, public=True):
         if not limit:
-            limit = self.photo_count(user=user)
+            limit = self.photo_count()
         if public:
-            return self.public(user=user)[:limit]
+            return self.public()[:limit]
         else:
-            return self.photos.for_user(user=user)[:limit]
+            return self.photos.photo_count()[:limit]
 
-    def sample(self, user, count=None, public=True):
+    def sample(self, count=None):
         """Return a sample of photos, ordered at random.
         If the 'count' is not specified, it will return a number of photos
         limited by the GALLERY_SAMPLE_SIZE setting.
         """
-        if not count:
-            count = SAMPLE_SIZE
-        if count > self.photo_count(user=user):
-            count = self.photo_count(user=user)
-        if public:
-            photo_set = self.public()
+        if count:
+            if count > self.photo_count():
+                count = self.photo_count()
         else:
-            photo_set = self.photos.filter(user=user)
+            count = SAMPLE_SIZE
+        photo_set = self.photos.all()
         return random.sample(set(photo_set), count)
 
-    def photo_count(self, user, public=True):
+    def photo_count(self, public=True):
         """Return a count of all the photos in this gallery."""
-        if public:
-            return self.public().count()
-        else:
-            return self.photos.filter(gallery=self).count()
+        return self.photos.count()
 
     photo_count.short_description = 'количество'
-
-    def public(self):
-        """Return a queryset of all the public photos in this gallery."""
-        return self.photos.filter(gallery=self)
 
 
 class Photo(ThumbnailsMixin, models.Model):
@@ -160,16 +161,38 @@ class Photo(ThumbnailsMixin, models.Model):
     image = models.ImageField(verbose_name='фото',
                               max_length=IMAGE_FIELD_MAX_LENGTH,
                               upload_to=get_storage_path)
+    upload_date = models.DateTimeField('дата загрузки',
+                                       default=datetime.now())
+
+    def next(self):
+        photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
+        next_photo = photo_gallery.filter(pk__gt=self.pk).order_by('pk').first()
+        if not next_photo:
+            next_photo = photo_gallery.last()
+        return next_photo
+
+    def prev(self):
+        photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
+        prev_photo = photo_gallery.filter(pk__lt=self.pk).order_by('-pk').first()
+        if not prev_photo:
+            prev_photo = photo_gallery.first()
+        return prev_photo
 
     def save(self, *args, **kwargs):
         if self.image:
-            self.slug = slugify(unidecode(self.title))
+            filename, _ = os.path.splitext(self.title)
+            self.slug = slugify(unidecode(filename))
             for thumbnail in thumbnails:
                 self.create_thumbnail(thumbnail_type=thumbnail)
         super().save()
 
     def delete(self, *args, **kwargs):
-        super().delete()
+        for thumbnail_type in thumbnails:
+            thumbnail_path = self.generate_thumbnail_name(thumbnail_type)
+            if os.path.exists(thumbnail_path):
+                print(thumbnail_path)
+                os.remove(thumbnail_path)
+        super().delete(*args, **kwargs)
 
     class Meta:
         ordering = ['-created_at', '-pk']

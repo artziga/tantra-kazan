@@ -146,7 +146,7 @@
                 <div class="social_container">
                 <div class="social-box">
                   <a href="{% url 'listings:create_offer' username=user.username %}">
-                    <img src="{% static 'users/images/icons8-add-100.png' %}" width="100" height="100" alt="">
+                    <img src="{% static 'users/images/icons8-add-100.png' %}" width="100" height="auto" alt="">
                   </a>
                 </div>
               </div>
@@ -167,21 +167,9 @@
 
   <!-- end service section -->
 
-  <section class="spl_section layout_padding layout_padding-left">
-    <div class="container">
-      <div class="heading_container">
-        <h2>
-          Мои aльбомы
-        </h2>
-
        {% for gallery in galleries %}
-          <h3>
-        </h3>
-        {% include 'users/gallery.html' %}
+        {% include 'gallery/gallery_carousel.html' %}
        {% endfor %}
-        </div>
-    </div>
-  </section>
 
   <!-- gallery section -->
 

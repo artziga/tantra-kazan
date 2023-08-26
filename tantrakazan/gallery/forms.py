@@ -16,20 +16,22 @@ def validate_image_files_extension(value):
             raise ValidationError('Допустимы только файлы с расширениями jpg, jpeg, png и gif.')
 
 
-class CreateGalleryForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        add_photo_validators = self.fields['add_photos'].validators
-        add_photo_validators.remove(validate_image_file_extension)
-        add_photo_validators.append(validate_image_files_extension)
-
-    add_photos = MultiImageField(
+class MultiImageUploadForm(forms.ModelForm):
+    image = MultiImageField(
         min_num=1,
         max_num=10,
         max_file_size=1024 * 1024 * 5,
-        required=False,
-        validators=[validate_image_files_extension])
+        required=False
+    )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        add_photo_validators = self.fields['image'].validators
+        add_photo_validators.remove(validate_image_file_extension)
+        add_photo_validators.append(validate_image_files_extension)
+
+
+class CreateGalleryForm(MultiImageUploadForm):
     class Meta:
         model = Gallery
         fields = ['title', 'description', 'is_public']
@@ -44,14 +46,7 @@ class CreateGalleryForm(forms.ModelForm):
         return cleaned_data
 
 
-class AddPhotoForm(forms.ModelForm):
-    image = MultiImageField(
-        min_num=1,
-        max_num=10,
-        max_file_size=1024 * 1024 * 5,
-        required=False,
-        validators=[validate_image_files_extension])
-
+class AddPhotoForm(MultiImageUploadForm):
     class Meta:
         model = Photo
         fields = ['image']
