@@ -1,8 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import F
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
 from django.db.utils import IntegrityError
 
+from feedback.forms import CommentForm
+from feedback.models import Comment
 from listings.models import Listing
 from users.models import *
 from users.forms import TherapistProfileForm, UserProfileForm, TherapistFilterForm
@@ -153,19 +157,45 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
         return {**context, **context_def}
 
 
-class TherapistProfileDetailView(ProfileView):
-    template_name = 'users/therapist_profile_detail.html'
+class TherapistSelfProfileDetailView(ProfileView):
+    template_name = 'users/therapist_self_profile_detail.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        offers = Listing.objects.filter(therapist_id=user.pk)
-        galleries = Gallery.objects.filter(user=user)
-        samples = {gallery.title: gallery.sample(count=1) for gallery in galleries}
+        therapist = self.get_therapist()
+        offers = Listing.objects.filter(therapist_id=therapist.pk)
+        galleries = Gallery.objects.filter(user=therapist)
+        content_type = ContentType.objects.get_for_model(therapist)
+        comments = Comment.objects.filter(
+            content_type=content_type,
+            object_id=therapist.pk
+        )
+        comment_form = self.get_comment_form(content_type=content_type, therapist=therapist)
+        context['therapist'] = therapist
         context['offers'] = offers
         context['galleries'] = galleries
-        context['samples'] = samples
+        context['comments'] = comments
+        context['comment_form'] = comment_form
         return context
+
+    @staticmethod
+    def get_comment_form(content_type, therapist):
+        comment_form = CommentForm()
+        comment_form.fields['content_type'].initial = content_type
+        comment_form.fields['object_id'].initial = therapist.pk
+        return comment_form
+
+    def get_therapist(self):
+        return self.request.user
+
+
+class TherapistProfileDetailView(TherapistSelfProfileDetailView):
+    template_name = 'users/therapist_profile_detail.html'
+
+    def get_therapist(self):
+        therapist_name = self.kwargs.get('therapist_username')
+        therapist = User.objects.get(username=therapist_name)
+        return therapist
 
 
 class TherapistListView(DataMixin, FilterFormMixin, ListView):
@@ -181,10 +211,11 @@ class TherapistListView(DataMixin, FilterFormMixin, ListView):
         return {**context, **context_def}
 
     def get_queryset(self):
-        queryset = User.objects.filter(therapist_profile__is_profile_active=True)
+        active_users = User.objects.filter(therapist_profile__is_profile_active=True)
+        sorted_users = active_users.filter(ratings__isnull=False).order_by('-ratings__average')
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
-            queryset = form.filter(queryset)
+            queryset = form.filter(sorted_users)
         return queryset
 
 

@@ -5,13 +5,22 @@
 
 <div class="container">
     <div class="heading_container">
+        <div class="title-row">
         <h2>{{gallery}}</h2>
-        <h3>{{ gallery.description }}</h3>
-        <div class="buttons">
-            <a href="{% url 'gallery:update_gallery' slug=gallery.slug %}" class="btn">Редактировать альбом</a>
-            <a href="{% url 'gallery:delete_gallery' slug=gallery.slug %}" class="btn btn-danger">Удалить альбом</a>
-            <a href="{% url 'gallery:add_photos' slug=gallery.slug %}" class="btn">Добавить фото</a>
+            <div class="icons">
+                <a href="{% url 'gallery:add_photos' slug=gallery.slug %}">
+                    <img src="{% static 'main/images/icons8-add-100.png' %}" height="30%" width="auto" alt="">
+                </a>
+            <a href="{% url 'gallery:update_gallery' slug=gallery.slug %}">
+                <img src="{% static 'main/images/icons8-edit-64.png' %}" height="30%" width="auto" alt="Редактировать">
+            </a>
+            <a href="{% url 'gallery:delete_gallery' slug=gallery.slug %}">
+                <img src="{% static 'main/images/icons8-delete-50.png' %}" height="30%" width="auto" alt="Удалить">
+            </a>
+            </div>
+
         </div>
+        <h3>{{ gallery.description }}</h3>
     </div>
     <div class="gallery_container">
         {% for photo in photos %}

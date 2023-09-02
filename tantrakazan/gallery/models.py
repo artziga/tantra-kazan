@@ -64,7 +64,6 @@ class ThumbnailsMixin:
     @property
     def thumbnail(self):
         thumbnail_name = self.generate_thumbnail_name('thumbnail')
-        # print(f'/{self.get_storage_path(thumbnail_name)}')
         return f'/{self.get_storage_path(thumbnail_name)}'
 
     def create_thumbnail(self, thumbnail_type: str) -> None:
@@ -72,11 +71,30 @@ class ThumbnailsMixin:
             self.image.file.seek(0)
             img_bytes = self.image.file.read()
             img = Image.open(BytesIO(img_bytes))
+            img = self.crop_image_to_square(img)
             img.thumbnail(size=thumbnails[thumbnail_type])
             thumbnail_name = self.generate_thumbnail_name(thumbnail_type=thumbnail_type)
             thumbnail_path = self.get_storage_path(filename=thumbnail_name)
             os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
             img.save(thumbnail_path, 'PNG')
+
+    @staticmethod
+    def crop_image_to_square(image):
+        image_width, image_height = image.size
+        if image_width == image_height:
+            return image
+        diff = abs(image_width - image_height)
+        if image_width > image_height:
+            left = diff / 2
+            right = image_width - diff / 2
+            upper = 0
+            lower = image_height
+        else:
+            left = 0
+            right = image_width
+            upper = diff / 2
+            lower = image_height - diff / 2
+        return image.crop((left, upper, right, lower))
 
 
 thumbnails = {
@@ -190,7 +208,6 @@ class Photo(ThumbnailsMixin, models.Model):
         for thumbnail_type in thumbnails:
             thumbnail_path = self.generate_thumbnail_name(thumbnail_type)
             if os.path.exists(thumbnail_path):
-                print(thumbnail_path)
                 os.remove(thumbnail_path)
         super().delete(*args, **kwargs)
 

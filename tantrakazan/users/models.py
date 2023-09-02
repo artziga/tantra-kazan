@@ -1,7 +1,12 @@
 from datetime import date
 
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.gis.db.models import PointField
+from star_ratings.models import Rating
+
+from feedback.models import Comment
 from main.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -39,6 +44,7 @@ class TherapistProfile(models.Model):
     short_description = models.TextField(verbose_name='Короткое описание', null=True, blank=True)
     description = models.TextField(verbose_name='О себе', null=True, blank=True)
     is_profile_active = models.BooleanField(default=True)
+    ratings = GenericRelation(Rating, related_query_name='therapists')
 
     @staticmethod
     def get_absolute_url():
@@ -86,3 +92,13 @@ class TherapistProfile(models.Model):
     @property
     def point(self):
         return [self.latitude, self.longitude]
+
+    @property
+    def comments_count(self):
+        user_id = self.user.pk
+        content_type = ContentType.objects.get_for_model(self.user)
+        count = Comment.objects.filter(
+            content_type=content_type,
+            object_id=user_id
+        ).count()
+        return count

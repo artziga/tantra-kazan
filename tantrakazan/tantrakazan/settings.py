@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-nlf8)g#8524xwloam1$9yx27z_s4w*-xeh=1q-n=kvtgiyfq%i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', '192.168.102.157']
 
 # Application definition
 
@@ -41,11 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'taggit',
+    'star_ratings',
     'accounts.apps.AccountsConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
+    'feedback.apps.FeedbackConfig',
     'sorl.thumbnail',
 ]
 
@@ -66,7 +68,7 @@ CACHE_MIDDLEWARE_SECONDS = 0
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,8 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = []
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL = 'main.User'
 
 # Default primary key field type
@@ -164,3 +166,6 @@ LOGGING = {
 
 
 YANDEX_GEOCODER_API_KEY = 'b5c66d4f-b818-46bf-8299-11bb0dd62256'
+
+STAR_RATINGS_STAR_HEIGHT = 30
+STAR_RATINGS_STAR_WIDTH = STAR_RATINGS_STAR_HEIGHT

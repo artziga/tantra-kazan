@@ -4,29 +4,33 @@
   <section class="spl_section layout_padding layout_padding-left">
     <div class="container">
       <div class="heading_container">
+    <div class="title-row">
         <h2>
-          <a href="{% url 'gallery:gallery' slug=gallery.slug %}">
-        {{ gallery }}
+            <a href="{% url 'gallery:gallery' slug=gallery.slug %}">
+                {{ gallery }}
             </a>
         </h2>
-        <p>{{ gallery.description }}
+        <div class="icons">
+                {% if user.is_authenticated %}
+                {% if therapist == user %}
+                        {% if gallery.photos.exists %}
+                <a href="{% url 'gallery:add_photos' slug=gallery.slug %}">
+                    <img src="{% static 'main/images/icons8-add-100.png' %}" height="30%" width="auto" alt="">
+                </a>
+            {% endif %}
 
-          {% if gallery.photos.exists %}
-          <a href="{% url 'gallery:add_photos' slug=gallery.slug %}">
-                    <img src="{% static 'users/images/icons8-add-100.png' %}" width="30" height="auto" alt="">
-                  </a>
-          {% endif %}
-          <a href="{% url 'gallery:update_gallery' slug=gallery.slug %}">
-<!--                    <a target="_blank" href="https://icons8.com/icon/114092/create">Edit</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
-                    <img src="{% static 'users/images/icons8-edit-64.png' %}" alt="Редактировать">
-                  </a>
-          <a href="{% url 'gallery:delete_gallery' slug=gallery.slug %}">
-                      <!--                    <a target="_blank" href="https://icons8.com/icon/11705/trash-can">Delete</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
-
-                    <img src="{% static 'users/images/icons8-delete-50.png' %}" alt="Удалить">
-                  </a>
-        </p>
-      </div>
+            <a href="{% url 'gallery:update_gallery' slug=gallery.slug %}">
+                <img src="{% static 'main/images/icons8-edit-64.png' %}" height="30%" width="auto" alt="Редактировать">
+            </a>
+            <a href="{% url 'gallery:delete_gallery' slug=gallery.slug %}">
+                <img src="{% static 'main/images/icons8-delete-50.png' %}" height="30%" width="auto" alt="Удалить">
+            </a>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <p>{{ gallery.description }}</p>
+</div>
     </div>
     {% if gallery.photos.exists %}
     <div class="spl_container">
@@ -36,11 +40,15 @@
           <div class="box">
             <div class="img-box">
               <img src="{{photo.thumbnail}}" title="" alt="{{photo.image}}">
+                                  {% if photo.description %}
+
               <div class="social_container">
                 <div class="social-box">
                   {{ photo.description }}
                 </div>
               </div>
+                {% endif %}
+
             </div>
             </div>
             </div>
@@ -48,9 +56,13 @@
               </div>
     </div>
     {% else %}
+      {% if user.is_authenticated %}
+                {% if therapist == user %}
     <a href="{% url 'gallery:add_photos' slug=gallery.slug %}">
-                    <img src="{% static 'users/images/icons8-add-100.png' %}" width="100" height="auto" alt="">
+                    <img src="{% static 'main/images/icons8-add-100.png' %}" width="100" height="auto" alt="">
                   </a>
+    {% endif %}
+    {% endif %}
     {% endif %}
 
   </section>

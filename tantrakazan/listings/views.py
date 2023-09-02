@@ -29,6 +29,7 @@ class OfferCreateView(DataMixin, CreateView):
         listing = form.save(commit=False)
         listing.therapist = self.request.user
         self.add_listing_image(listing)
+        listing.duration = form.cleaned_data['duration']
         listing.save()
         return super().form_valid(form)
 

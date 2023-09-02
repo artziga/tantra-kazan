@@ -1,0 +1,63 @@
+.gallery_container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Стили для отдельной фотографии */
+.gallery_container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Дополнительные стили для мобильных устройств */
+@media screen and (max-width: 768px) {
+  .gallery_container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Стили для кнопок */
+.buttons {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.buttons a, .btn {
+  display: inline-block;
+  padding: 8px 20px;
+  background-color: #fee0cd;
+  color: #000000;
+  text-decoration: none;
+  text-align: center;
+  -webkit-transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Стили для определенной кнопки с классом btn-danger */
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Стили при наведении на кнопки */
+.buttons a:hover, .btn:hover {
+  background-color: transparent;
+  border-color: #fee0cd;
+  color: #fee0cd;
+}
+
+.buttons .btn-danger a:hover, .btn:hover {
+  background-color: #dc3545;
+  border-color: #fee0cd;
+  color: #fee0cd;
+}
+

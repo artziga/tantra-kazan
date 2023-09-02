@@ -20,29 +20,36 @@
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css" />
 
   <!-- bootstrap core css -->
-  <link rel="stylesheet" type="text/css" href="{% static 'users/css/bootstrap.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
 
   <!-- fonts style -->
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700|Raleway:400,500,700&display=swap" rel="stylesheet">
   <!-- Custom styles for this template -->
-  <link href="{% static 'users/css/style.css' %}" rel="stylesheet" />
-  <link href="{% static 'users/css/profile_style.css' %}" rel="stylesheet" />
+  <link href="{% static 'main/css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'main/css/profile_style.css' %}" rel="stylesheet" />
   <!-- filter style -->
   <!-- profile card style -->
-<!--  <link href="{% static 'users/css/profile_card.css' %}" rel="stylesheet" />-->
-  <link rel="stylesheet" href="{% static 'users/css/card.css' %}">
-  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />
+<!--  <link href="{% static 'main/css/profile_card.css' %}" rel="stylesheet" />-->
+  <link rel="stylesheet" href="{% static 'main/css/card.css' %}">
+  <link href="{% static 'main/css/offers.css' %}" rel="stylesheet" />
   <!-- responsive style -->
-  <link href="{% static 'users/css/responsive.css' %}" rel="stylesheet" />
+  <link href="{% static 'main/css/responsive.css' %}" rel="stylesheet" />
 <!--  стили галереи-->
-  <link href="{% static 'users/css/gallery.css' %}" rel="stylesheet" />
+  <link href="{% static 'main/css/gallery.css' %}" rel="stylesheet" />
+
+<!--  стили блока комментариев-->
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/comments.css' %}">
 
 <!--  подключение яндекс карты-->
       <script
               src="https://api-maps.yandex.ru/2.1/?apikey={{API_KEY}}&lang=ru_RU" type="text/javascript">
     </script>
 
-<!--  <link href="{% static 'users/css/offers.css' %}" rel="stylesheet" />-->
+<!--  статика для рейтинга -->
+  <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+<!--  <link href="{% static 'main/css/offers.css' %}" rel="stylesheet" />-->
 </head>
 
 <body class="sub_page">
@@ -79,7 +86,7 @@
         <div class="container-fluid">
           <nav class="navbar navbar-expand-lg custom_nav-container">
             <a class="navbar-brand" href="{% url 'main:home' %}"
-            <img src="{% static 'users/images/logo.png' %}" alt="" />
+            <img src="{% static 'main/images/logo.png' %}" alt="" />
               <span>
                 Tantra-Kazan
               </span>
@@ -101,21 +108,19 @@
                   <a href="{%url 'accounts:registration' %}">
                     ОЛОЛЛОЛОЛ!!!!!!!!
                   </a>
-                  <form class="form-inline ">
-                    <button class="btn   nav_search-btn" type="submit"></button>
-                  </form>
                 </div>
+                {% include 'main/search_form.html' %}
               </div>
             </div>
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
               {% if request.user.is_therapist %}
               <a href="{% url 'users:therapist_profile' %}">
-                <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
+                <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% else %}
               <a href="{% url 'users:profile'%}">
-                <img src="{% static 'users/images/profile-icon.png' %}" width="50" height="50" alt="">
+                <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt="">
               </a>
               {% endif %}
               <a href="{%url 'accounts:logout' %}">
@@ -131,9 +136,8 @@
               </a>
                 </p>
               {% endif %}
-              <form class="form-inline ">
-                <button class="btn   nav_search-btn" type="submit"></button>
-              </form>
+             {% include 'main/search_form.html' %}
+
             </div>
           </nav>
         </div>
@@ -154,16 +158,16 @@
   <section class="info_section  layout_padding-left">
     <div class="social_box">
       <a href="">
-        <img src="{% static 'users/images/facebook-logo-button.png' %}" alt="">
+        <img src="{% static 'main/images/facebook-logo-button.png' %}" alt="">
       </a>
       <a href="">
-        <img src="{% static 'users/images/twitter-logo-button.png' %}" alt="">
+        <img src="{% static 'main/images/twitter-logo-button.png' %}" alt="">
       </a>
       <a href="">
-        <img src="{% static 'users/images/linkedin.png' %}" alt="">
+        <img src="{% static 'main/images/linkedin.png' %}" alt="">
       </a>
       <a href="">
-        <img src="{% static 'users/images/instagram.png' %}" alt="">
+        <img src="{% static 'main/images/instagram.png' %}" alt="">
       </a>
     </div>
     <div class="info_container layout_padding">
@@ -237,15 +241,15 @@
             </h6>
             <div class="info_link-box">
               <a href="">
-                <img src="{% static 'users/images/location.png' %}" alt="">
+                <img src="{% static 'main/images/location.png' %}" alt="">
                 <span> No.123 Chalingt Gates, loram ipusm</span>
               </a>
               <a href="">
-                <img src="{% static 'users/images/call.png' %}" alt="">
+                <img src="{% static 'main/images/call.png' %}" alt="">
                 <span>+01 12345678901</span>
               </a>
               <a href="">
-                <img src="{% static 'users/images/mail.png' %}" alt="">
+                <img src="{% static 'main/images/mail.png' %}" alt="">
                 <span> demo123@gmail.com</span>
               </a>
             </div>
@@ -261,16 +265,16 @@
     <div class="social_container">
       <div class="social_box">
         <a href="">
-          <img src="{% static 'users/images/facebook-logo-button.png' %}" alt="">
+          <img src="{% static 'main/images/facebook-logo-button.png' %}" alt="">
         </a>
         <a href="">
-          <img src="{% static 'users/images/twitter-logo-button.png' %}" alt="">
+          <img src="{% static 'main/images/twitter-logo-button.png' %}" alt="">
         </a>
         <a href="">
-          <img src="{% static 'users/images/linkedin.png' %}" alt="">
+          <img src="{% static 'main/images/linkedin.png' %}" alt="">
         </a>
         <a href="">
-          <img src="{% static 'users/images/instagram.png' %}" alt="">
+          <img src="{% static 'main/images/instagram.png' %}" alt="">
         </a>
       </div>
     </div>
@@ -286,9 +290,9 @@
   <link rel="stylesheet" type="text/css" href="{% static '/vendor/select2/dist/css/select2.min.css' %}">
 
 
-  <script src="{% static 'users/js/jquery-3.4.1.min.js' %}"></script>
-  <script src="{% static 'users/js/bootstrap.js' %}"></script>
-  <script src="{% static 'users/js/bootstrap.js' %}"></script>
+  <script src="{% static 'main/js/jquery-3.4.1.min.js' %}"></script>
+  <script src="{% static 'main/js/bootstrap.js' %}"></script>
+  <script src="{% static 'main/js/bootstrap.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js">

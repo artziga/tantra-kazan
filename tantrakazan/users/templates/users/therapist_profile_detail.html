@@ -4,35 +4,29 @@
 
 {% block content %}
  <title>{{ title }}</title>
-
   <section class="layout_padding-left">
 
 
     <div class="detail-container">
 
-{% if request.user.is_authenticated %}
     <section class="section about-section gray-bg" id="about">
-                          <a href="{% url 'users:edit_profile' %}">
-<!--                    <a target="_blank" href="https://icons8.com/icon/114092/create">Edit</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
-                    <img src="{% static 'users/images/icons8-edit-64.png' %}" height="15" alt="Редактировать">
-                  </a>
             <div class="container">
                 <div class="row align-items-center flex-row-reverse">
                     <div class="col-lg-6">
                         <div class="about-text go-to">
-                            <h3 class="dark-color">{{user.username}}</h3>
-                            <h3 class="dark-color">{{user.is_therapist}}</h3>
-                            <h6 class="theme-color lead">{{user.therapist_profile.short_description}}</h6>
+                            <h3 class="dark-color">{{therapist.username}}</h3>
+                            <h3 class="dark-color">{{therapist.is_therapist}}</h3>
+                            <h6 class="theme-color lead">{{therapist.therapist_profile.short_description}}</h6>
                             <div class="row about-list">
                                 <div class="col-md-6">
-                                    {% if user.therapist_profile.birth_date %}
+                                    {% if therapist.therapist_profile.birth_date %}
                                     <div class="media">
                                         <label>День рождения</label>
-                                        <p>{{user.therapist_profile.birth_date}}</p>
+                                        <p>{{therapist.therapist_profile.birth_date}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Возраст</label>
-                                        <p>{{user.therapist_profile.str_age}}</p>
+                                        <p>{{therapist.therapist_profile.str_age}}</p>
                                     </div>
                                     {% endif %}
                                     <div class="media">
@@ -41,25 +35,25 @@
                                     </div>
                                     <div class="media">
                                         <label>Адрес</label>
-                                        <p>{{user.therapist_profile.address}}</p>
+                                        <p>{{therapist.therapist_profile.address}}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="media">
                                         <label>E-mail</label>
-                                        <p>{{user.email}}</p>
+                                        <p>{{therapist.email}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Телефон</label>
-                                        <p>{{user.therapist_profile.phone_number}}</p>
+                                        <p>{{therapist.therapist_profile.phone_number}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Телеграм</label>
-                                        <p>{{user.therapist_profile.telegram_profile}}</p>
+                                        <p>{{therapist.therapist_profile.telegram_profile}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Инстаграм</label>
-                                        <p>{{user.therapist_profile.instagram_profile}}</p>
+                                        <p>{{therapist.therapist_profile.instagram_profile}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -67,10 +61,10 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="about-avatar">
-                            {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" height="400" title="" alt="">
+                            {% if therapist.avatar %}
+                            <img src="{{ therapist.avatar.url }}" height="400" title="" alt="">
                             {% else %}
-                            <img src="{% static 'users/images/profile-icon.png' %}" height="400" title="" alt="">
+                            <img src="{% static 'main/images/profile-icon.png' %}" height="400" title="" alt="">
                             {% endif %}
                         </div>
                     </div>
@@ -78,100 +72,23 @@
                 <div class="counter">
                     <div class="row">
 
-                            <p>{{ user.therapist_profile.description }}</p>
+                            <p>{{ therapist.therapist_profile.description }}</p>
 
                     </div>
             </div>
             </div>
         </section>
-{% else %}
-        <p> Ваш профиль пока не заполнен.
-        <a href="{% url 'users:form' username=request.user.username %}">Заполнить анкету</a>
-            </p>
-        {% endif %}
-        </div>
 </section>
-<!-- service section -->
-  <section class="spl_section layout_padding layout_padding-left">
-    <div class="container">
-      <div class="heading_container">
-        <h2>
-          Мои услуги
-        </h2>
-        <p>Самые лучшие массажи
-        </p>
-      </div>
-    </div>
-    <div class="spl_container">
-      <div class="owl-carousel owl-theme">
-        {% for offer in offers %}
-        <div class="item" style="">
-          <div class="box">
-            <div class="img-box">
-              {% if offer.photo %}
-              <img src="{{ offer.photo.url }}" alt="Offer Photo">
-              {% else %}
-              <img src="{% static 'users/images/about-img.jpg' %}" alt="Default Offer Photo">
-              {% endif %}
-              <div class="social_container">
-                <div class="social-box">
-                  {{ offer.price }}
-                  <a href="{% url 'listings:update_offer' pk=offer.pk %}">
-<!--                    <a target="_blank" href="https://icons8.com/icon/114092/create">Edit</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
-                    <img src="{% static 'users/images/icons8-edit-64.png' %}" alt="Редактировать">
-                  </a>
-                  <a href="{% url 'listings:remove_offer' pk=offer.pk %}">
-                      <!--                    <a target="_blank" href="https://icons8.com/icon/11705/trash-can">Delete</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->
+    {% include 'listings/listings_carousel.html' %}
 
-                    <img src="{% static 'users/images/icons8-delete-50.png' %}" alt="Удалить">
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="detail-box">
-              <h5>
-                {{offer}}
-              </h5>
-              <p>
-                {{offer.description}}
-              </p>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-        <div class="item" style="">
-          <div class="box">
-            <div class="img-box">
-              <img src="{% static 'users/images/hero-bg.jpg' %}" alt="">
-                <div class="social_container">
-                <div class="social-box">
-                  <a href="{% url 'listings:create_offer' username=user.username %}">
-                    <img src="{% static 'users/images/icons8-add-100.png' %}" width="100" height="auto" alt="">
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="detail-box">
-              <h5>
-                Добавить карточку услуги
-              </h5>
-              <p>
-                Вы можете добавить услугу и будет чотенько
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- end service section -->
-
+ <!-- gallery section -->
        {% for gallery in galleries %}
         {% include 'gallery/gallery_carousel.html' %}
        {% endfor %}
 
-  <!-- gallery section -->
+{% include 'feedback/comments.html' %}
+
 
   <!-- end galley section -->
 

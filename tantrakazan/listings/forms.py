@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django import forms
 
 from dal import autocomplete
@@ -13,14 +15,19 @@ class CreateOfferForm(autocomplete.FutureModelForm):
         required=False,
         widget=TagWidget(attrs={'placeholder': 'Вводите тэги через запятую'})
     )
+    hours = forms.IntegerField()
+    minutes = forms.IntegerField()
 
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     tags = self._clean_tags()
-    #     cleaned_data['tags'] = tags
-    #     return cleaned_data
+    def clean(self):
+        cleaned_data = super().clean()
+        # tags = self._clean_tags()
+        # cleaned_data['tags'] = tags
+        duration = self._clean_duration()
+        self.cleaned_data['duration'] = duration
+        return cleaned_data
     #
     # def _clean_tags(self):
+    #     print(self.cleaned_data['tags'])
     #     tags_names = set(tag.strip() for tag in self.cleaned_data['tags'].split(','))
     #     tags = set()
     #     for tag_name in tags_names:
@@ -28,6 +35,11 @@ class CreateOfferForm(autocomplete.FutureModelForm):
     #         tags.add(tag)
     #     return tags
 
+    def _clean_duration(self):
+        hours = self.cleaned_data.pop('hours')
+        minutes = self.cleaned_data.pop('minutes')
+        return timedelta(hours=hours, minutes=minutes)
+
     class Meta:
         model = Listing
-        exclude = ['therapist']
+        exclude = ['therapist', 'duration']

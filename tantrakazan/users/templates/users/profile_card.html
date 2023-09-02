@@ -1,8 +1,11 @@
 {% load static %}
+{% load ratings %}
 {% block profile_card %}
 <div class="contact-card">
     <div class="contact-left">
+        <a href="{% url 'users:therapist_profile1' therapist_username=therapist.username %}">
       <h3 class="contact-name">{{ therapist }}</h3>
+        </a>
       {% if therapist.avatar %}
         <img src="{{ therapist.avatar.url }}"alt="">
         {% else %}
@@ -14,11 +17,11 @@
       </div>
     </div>
 <div class="contact-right">
-<div class="top-info">
+    <div class="top-info">
     <h4 class="user-info-title">Информация о пользователе</h4>
     <div class="rating">
-      <p>Рейтинг: 5</p>
-      <p>Отзывов: 0</p>
+        {% ratings therapist read_only=True %}
+        Отзывов: {{ therapist.therapist_profile.comments_count }}
     </div>
     </div>
         <div class="row about-list">
@@ -64,8 +67,14 @@
 </div>
 
 
-
     <div class="contact-description">
+            <div class="top-info">
+    <h4 class="user-info-title">Информация о пользователе</h4>
+    <div class="rating">
+        {% ratings therapist %}
+        Отзывов: {{ therapist.comments_count }}
+    </div>
+    </div>
       <p>{{ therapist.therapist_profile.description }}</p>
     </div>
   </div>

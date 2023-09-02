@@ -138,7 +138,5 @@ class TherapistFilterForm(forms.Form):
                 filters['therapist_profile__massage_to_female'] = True
         if gender is not None:
             filters['therapist_profile__gender'] = gender
-        print(filters)
-
         queryset = queryset.filter(**filters).distinct()
         return queryset

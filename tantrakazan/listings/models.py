@@ -1,4 +1,9 @@
+from datetime import timedelta
+
+import arrow
+
 from taggit.models import Tag
+
 
 from main.models import User
 from django.db import models
@@ -17,6 +22,7 @@ class Listing(models.Model):
     photo = models.ImageField(upload_to='img/offers', verbose_name='фото карточки', null=True,
                               default='img/offers/default.jpg')
     description = models.TextField(verbose_name='описание', null=True)
+    duration = models.DurationField(verbose_name='продолжительность')
     price = models.PositiveSmallIntegerField(verbose_name='цена')
     is_active = models.BooleanField(default=True, verbose_name='опубликовать')
 
@@ -26,3 +32,9 @@ class Listing(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def display_duration(self):
+        hours = self.duration.seconds // 3600
+        minutes = (self.duration.seconds // 60) % 60
+        return f'{hours:02d} ч {minutes:02d} м'
