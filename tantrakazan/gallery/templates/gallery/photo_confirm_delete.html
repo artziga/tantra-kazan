@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+  <h1>Подтвердите удаление</h1>
+  <p>Вы действительно хотите удалить "{{ object }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Да, удалить</button>
+    <a href="{% url 'gallery:gallery' object.gallery.slug %}">Отмена</a>
+  </form>
+{% endblock %}
+
+
+
+
+
+

@@ -119,3 +119,13 @@ class PhotoUpdateView(DataMixin, PhotoDetailView, UpdateView):
     def get_success_url(self):
         return reverse_lazy('gallery:photo', kwargs={'slug': self.kwargs.get('slug')})
 
+
+class PhotoDeleteView(DeleteView):
+    model = Photo
+    success_url = reverse_lazy('users:therapist_profile')
+
+    def get_success_url(self):
+        deleted_photo = self.get_object()
+        gallery_slug = deleted_photo.gallery.slug
+        return reverse_lazy('gallery:gallery', kwargs={'slug': gallery_slug})
+

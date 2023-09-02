@@ -22,6 +22,9 @@
                         <img src="{% static 'main/images/icons8-edit-64.png' %}" alt="Добавить описание">
                       </a>
             {% endif %}
+        <a href="{% url 'gallery:delete_photo' slug=photo.slug %}">
+                <img src="{% static 'main/images/icons8-delete-50.png' %}" height="30%" width="auto" alt="Удалить">
+            </a>
         {% else %}
         <form method="post">
         {% csrf_token %}

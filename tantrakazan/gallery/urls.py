@@ -11,4 +11,6 @@ urlpatterns = [
     path('<str:slug>/', views.GalleryDetailView.as_view(), name='gallery'),
     path('photo/<str:slug>/', views.PhotoDetailView.as_view(), name='photo'),
     path('photo/update/<str:slug>/', views.PhotoUpdateView.as_view(), name='update_photo_description'),
+    path('photo/delete/<str:slug>', views.PhotoDeleteView.as_view(), name='delete_photo'),
+
 ]
