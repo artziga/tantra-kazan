@@ -11,8 +11,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 from django.urls import reverse_lazy
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +30,7 @@ SECRET_KEY = 'django-insecure-nlf8)g#8524xwloam1$9yx27z_s4w*-xeh=1q-n=kvtgiyfq%i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '192.168.102.157']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -142,9 +146,9 @@ EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 465  # Обычно порт 587 для SMTP с TLS
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'tantra-kazan@mail.ru'  # Ваш адрес электронной почты на mail.ru
-EMAIL_HOST_PASSWORD = 'TKy8JH3q6tTaf2HB96YL'  # Ваш пароль от почтового ящика
-DEFAULT_FROM_EMAIL = 'tantra-kazan@mail.ru'  # От какого адреса отправлять письма
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Ваш адрес электронной почты на mail.ru
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Ваш пароль от почтового ящика
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')  # От какого адреса отправлять письма
 
 LOGIN_REDIRECT_URL = reverse_lazy('users:profile')
 LOGOUT_REDIRECT_URL = reverse_lazy('main:home')
@@ -165,7 +169,7 @@ LOGGING = {
 }
 
 
-YANDEX_GEOCODER_API_KEY = 'b5c66d4f-b818-46bf-8299-11bb0dd62256'
+YANDEX_GEOCODER_API_KEY = os.getenv('YANDEX_GEOCODER_API_KEY')
 
 STAR_RATINGS_STAR_HEIGHT = 30
 STAR_RATINGS_STAR_WIDTH = STAR_RATINGS_STAR_HEIGHT
