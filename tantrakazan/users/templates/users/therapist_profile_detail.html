@@ -11,6 +11,26 @@
 
     <section class="section about-section gray-bg" id="about">
             <div class="container">
+
+<input type="hidden" id="bookmark-data" value="{{ is_bookmarked|yesno:"1,0" }}">
+<span id="bookmark-count">{{ count }}</span> в закладках
+
+{% if user.is_authenticated %}
+  <form method="post" action="{% url 'feedback:bookmark' therapist.pk content_type_id %}" class="bookmark-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="{% if is_bookmarked %}remove{% else %}add{% endif %}">
+    <button type="submit" id="bookmark-button">
+      {% if is_bookmarked %}Удалить из закладок{% else %}Добавить в закладки{% endif %}
+    </button>
+  </form>
+{% else %}
+  <p>Чтобы добавить в закладки, войдите в систему.</p>
+{% endif %}
+
+
+
+
+
                 <div class="row align-items-center flex-row-reverse">
                     <div class="col-lg-6">
                         <div class="about-text go-to">
@@ -91,6 +111,9 @@
 
 
   <!-- end galley section -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script src="{% static 'main/js/bookmarks.js' %}"></script>
 
 {% endblock content %}
 

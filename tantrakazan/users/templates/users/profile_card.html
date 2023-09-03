@@ -21,7 +21,7 @@
     <h4 class="user-info-title">Информация о пользователе</h4>
     <div class="rating">
         {% ratings therapist read_only=True %}
-        Отзывов: {{ therapist.therapist_profile.comments_count }}
+        Отзывов: {{ therapist.comments_count }}
     </div>
     </div>
         <div class="row about-list">

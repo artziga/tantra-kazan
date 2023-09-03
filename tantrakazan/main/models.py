@@ -4,6 +4,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from star_ratings.models import Rating
 
+from feedback.models import Comment, Bookmark
+from main.managers import CustomUserManager
+
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
@@ -17,7 +20,8 @@ class User(AbstractUser):
     )
     is_activated = models.BooleanField(verbose_name='активирован', default=False)
     is_therapist = models.BooleanField(verbose_name='Массажист', default=False)
-    ratings = GenericRelation(Rating, related_query_name='therapists')
+    ratings = GenericRelation(Rating, related_name='ratings')
+    bookmarks = GenericRelation(Bookmark, related_name='bookmarks')
+    comments = GenericRelation(Comment, related_name='comments')
 
-
-    objects = UserManager()
+    objects = CustomUserManager()

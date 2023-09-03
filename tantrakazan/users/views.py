@@ -5,8 +5,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
 from django.db.utils import IntegrityError
 
-from feedback.forms import CommentForm
-from feedback.models import Comment
+from feedback.forms import CommentForm, LikeForm
+from feedback.models import Comment, LikeDislike, Bookmark
 from listings.models import Listing
 from users.models import *
 from users.forms import TherapistProfileForm, UserProfileForm, TherapistFilterForm
@@ -170,11 +170,16 @@ class TherapistSelfProfileDetailView(ProfileView):
             content_type=content_type,
             object_id=therapist.pk
         )
+        like_to_therapist_form = self.get_like_form(content_type=content_type, therapist=therapist)
         comment_form = self.get_comment_form(content_type=content_type, therapist=therapist)
         context['therapist'] = therapist
+        context['content_type_id'] = content_type.pk
         context['offers'] = offers
         context['galleries'] = galleries
+        context['count'] = Bookmark.objects.filter(object_id=therapist.pk, content_type_id=content_type.pk).count()
+        context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=content_type.pk, user_id=self.request.user.pk, object_id=therapist.pk).exists()
         context['comments'] = comments
+        context['like_to_therapist_form'] = like_to_therapist_form
         context['comment_form'] = comment_form
         return context
 
@@ -184,6 +189,21 @@ class TherapistSelfProfileDetailView(ProfileView):
         comment_form.fields['content_type'].initial = content_type
         comment_form.fields['object_id'].initial = therapist.pk
         return comment_form
+
+    def get_like_form(self, content_type, therapist):
+        like_form = LikeForm()
+        try:
+            like_or_dislike = LikeDislike.objects.get(
+                user=self.request.user,
+                object_id=therapist.pk,
+                content_type=content_type
+            )
+            like_form.fields['like_or_dislike'].initial = like_or_dislike.like_or_dislike
+        except LikeDislike.DoesNotExist:
+            like_form.fields['like_or_dislike'].initial = None
+        like_form.fields['content_type'].initial = content_type
+        like_form.fields['object_id'].initial = therapist.pk
+        return like_form
 
     def get_therapist(self):
         return self.request.user
@@ -211,8 +231,8 @@ class TherapistListView(DataMixin, FilterFormMixin, ListView):
         return {**context, **context_def}
 
     def get_queryset(self):
-        active_users = User.objects.filter(therapist_profile__is_profile_active=True)
-        sorted_users = active_users.filter(ratings__isnull=False).order_by('-ratings__average')
+        active_therapists = User.objects.with_comments_count()
+        sorted_users = active_therapists.filter(ratings__isnull=False).order_by('-ratings__average')
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(sorted_users)

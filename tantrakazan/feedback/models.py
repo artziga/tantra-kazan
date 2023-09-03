@@ -4,11 +4,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from main.models import User
+from feedback.managers import LikeDislikeManager
+from tantrakazan import settings
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='автор')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор', related_query_name='comments')
     text = models.TextField(max_length=255, verbose_name='комментарий')
     parent = models.ForeignKey(
         'self',
@@ -24,10 +25,29 @@ class Comment(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
 
-class Favorite(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='автор')
-    like_or_dislike = models.BooleanField(default=True, verbose_name='лайк или дизлайк')
+class Bookmark(models.Model):
+    class Meta:
+        unique_together = ['user', 'content_type', 'object_id']
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователь", on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    def __str__(self):
+        return self.user.username
+
+
+class LikeDislike(Bookmark):
+    LIKE = 1
+    DISLIKE = -1
+
+    VOTES = (
+        (LIKE, 'Нравится'),
+        (DISLIKE, 'Не нравится')
+    )
+
+    like_or_dislike = models.BooleanField(default=True, verbose_name='голос',
+                                          choices=VOTES)
+
+    objects = LikeDislikeManager()

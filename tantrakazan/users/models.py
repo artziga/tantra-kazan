@@ -92,13 +92,3 @@ class TherapistProfile(models.Model):
     @property
     def point(self):
         return [self.latitude, self.longitude]
-
-    @property
-    def comments_count(self):
-        user_id = self.user.pk
-        content_type = ContentType.objects.get_for_model(self.user)
-        count = Comment.objects.filter(
-            content_type=content_type,
-            object_id=user_id
-        ).count()
-        return count
