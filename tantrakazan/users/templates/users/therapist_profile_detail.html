@@ -14,15 +14,13 @@
 
 <input type="hidden" id="bookmark-data" value="{{ is_bookmarked|yesno:"1,0" }}">
 <span id="bookmark-count">{{ count }}</span> в закладках
-
+{{ is_bookmarked }}
 {% if user.is_authenticated %}
-  <form method="post" action="{% url 'feedback:bookmark' therapist.pk content_type_id %}" class="bookmark-form">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="{% if is_bookmarked %}remove{% else %}add{% endif %}">
-    <button type="submit" id="bookmark-button">
-      {% if is_bookmarked %}Удалить из закладок{% else %}Добавить в закладки{% endif %}
-    </button>
-  </form>
+<form method="post" action="{% url 'feedback:bookmark' therapist.pk content_type_id %}" class="bookmark-form" id="bookmark-form">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="{% if is_bookmarked %}remove{% else %}add{% endif %}">
+  <input type="image" src="{% if is_bookmarked %}{% static 'main/images/bookmark-on-icon.png' %}{% else %}{% static 'main/images/bookmark-off-icon.png' %}{% endif %}" height="20" alt="Отправить" id="bookmark-button">
+</form>
 {% else %}
   <p>Чтобы добавить в закладки, войдите в систему.</p>
 {% endif %}
@@ -92,7 +90,7 @@
                 <div class="counter">
                     <div class="row">
 
-                            <p>{{ therapist.therapist_profile.description }}</p>
+                            <p>{{ therapist.therapist_profile.description|safe }}</p>
 
                     </div>
             </div>
@@ -109,12 +107,51 @@
 
 {% include 'feedback/comments.html' %}
 
+{% block script %}
 
   <!-- end galley section -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script src="{% static 'main/js/bookmarks.js' %}"></script>
+  <script> $(document).ready(function () {
+  $("#bookmark-form").submit(function (event) {
+    event.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: form.serialize(),
+      dataType: "json",
+      success: function (data) {
+        // Обновите отображаемые результаты на странице
+        $("#bookmark-data").val(data.result);
+        $("#bookmark-count").text(data.count); // Обновление количества
+
+        // Обновите изображение на кнопке
+        var button = $("#bookmark-button");
+        if (data.result) {
+          button.attr("src", "{% static 'main/images/bookmark-on-icon.png' %}");
+          button.attr("alt", "Удалить из закладок");
+        } else {
+          button.attr("src", "{% static 'main/images/bookmark-off-icon.png' %}");
+          button.attr("alt", "Добавить в закладки");
+        }
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        // Обработка ошибки, если не удалось отправить запрос
+        console.error("Произошла ошибка: " + errorThrown);
+      }
+    });
+  });
+});
+</script>
+
+{% endblock script %}
 
 {% endblock content %}
+
+
 
 

@@ -21,6 +21,7 @@
               {{form.non_field_errors}}
   {% for field in form %}
     <div>
+        {{ form.media }}
       {{ field.label_tag }}
       {% if field.name == 'avatar' %}
         {% if field.value %}

@@ -1,0 +1,41 @@
+.comments {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.comment {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.child-comments {
+  margin-left: 20px;
+}
+
+.child-comment {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+}
+
+.reply-container {
+  display: none;
+}
+
+.reply-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.comment-form {
+  margin-top: 20px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+}

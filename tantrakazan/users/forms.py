@@ -2,6 +2,7 @@ import os
 
 from datetime import date
 
+from ckeditor.widgets import CKEditorWidget
 from django import forms
 from tantrakazan.utils import Locator
 from django.core.files import File
@@ -51,9 +52,9 @@ class TherapistProfileForm(UserProfileForm):
     instagram_profile = forms.CharField(required=False, label='Инстаграм', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Инстаграм'}))
     show_instagram_profile = forms.BooleanField(required=False, label='Показывать ссылку на инстаграмм')
-    short_description = forms.CharField(required=False, label='О себе', widget=forms.Textarea(
+    short_description = forms.CharField(required=False, label='О себе', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Короткое описание'}))
-    description = forms.CharField(required=False, label='О себе', widget=forms.Textarea(
+    description = forms.CharField(required=False, label='О себе', widget=CKEditorWidget(
         attrs={'class': 'form-input', 'placeholder': 'О себе'}))
     is_profile_active = forms.BooleanField(required=False)
 

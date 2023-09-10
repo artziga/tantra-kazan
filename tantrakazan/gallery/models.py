@@ -4,6 +4,7 @@ import random
 from io import BytesIO
 
 from PIL import Image
+from autoslug import AutoSlugField
 from django.conf import settings
 from main.models import User
 from django.db import models
@@ -110,10 +111,7 @@ class Gallery(models.Model):
     title = models.CharField('название',
                              max_length=250,
                              unique=False)
-    slug = models.SlugField('слаг',
-                            unique=True,
-                            max_length=250,
-                            help_text='A "slug" is a unique URL-friendly title for an object.')
+    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from='title')
     description = models.TextField('описание',
                                    blank=True)
     is_public = models.BooleanField('отображать',
@@ -165,22 +163,17 @@ class Gallery(models.Model):
 
 class Photo(ThumbnailsMixin, models.Model):
     title = models.CharField(max_length=100, verbose_name='название')
-    slug = models.SlugField('слаг',
-                            unique=True,
-                            max_length=250,
-                            help_text='A "slug" is a unique URL-friendly title for an object.')
+    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from='title')
     gallery = models.ForeignKey(Gallery,
                                 on_delete=models.CASCADE,
                                 verbose_name='альбом',
                                 related_query_name='photos',
                                 related_name='photos')
     description = models.CharField(max_length=150, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    upload_date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(verbose_name='фото',
                               max_length=IMAGE_FIELD_MAX_LENGTH,
                               upload_to=get_storage_path)
-    upload_date = models.DateTimeField('дата загрузки',
-                                       default=datetime.now())
 
     def next(self):
         photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
@@ -212,6 +205,6 @@ class Photo(ThumbnailsMixin, models.Model):
         super().delete(*args, **kwargs)
 
     class Meta:
-        ordering = ['-created_at', '-pk']
-        get_latest_by = 'created_at'
+        ordering = ['-upload_date', '-pk']
+        get_latest_by = 'upload_date'
         verbose_name = 'фото'

@@ -21,15 +21,22 @@ import django.contrib.auth.urls
 from tantrakazan import settings
 from main import views
 from django.conf.urls.static import static
+
+from tantrakazan.utils import TagAutocomplete
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', include('main.urls')),
     path('ratings/', include('star_ratings.urls', namespace='ratings')),
     path('accounts/', include('accounts.urls')),
     path('users/', include('users.urls')),
     path('listings/', include('listings.urls')),
     path('gallery/', include('gallery.urls')),
-    path('feedback/', include('feedback.urls'))
+    path('feedback/', include('feedback.urls')),
+    path('articles/', include('articles.urls')),
+    path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag_autocomplete'),
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

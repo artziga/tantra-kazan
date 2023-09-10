@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.gis.db.models import PointField
 from star_ratings.models import Rating
+from ckeditor.fields import RichTextField
 
 from feedback.models import Comment
 from main.models import User
@@ -42,7 +43,7 @@ class TherapistProfile(models.Model):
     instagram_profile = models.CharField(max_length=20, verbose_name='Инстаграм', null=True, blank=True)
     show_instagram_profile = models.BooleanField(default=True)
     short_description = models.TextField(verbose_name='Короткое описание', null=True, blank=True)
-    description = models.TextField(verbose_name='О себе', null=True, blank=True)
+    description = RichTextField(verbose_name='О себе', null=True, blank=True)
     is_profile_active = models.BooleanField(default=True)
     ratings = GenericRelation(Rating, related_query_name='therapists')
 

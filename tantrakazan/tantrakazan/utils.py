@@ -1,5 +1,9 @@
+from dal import autocomplete
+from django.db.models import Count
 from geopy import Yandex
 from geopy import Point
+from taggit.models import Tag
+
 from tantrakazan.settings import YANDEX_GEOCODER_API_KEY as API_KEY
 
 menu = [
@@ -12,6 +16,7 @@ menu = [
 
 
 class DataMixin:
+    title = None
 
     def get_user_context(self, **kwargs):
         user_menu = menu.copy()
@@ -29,6 +34,8 @@ class DataMixin:
         context = kwargs
         context['menu'] = user_menu
         context['API_KEY'] = API_KEY
+        if self.title:
+            context['title'] = self.title
         return context
 
 
@@ -65,3 +72,11 @@ class FilterFormMixin:
             del parameters_for_url['page']
         filled_parameters = self.get_filled_filter_parameters()
         return parameters_for_url, filled_parameters
+
+
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Tag.objects.annotate(article_count=Count('article'))  # Аннотируем количество статей для каждого тега
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs.order_by('-article_count')[:5]

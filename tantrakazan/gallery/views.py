@@ -69,20 +69,10 @@ class AddPhotosView(DataMixin, FormView):
     def append_photos(photos: list, gallery) -> list:
         current_gallery_photos = []
         for photo in photos:
-            title = AddPhotosView.get_unique_name(photo.name)
+            title = photo.name
             photo = Photo.objects.create(image=photo, gallery=gallery, title=title)
             current_gallery_photos.append(photo)
         return current_gallery_photos
-
-    @staticmethod
-    def get_unique_name(full_name: str) -> str:
-        file_name, ert = full_name.split('.')
-        now = str(datetime.now().time())
-        now = now.replace('.', '').replace(':', '')
-        int_now = int(now)
-        hex_now = str(hex(int_now))
-        unique_file_name = f'{file_name}_{hex_now[6:]}.{ert}'
-        return unique_file_name
 
 
 class GalleryDetailView(DataMixin, ListView):
@@ -128,4 +118,3 @@ class PhotoDeleteView(DeleteView):
         deleted_photo = self.get_object()
         gallery_slug = deleted_photo.gallery.slug
         return reverse_lazy('gallery:gallery', kwargs={'slug': gallery_slug})
-
