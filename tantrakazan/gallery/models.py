@@ -2,10 +2,18 @@ import logging
 import os
 import random
 from io import BytesIO
+from datetime import datetime
 
 from PIL import Image
 from autoslug import AutoSlugField
 from django.conf import settings
+from django.core.files import File
+from django.db.models.fields.files import FieldFile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from imagekit.models import ImageSpecField, ProcessedImageField
+from imagekit.processors import ResizeToFill, ResizeToFit, Thumbnail, SmartResize, ResizeCanvas
+
 from main.models import User
 from django.db import models
 from django.urls import reverse
@@ -13,11 +21,10 @@ from django.utils.encoding import force_str, filepath_to_uri, smart_str
 from django.utils.safestring import mark_safe
 
 from gallery.mangers import GalleryQuerySet, PhotoQuerySet
-from django.utils.text import slugify
-# from photologue import models as ph_models
-from sortedm2m.fields import SortedManyToManyField
-from unidecode import unidecode
-from datetime import datetime
+from gallery.photo_processor import CropFaceProcessor, get_square_borders
+from sorl.thumbnail import ImageField
+
+from tantrakazan.settings import MEDIA_ROOT
 
 LATEST_LIMIT = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
 SAMPLE_SIZE = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', 3)
@@ -44,64 +51,63 @@ def get_storage_path(instance, filename: str) -> str:
 
 
 class ThumbnailsMixin:
-
-    @property
-    def filename(self):
-        return os.path.basename(self.image.name)
-
-    def get_storage_path(self, filename: str) -> str:
-        user = self.gallery.user.username
-        gallery = self.gallery.slug
-        return os.path.join(IMAGE_DIR_FOR_THUMB, user, gallery, filename)
-
-    def generate_thumbnail_name(self, thumbnail_type: str) -> str:
-        return f"{thumbnail_type}_{self.slug}"
-
-    @property
-    def admin_thumbnail(self):
-        thumbnail_name = self.generate_thumbnail_name('admin_thumbnail')
-        return f'/{self.get_storage_path(thumbnail_name)}'
-
-    @property
-    def thumbnail(self):
-        thumbnail_name = self.generate_thumbnail_name('thumbnail')
-        return f'/{self.get_storage_path(thumbnail_name)}'
-
-    def create_thumbnail(self, thumbnail_type: str) -> None:
-        if self.image:
-            self.image.file.seek(0)
-            img_bytes = self.image.file.read()
-            img = Image.open(BytesIO(img_bytes))
-            img = self.crop_image_to_square(img)
-            img.thumbnail(size=thumbnails[thumbnail_type])
-            thumbnail_name = self.generate_thumbnail_name(thumbnail_type=thumbnail_type)
-            thumbnail_path = self.get_storage_path(filename=thumbnail_name)
-            os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
-            img.save(thumbnail_path, 'PNG')
+    thumbnail_sizes = None
+    thumbnail_fields = None
 
     @staticmethod
-    def crop_image_to_square(image):
-        image_width, image_height = image.size
-        if image_width == image_height:
-            return image
-        diff = abs(image_width - image_height)
-        if image_width > image_height:
-            left = diff / 2
-            right = image_width - diff / 2
-            upper = 0
-            lower = image_height
+    def _filename(field: FieldFile) -> str:
+        image = field
+        return os.path.basename(image.name)
+
+    def get_storage_path(self, filename: str) -> str:
+        """Метод возвращает путь сохранения файла в папку для
+         сохранения файла на основе параметра поля upload_to"""
+
+        upload_to = get_storage_path(self, filename)
+
+        return os.path.join('media/', upload_to)
+
+    def generate_thumbnail_name(self, field: FieldFile, thumbnail_type: str) -> str:
+        filename = self._filename(field)
+        filename_body, ext = os.path.splitext(filename)
+        if hasattr(self, 'slug') and self.slug is not None:
+            return f"{thumbnail_type}_{self.slug}{ext}"
         else:
-            left = 0
-            right = image_width
-            upper = diff / 2
-            lower = image_height - diff / 2
-        return image.crop((left, upper, right, lower))
+            return f"{thumbnail_type}_{filename}"
+
+    # @property
+    # def admin_thumbnail(self):
+    #     thumbnail_name = self.generate_thumbnail_name('admin_thumbnail')
+    #     return f'/{get_storage_path(image_field="image", filename=thumbnail_name)}'
+    #
+    # @property
+    # def thumbnail(self):
+    #     thumbnail_name = self.generate_thumbnail_name('thumbnail')
+    #     return f'/{get_storage_path(image_field="image", filename=thumbnail_name)}'
+
+    def create_thumbnail(self, field: FieldFile, thumbnail_type: str) -> None:
+        image_field = field
+        image_field.file.seek(0)
+        img_bytes = image_field.file.read()
+        img = Image.open(BytesIO(img_bytes))
+        img = get_square_borders(img)
+        img.thumbnail(size=self.thumbnail_sizes[thumbnail_type])
+        thumbnail_name = self.generate_thumbnail_name(thumbnail_type=thumbnail_type, field=field)
+        thumbnail_path = self.get_storage_path(filename=thumbnail_name)
+        os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
+        img.save(thumbnail_path)
+
+    def generate_thumbnails(self):
+        for field in self.thumbnail_fields:
+            model_field = getattr(self, field)
+            for thumbnail_type in self.thumbnail_fields[field]:
+                self.create_thumbnail(field=model_field, thumbnail_type=thumbnail_type)
 
 
-thumbnails = {
-    'admin_thumbnail': (100, 100),
-    'thumbnail': (250, 250)
-}
+@receiver(post_save)
+def create_thumbnails(sender, instance, **kwargs):
+    if issubclass(sender, ThumbnailsMixin):
+        instance.generate_thumbnails()
 
 
 class Gallery(models.Model):
@@ -161,19 +167,63 @@ class Gallery(models.Model):
     photo_count.short_description = 'количество'
 
 
-class Photo(ThumbnailsMixin, models.Model):
-    title = models.CharField(max_length=100, verbose_name='название')
-    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from='title')
+class BaseImage(models.Model):
+    image_size = (1000, 1000)
+
+    def generate_slug(self):
+        if self.title:
+            return self.title
+        elif self.image:
+            image_name, ext = os.path.splitext(self.image.name)
+            return image_name
+        else:
+            return 'no-title-and-no-image'
+
+    title = models.CharField(max_length=100, null=True, verbose_name='название')
+    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from=generate_slug)
+    image = ProcessedImageField(verbose_name='фото',
+                                processors=[ResizeToFit(*image_size)],
+                                max_length=IMAGE_FIELD_MAX_LENGTH,
+                                upload_to=get_storage_path,
+                                )
+    admin_thumbnail = ImageSpecField(source='image',
+                                     processors=[Thumbnail(100, 100)
+                                                 ],
+                                     format='JPEG',
+                                     options={'quality': 60})
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class Photo(BaseImage):
     gallery = models.ForeignKey(Gallery,
                                 on_delete=models.CASCADE,
                                 verbose_name='альбом',
                                 related_query_name='photos',
                                 related_name='photos')
     description = models.CharField(max_length=150, null=True, blank=True)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(verbose_name='фото',
-                              max_length=IMAGE_FIELD_MAX_LENGTH,
-                              upload_to=get_storage_path)
+    thumbnail = ImageSpecField(source='image',
+                               processors=[Thumbnail(300, 300)],
+                               format='JPEG',
+                               options={'quality': 60})
+    admin_thumbnail = ImageSpecField(source='image',
+                                     processors=[Thumbnail(100, 100)
+                                                 ],
+                                     format='JPEG',
+                                     options={'quality': 60})
+
+    # thumbnail_sizes = {
+    #     'admin_thumbnail': (100, 100),
+    #     'thumbnail': (250, 250)
+    # }
+    # thumbnail_fields = {'image': ['admin_thumbnail', 'thumbnail']}
+
+    def save(self, *args, **kwargs):
+        self.thumbnail.generate()
+        self.admin_thumbnail.generate()
+        return super().save()
 
     def next(self):
         photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
@@ -189,22 +239,26 @@ class Photo(ThumbnailsMixin, models.Model):
             prev_photo = photo_gallery.first()
         return prev_photo
 
-    def save(self, *args, **kwargs):
-        if self.image:
-            filename, _ = os.path.splitext(self.title)
-            self.slug = slugify(unidecode(filename))
-            for thumbnail in thumbnails:
-                self.create_thumbnail(thumbnail_type=thumbnail)
-        super().save()
-
-    def delete(self, *args, **kwargs):
-        for thumbnail_type in thumbnails:
-            thumbnail_path = self.generate_thumbnail_name(thumbnail_type)
-            if os.path.exists(thumbnail_path):
-                os.remove(thumbnail_path)
-        super().delete(*args, **kwargs)
-
     class Meta:
         ordering = ['-upload_date', '-pk']
         get_latest_by = 'upload_date'
         verbose_name = 'фото'
+
+
+class Avatar(BaseImage):
+    thumbnail = ImageSpecField(source='image',
+                               processors=[CropFaceProcessor(margin_percent=0.6),
+                                           Thumbnail(100, 100)],
+                               format='JPEG',
+                               options={'quality': 60})
+    mini_thumbnail = ImageSpecField(source='image',
+                                    processors=[CropFaceProcessor(margin_percent=0.6),
+                                                Thumbnail(50, 50)],
+                                    format='JPEG',
+                                    options={'quality': 30})
+
+    comment_thumbnail = ImageSpecField(source='image',
+                                       processors=[CropFaceProcessor(margin_percent=0.6),
+                                                   Thumbnail(100, 100)],
+                                       format='JPEG',
+                                       options={'quality': 30})

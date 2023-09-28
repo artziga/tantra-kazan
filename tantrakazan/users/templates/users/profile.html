@@ -26,7 +26,7 @@
       {% if field.name == 'avatar' %}
         {% if field.value %}
 <!--        {{ field.value}}-->
-          <img src="{{ field.value.url }}" alt="Фото профиля">
+          <img src="{{ field.value.url }}" height="200" alt="Фото профиля">
         {% endif %}
       {% endif %}
       {{ field }}
@@ -56,6 +56,11 @@
       </div>
     </div>
   </section>
-
+    <script>
+        // Настройка автодополнения адресов
+        ymaps.ready(function () {
+            var addressInput = new ymaps.SuggestView('addressInput');
+        });
+    </script>
   <!-- end contact section -->
 {% endblock content %}

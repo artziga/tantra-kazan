@@ -2,8 +2,6 @@ from pathlib import Path
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.text import slugify
-from unidecode import unidecode
 from multiupload.fields import MultiImageField
 from django.core.validators import validate_image_file_extension
 from gallery.models import Gallery, Photo
@@ -35,15 +33,6 @@ class CreateGalleryForm(MultiImageUploadForm):
     class Meta:
         model = Gallery
         fields = ['title', 'description', 'is_public']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        title = cleaned_data.get('title')
-        if title:
-            slug = slugify(unidecode(title))
-            cleaned_data['slug'] = slug
-            self.instance.slug = slug
-        return cleaned_data
 
 
 class AddPhotoForm(MultiImageUploadForm):

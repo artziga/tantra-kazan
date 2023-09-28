@@ -170,3 +170,7 @@
   margin: 0;
   font-size: 15px;
 }
+
+.rounded-image {
+    border-radius: 50%;
+}

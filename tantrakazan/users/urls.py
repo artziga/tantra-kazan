@@ -1,10 +1,11 @@
 from django.urls import path
+
+from tantrakazan.utils import AddressAutocomplete
 from users import views
 app_name = 'users'
 
 urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
-    path('therapist_profile/', views.TherapistSelfProfileDetailView.as_view(), name='therapist_profile'),
     path('therapist/<str:therapist_username>/', views.TherapistProfileDetailView.as_view(), name='therapist_profile1'),
     path('profile_completion/', views.UserProfileCompletionView.as_view(), name='profile_completion'),
     path(
@@ -16,6 +17,7 @@ urlpatterns = [
     path('edit_profile/', views.UserFormUpdateView.as_view(), name='edit_profile'),
     path('therapists/', views.TherapistListView.as_view(), name='therapists'),
     path('therapists/on_map', views.TherapistOnMapListView.as_view(), name='therapists_on_map'),
+    path('address_autocomplete/', AddressAutocomplete.as_view(), name='address_autocomplete'),
 ]
 
 # from django.contrib.auth.urls

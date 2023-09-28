@@ -76,7 +76,22 @@ class FilterFormMixin:
 
 class TagAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Tag.objects.annotate(article_count=Count('article'))  # Аннотируем количество статей для каждого тега
+        qs = Tag.objects.annotate(total_count=Count('article') + Count('listing'))
         if self.q:
             qs = qs.filter(name__istartswith=self.q)
-        return qs.order_by('-article_count')[:5]
+
+        return qs.order_by('-total_count')[:5]
+
+
+class AddressAutocomplete(autocomplete.Select2ListView):
+
+    def get_list(self):
+        if self.q:
+            req = 'казань, ' + self.q
+            locations = Yandex(api_key=API_KEY).geocode(req, exactly_one=False)
+            locations = locations[:5]
+            addresses = [str(location) for location in locations]
+            print(addresses)
+            return addresses
+
+        return []

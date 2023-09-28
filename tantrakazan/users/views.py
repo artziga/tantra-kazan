@@ -1,17 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import F
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
 from django.db.utils import IntegrityError
 
 from feedback.forms import CommentForm, LikeForm
-from feedback.models import Comment, LikeDislike, Bookmark
+from feedback.models import LikeDislike, Bookmark
 from listings.models import Listing
 from users.models import *
 from users.forms import TherapistProfileForm, UserProfileForm, TherapistFilterForm
 from tantrakazan.utils import DataMixin, FilterFormMixin
-from users.photo_processor import crop_face
+from gallery.photo_processor import CropFace
 from gallery.models import Gallery
 
 
@@ -34,7 +32,7 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
         user = self.request.user
         form.cleaned_data['user'] = user
         photo = self.request.FILES.get('avatar')
-        cropped_photo = crop_face(uploaded_image=photo)
+        cropped_photo = CropFace(uploaded_image=photo)
         user.avatar = cropped_photo
         user.save()
         return super().form_valid(form)
@@ -66,7 +64,7 @@ class UserProfileCompletionView(LoginRequiredMixin, DataMixin, FormView):
         photo = self.request.FILES.get('avatar')
         if photo:
             user = self.request.user
-            cropped_photo = crop_face(uploaded_image=photo)
+            cropped_photo = CropFace(uploaded_image=photo)
             user.avatar = cropped_photo
             user.save()
         return super().form_valid(form)
@@ -148,20 +146,35 @@ class UserFormUpdateView(TherapistProfileFormBaseView):
         return user_data | profile_data
 
 
-class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
-    template_name = 'users/user_profile_detail.html'
+# class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
+#     template_name = 'users/user_profile_detail.html'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context_def = self.get_user_context(title='Профиль')
+#         return {**context, **context_def}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+
+class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
+    def get_context_data(self, *args, **kwargs):
+        if self.request.user.is_therapist:
+            return self.get_therapist_context_data(self, *args, **kwargs)
+        else:
+            return self.get_user_context_data(self, *args, **kwargs)
+
+    def get_template_names(self):
+        if self.request.user.is_therapist:
+            return ['users/therapist_self_profile_detail.html']
+        else:
+            return ['users/user_profile_detail.html']
+
+    def get_user_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Профиль')
         return {**context, **context_def}
 
-
-class TherapistSelfProfileDetailView(ProfileView):
-    template_name = 'users/therapist_self_profile_detail.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_therapist_context_data(self, *args, **kwargs):
+        context = self.get_user_context(**kwargs)
         therapist = self.get_therapist()
         offers = Listing.objects.filter(therapist_id=therapist.pk)
         galleries = Gallery.objects.filter(user=therapist)
@@ -173,11 +186,14 @@ class TherapistSelfProfileDetailView(ProfileView):
         like_to_therapist_form = self.get_like_form(content_type=content_type, therapist=therapist)
         comment_form = self.get_comment_form(content_type=content_type, therapist=therapist)
         context['therapist'] = therapist
+        print(context['therapist'])
         context['content_type_id'] = content_type.pk
         context['offers'] = offers
         context['galleries'] = galleries
         context['count'] = Bookmark.objects.filter(object_id=therapist.pk, content_type_id=content_type.pk).count()
-        context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=content_type.pk, user_id=self.request.user.pk, object_id=therapist.pk).exists()
+        context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=content_type.pk,
+                                                           user_id=self.request.user.pk,
+                                                           object_id=therapist.pk).exists()
         context['comments'] = comments
         context['like_to_therapist_form'] = like_to_therapist_form
         context['comment_form'] = comment_form
@@ -209,13 +225,14 @@ class TherapistSelfProfileDetailView(ProfileView):
         return self.request.user
 
 
-class TherapistProfileDetailView(TherapistSelfProfileDetailView):
-    template_name = 'users/therapist_profile_detail.html'
-
+class TherapistProfileDetailView(ProfileView):
     def get_therapist(self):
         therapist_name = self.kwargs.get('therapist_username')
         therapist = User.objects.get(username=therapist_name)
         return therapist
+
+    def get_template_names(self):
+        return ['users/therapist_profile_detail.html']
 
 
 class TherapistListView(DataMixin, FilterFormMixin, ListView):

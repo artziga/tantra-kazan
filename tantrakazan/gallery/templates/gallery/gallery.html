@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load thumbnail %}
 
 {% block content %}
 
@@ -24,9 +25,9 @@
     </div>
     <div class="gallery_container">
         {% for photo in photos %}
-        <a href="{% url 'gallery:photo' slug=photo.slug %}">
-            <img src="{{photo.thumbnail}}" title="" alt="{{photo.image}}">
-        </a>
+            <a href="{% url 'gallery:photo' slug=photo.slug %}">
+            <img src="{{ photo.thumbnail.url }}" alt="111">
+            </a>
         {% endfor %}
     </div>
 </div>

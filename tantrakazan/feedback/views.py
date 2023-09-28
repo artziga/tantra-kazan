@@ -35,7 +35,7 @@ class DeleteCommentView(DeleteView):
     model = Comment
 
     def get_success_url(self):
-        return reverse_lazy('users:therapist_profile')
+        return reverse_lazy('users:profile')
 
 
 class BookmarkView(LoginRequiredMixin, View):

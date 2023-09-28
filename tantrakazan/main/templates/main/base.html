@@ -115,8 +115,12 @@
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
               {% if request.user.is_therapist %}
-              <a href="{% url 'users:therapist_profile' %}">
-                <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt="">
+              <a href="{% url 'users:profile' %}">
+                {% if user.avatar %}
+              <img src="{{ user.avatar.url }}" width="50" height="50" alt="" class="rounded-image">
+                {% else %}
+              <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt=""class="rounded-image">
+                {% endif %}
               </a>
               {% else %}
               <a href="{% url 'users:profile'%}">

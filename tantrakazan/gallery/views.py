@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
@@ -69,7 +71,7 @@ class AddPhotosView(DataMixin, FormView):
     def append_photos(photos: list, gallery) -> list:
         current_gallery_photos = []
         for photo in photos:
-            title = photo.name
+            title, ext = os.path.splitext(photo.name)
             photo = Photo.objects.create(image=photo, gallery=gallery, title=title)
             current_gallery_photos.append(photo)
         return current_gallery_photos

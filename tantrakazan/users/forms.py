@@ -41,7 +41,7 @@ class TherapistProfileForm(UserProfileForm):
     experience = forms.IntegerField(required=False, label='Опыт',
                                     widget=forms.NumberInput(attrs={'placeholder': 'Опыт'}))
     address = forms.CharField(required=False, label='Адрес', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Адрес: Улица, д. ХХ'}))
+        attrs={'class': 'form-input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
     show_address = forms.BooleanField(required=False)
     phone_number = forms.CharField(required=False, label='Телефон', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Телефон'}))

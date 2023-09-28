@@ -13,7 +13,7 @@ class CreateOfferForm(autocomplete.FutureModelForm):
     photo = forms.ImageField(label='Фото', required=False)
     tags = TagField(
         required=False,
-        widget=TagWidget(attrs={'placeholder': 'Вводите тэги через запятую'})
+        widget=autocomplete.TaggitSelect2('tag_autocomplete', attrs={'placeholder': 'Вводите тэги через запятую'})
     )
     hours = forms.IntegerField()
     minutes = forms.IntegerField()
