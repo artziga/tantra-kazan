@@ -9,9 +9,9 @@ class RegisterUserForm(UserCreationForm):
         attrs={'class': 'form-input', 'placeholder': 'Имя пользователя'}))
     email = forms.EmailField(label='Email', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'E-Mail'}))
-    password1 = forms.CharField(label='Пароль', widget=forms.TextInput(
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(
         attrs={'class': 'form-input', 'placeholder': 'Пароль'}))
-    password2 = forms.CharField(label='Повторите пароль', widget=forms.TextInput(
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput(
         attrs={'class': 'form-input', 'placeholder': 'Повторите пароль'}))
 
     class Meta:

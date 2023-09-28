@@ -140,9 +140,12 @@ class UserFormUpdateView(TherapistProfileFormBaseView):
             'description',
             'is_profile_active'
         ).first()
-        bd = profile_data['birth_date']
-        if bd:
-            profile_data['birth_date'] = bd.isoformat()
+        if profile_data:
+            bd = profile_data['birth_date']
+            if bd:
+                profile_data['birth_date'] = bd.isoformat()
+        else:
+            return user_data
         return user_data | profile_data
 
 

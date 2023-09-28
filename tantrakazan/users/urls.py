@@ -17,10 +17,8 @@ urlpatterns = [
     path('edit_profile/', views.UserFormUpdateView.as_view(), name='edit_profile'),
     path('therapists/', views.TherapistListView.as_view(), name='therapists'),
     path('therapists/on_map', views.TherapistOnMapListView.as_view(), name='therapists_on_map'),
-    path('address_autocomplete/', AddressAutocomplete.as_view(), name='address_autocomplete'),
 ]
 
-# from django.contrib.auth.urls
 
 
 

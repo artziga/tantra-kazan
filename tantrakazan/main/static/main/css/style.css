@@ -1227,7 +1227,16 @@ a:focus {
   color: white;
 }
 
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px; /* Добавьте необходимый отступ сверху, если нужно */
+}
 
+.reset_password {
+  text-decoration: none;
+}
 
 
 /*# sourceMappingURL=style.css.map */

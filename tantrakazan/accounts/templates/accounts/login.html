@@ -32,14 +32,17 @@
               {% endfor %}
       <div class="button-column">
       <button class="contact_section contact_form-container button" type="submit">Войти</button>
-      <a class="reset_password" href="{% url 'accounts:password_reset' %}">Сброс пароля</a>
+      <div class="button-group">
+        <a class="reset_password" href="{% url 'accounts:password_reset' %}">Сброс пароля</a>
+        <a class="reset_password" href="{% url 'accounts:registration' %}">Регистрация</a>
+      </div>
       </div>
             </form>
           </div>
         </div>
         <div class="col-md-6 col-lg-5 offset-lg-1">
           <div class="img-box">
-            <img src="{% static 'users/images/contact-img.jpg' %}" alt="">
+            <img src="{% static 'main/images/contact-img.jpg' %}" alt="No found">
           </div>
         </div>
       </div>
