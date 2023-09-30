@@ -80,7 +80,7 @@
                     <div class="col-lg-6">
                         <div class="about-avatar">
                             {% if therapist.avatar %}
-                            <img src="{{ therapist.avatar.url }}" height="400" title="" alt="">
+                            <img src="{{ therapist.avatar.image.url }}" height="400" title="" alt="">
                             {% else %}
                             <img src="{% static 'main/images/profile-icon.png' %}" height="400" title="" alt="">
                             {% endif %}

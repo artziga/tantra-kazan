@@ -8,7 +8,7 @@ from star_ratings.models import Rating
 from ckeditor.fields import RichTextField
 
 from feedback.models import Comment
-from main.models import User
+from tantrakazan.settings import AUTH_USER_MODEL as USER
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -20,7 +20,7 @@ from gallery.models import Gallery
 
 class TherapistProfile(models.Model):
     user = models.OneToOneField(
-        User,
+        USER,
         on_delete=models.CASCADE,
 
         related_name='therapist_profile')

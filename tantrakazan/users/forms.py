@@ -1,19 +1,10 @@
-import os
-
-from datetime import date
-
 from ckeditor.widgets import CKEditorWidget
 from django import forms
-from tantrakazan.utils import Locator
-from django.core.files import File
 
-from tantrakazan import settings
 from users.models import *
-from main.models import User
-from listings.models import Tag
 
 
-class UserProfileForm(forms.Form):
+class CreateAvatarForm(forms.Form):
     avatar = forms.ImageField(label='АВАТАР', required=False, widget=forms.ClearableFileInput())
 
     def clean(self):
@@ -22,7 +13,56 @@ class UserProfileForm(forms.Form):
         return cleaned_data
 
 
-class TherapistProfileForm(UserProfileForm):
+class PersonDataForm(forms.Form):
+    first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Имя'}))
+    last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Фамилия'}))
+    gender = forms.NullBooleanField(label='', widget=forms.Select(
+        choices=((None, 'Укажите свой пол'), (True, 'Мужчина'), (False, 'Женщина'))))
+    birth_date = forms.DateField(label='Дата рождения', required=False,
+                                 widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Дата рождения'}))
+    height = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Рост'}))
+    weight = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Вес'}))
+
+
+class TherapistDataForm(forms.Form):
+    massage_to_male_or_female = forms.NullBooleanField(required=False, label='Кому делаете массаж?',
+                                                       widget=forms.Select(
+                                                           choices=((None, 'Всем'),
+                                                                    (True, 'Мужчинам'),
+                                                                    (False, 'Женщинам'))))
+    experience = forms.IntegerField(required=False, label='Опыт',
+                                    widget=forms.NumberInput(attrs={'placeholder': 'Опыт'}))
+
+
+class AboutForm(forms.Form):
+    short_description = forms.CharField(required=False, label='О себе', widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Короткое описание'}))
+    description = forms.CharField(required=False, label='О себе', widget=CKEditorWidget(
+        attrs={'class': 'form-input', 'placeholder': 'О себе'}))
+
+
+class ContactDataForm(forms.Form):
+    address = forms.CharField(required=False, label='Адрес', widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
+    show_address = forms.BooleanField(required=False)
+    phone_number = forms.CharField(required=False, label='Телефон', widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Телефон'}))
+    show_phone_number = forms.BooleanField(required=False, label='Показывать номер')
+    telegram_profile = forms.CharField(required=False, label='Телеграм', widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Телеграм'}))
+    show_telegram_profile = forms.BooleanField(required=False, label='Показывать ссылку на телеграмм')
+    instagram_profile = forms.CharField(required=False, label='Инстаграм', widget=forms.TextInput(
+        attrs={'class': 'form-input', 'placeholder': 'Инстаграм'}))
+    show_instagram_profile = forms.BooleanField(required=False, label='Показывать ссылку на инстаграмм')
+
+
+class ActivateProfileForm(forms.Form):
+    is_profile_active = forms.BooleanField(required=False)
+
+
+class TherapistProfileForm(CreateAvatarForm):
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Имя'}))
     last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(

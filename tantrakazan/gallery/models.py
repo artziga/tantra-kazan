@@ -14,7 +14,7 @@ from django.dispatch import receiver
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, ResizeToFit, Thumbnail, SmartResize, ResizeCanvas
 
-from main.models import User
+from tantrakazan.settings import AUTH_USER_MODEL as USER
 from django.db import models
 from django.urls import reverse
 from django.utils.encoding import force_str, filepath_to_uri, smart_str
@@ -111,7 +111,7 @@ def create_thumbnails(sender, instance, **kwargs):
 
 
 class Gallery(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    user = models.ForeignKey(USER, on_delete=models.CASCADE, verbose_name='Пользователь')
     date_added = models.DateTimeField('дата создания',
                                       default=datetime.now())
     title = models.CharField('название',
@@ -207,18 +207,9 @@ class Photo(BaseImage):
     thumbnail = ImageSpecField(source='image',
                                processors=[Thumbnail(300, 300)],
                                format='JPEG',
-                               options={'quality': 60})
-    admin_thumbnail = ImageSpecField(source='image',
-                                     processors=[Thumbnail(100, 100)
-                                                 ],
-                                     format='JPEG',
-                                     options={'quality': 60})
+                               options={'quality': 80})
 
-    # thumbnail_sizes = {
-    #     'admin_thumbnail': (100, 100),
-    #     'thumbnail': (250, 250)
-    # }
-    # thumbnail_fields = {'image': ['admin_thumbnail', 'thumbnail']}
+
 
     def save(self, *args, **kwargs):
         self.thumbnail.generate()
@@ -246,19 +237,20 @@ class Photo(BaseImage):
 
 
 class Avatar(BaseImage):
+    image = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
     thumbnail = ImageSpecField(source='image',
                                processors=[CropFaceProcessor(margin_percent=0.6),
                                            Thumbnail(100, 100)],
                                format='JPEG',
-                               options={'quality': 60})
+                               options={'quality': 90})
     mini_thumbnail = ImageSpecField(source='image',
                                     processors=[CropFaceProcessor(margin_percent=0.6),
                                                 Thumbnail(50, 50)],
                                     format='JPEG',
-                                    options={'quality': 30})
+                                    options={'quality': 90})
 
     comment_thumbnail = ImageSpecField(source='image',
                                        processors=[CropFaceProcessor(margin_percent=0.6),
                                                    Thumbnail(100, 100)],
                                        format='JPEG',
-                                       options={'quality': 30})
+                                       options={'quality': 90})

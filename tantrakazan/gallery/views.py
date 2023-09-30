@@ -14,7 +14,7 @@ from unidecode import unidecode
 class GalleryCreateView(DataMixin, FormView):
     form_class = CreateGalleryForm
     template_name = 'users/profile.html'
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,7 +37,7 @@ class GalleryUpdateView(DataMixin, UpdateView):
     model = Gallery
     template_name = 'users/profile.html'
     fields = ['title', 'description', 'is_public']
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,13 +47,13 @@ class GalleryUpdateView(DataMixin, UpdateView):
 
 class GalleryDeleteView(DeleteView):
     model = Gallery
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
 
 class AddPhotosView(DataMixin, FormView):
     form_class = AddPhotoForm
     template_name = 'users/profile.html'
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -114,7 +114,7 @@ class PhotoUpdateView(DataMixin, PhotoDetailView, UpdateView):
 
 class PhotoDeleteView(DeleteView):
     model = Photo
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
     def get_success_url(self):
         deleted_photo = self.get_object()

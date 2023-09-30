@@ -117,7 +117,7 @@
               {% if request.user.is_therapist %}
               <a href="{% url 'users:profile' %}">
                 {% if user.avatar %}
-              <img src="{{ user.avatar.url }}" width="50" height="50" alt="" class="rounded-image">
+              <img src="{{ user.avatar.mini_thumbnail.url }}" width="50" height="50" alt="" class="rounded-image">
                 {% else %}
               <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt=""class="rounded-image">
                 {% endif %}

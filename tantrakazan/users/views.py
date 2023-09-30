@@ -7,15 +7,16 @@ from feedback.forms import CommentForm, LikeForm
 from feedback.models import LikeDislike, Bookmark
 from listings.models import Listing
 from users.models import *
-from users.forms import TherapistProfileForm, UserProfileForm, TherapistFilterForm
+from main.models import User
+from users.forms import TherapistProfileForm, CreateAvatarForm, TherapistFilterForm
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from gallery.photo_processor import CropFace
-from gallery.models import Gallery
+from gallery.models import Gallery, Avatar
 
 
 class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
     model = User
-    form_class = UserProfileForm
+    form_class = CreateAvatarForm
     template_name = 'users/profile.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -52,8 +53,8 @@ class AddTherapistAvatar(AddAvatar):
 
 class UserProfileCompletionView(LoginRequiredMixin, DataMixin, FormView):
     template_name = 'users/profile.html'
-    success_url = reverse_lazy('users:therapist_profile')
-    form_class = UserProfileForm
+    success_url = reverse_lazy('users:profile')
+    form_class = CreateAvatarForm
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,8 +65,8 @@ class UserProfileCompletionView(LoginRequiredMixin, DataMixin, FormView):
         photo = self.request.FILES.get('avatar')
         if photo:
             user = self.request.user
-            cropped_photo = CropFace(uploaded_image=photo)
-            user.avatar = cropped_photo
+            users_avatar = Avatar.objects.create(image=photo)
+            user.avatar = users_avatar
             user.save()
         return super().form_valid(form)
 

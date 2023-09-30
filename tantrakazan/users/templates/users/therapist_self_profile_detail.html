@@ -72,7 +72,7 @@
                     <div class="col-lg-6">
                         <div class="about-avatar">
                             {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" height="400" title="" alt="">
+                            <img src="{{ user.avatar.image.url }}" height="400" title="" alt="">
                             {% else %}
                             <img src="{% static 'main/images/profile-icon.png' %}" height="400" title="" alt="">
                             {% endif %}

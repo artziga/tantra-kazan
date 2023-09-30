@@ -6,10 +6,11 @@ from star_ratings.models import Rating
 
 from feedback.models import Comment, Bookmark
 from main.managers import CustomUserManager
+from gallery.models import Avatar
 
 
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
+    avatar = models.OneToOneField(Avatar, on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(
         "активен",
         default=False,
