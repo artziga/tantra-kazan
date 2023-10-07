@@ -1,5 +1,5 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html>
 
 <head>
@@ -27,7 +27,6 @@
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700|Raleway:400,500,700&display=swap" rel="stylesheet">
   <!-- Custom styles for this template -->
   <link href="{% static 'main/css/style.css' %}" rel="stylesheet" />
-  <link href="{% static 'main/css/profile_style.css' %}" rel="stylesheet" />
   <!-- filter style -->
   <!-- profile card style -->
 <!--  <link href="{% static 'main/css/profile_card.css' %}" rel="stylesheet" />-->
@@ -47,9 +46,12 @@
     </script>
 
 <!--  статика для рейтинга -->
-  <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
-<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
-<!--  <link href="{% static 'main/css/offers.css' %}" rel="stylesheet" />-->
+
+    <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+    <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+      <link rel="stylesheet" href="{% static 'main/css/multistep_form.css' %}">
+
 </head>
 
 <body class="sub_page">
@@ -294,15 +296,12 @@
   <link rel="stylesheet" type="text/css" href="{% static '/vendor/select2/dist/css/select2.min.css' %}">
 
 
+  <script src="{% static 'main/js/bootstrap.js' %}"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+
+
   <script src="{% static 'main/js/jquery-3.4.1.min.js' %}"></script>
-  <script src="{% static 'main/js/bootstrap.js' %}"></script>
-  <script src="{% static 'main/js/bootstrap.js' %}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
-  </script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js">
-  </script>
-
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
   <script>
     var nav = $(".custom_sidenav-container ");
     var btn = $(".custom_menu-btn");
@@ -323,10 +322,10 @@
       autoWidth: true,
       items: 3
     });
-  </script>
-        {{ form.media }}
+   </script>
 
-
+{% block form_media %}
+{% endblock form_media %}
 </body>
 
 </html>

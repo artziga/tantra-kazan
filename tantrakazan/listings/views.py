@@ -15,7 +15,7 @@ class OfferCreateView(DataMixin, CreateView):
     model = Listing
     form_class = CreateOfferForm
     template_name = 'listings/profile.html'
-    success_url = reverse_lazy('users:therapist_profile')
+    success_url = reverse_lazy('users:profile')
 
     def form_valid(self, form):
         listing = form.save(commit=False)
@@ -43,7 +43,7 @@ class OfferUpdateView(OfferCreateView, UpdateView):
 def remove_offer(request, pk):
     offer = Listing.objects.get(pk=pk)
     offer.delete()
-    return redirect('users:therapist_profile')
+    return redirect('users:profile')
 
 
 class ListingListView(DataMixin, ListView):

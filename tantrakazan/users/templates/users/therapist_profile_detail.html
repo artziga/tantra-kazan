@@ -107,10 +107,12 @@
 
 {% include 'feedback/comments.html' %}
 
-{% block script %}
 
-  <!-- end galley section -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'main/js/jquery-3.4.1.min.js' %}"></script>
 
   <script> $(document).ready(function () {
   $("#bookmark-form").submit(function (event) {
@@ -148,10 +150,6 @@
 });
 </script>
 
-{% endblock script %}
-
-{% endblock content %}
-
-
+{% endblock scripts %}
 
 

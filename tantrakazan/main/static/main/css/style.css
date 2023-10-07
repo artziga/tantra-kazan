@@ -886,6 +886,45 @@ a:focus {
   margin-top: 45px;
 }
 
+.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.input-group {
+    flex: 1;
+    margin-right: 10px;
+}
+.form-group input[type="checkbox"] {
+    display: none;
+}
+
+/* Стилизация кастомных чекбоксов */
+.form-group .custom-checkbox {
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+}
+
+/* Значок глаза для неотмеченного чекбокса */
+.form-group .custom-checkbox::before {
+    content: "👁️"; /* Здесь можете использовать другой значок */
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Значок глаза для отмеченного чекбокса */
+.form-group .custom-checkbox input:checked + .custom-label::before {
+    content: "👁️"; /* Здесь можете использовать другой значок */
+    color: #007bff; /* Цвет при активации */
+}
+
 .contact_section .contact_form-container input {
   border: none;
   outline: none;
@@ -923,6 +962,8 @@ a:focus {
   height: 120px;
 }
 
+
+
 .contact_section .contact_form-container select {
   border: none;
   outline: none;
@@ -956,8 +997,7 @@ a:focus {
 }
 
 
-.contact_section .contact_form-container button,
-.contact_section .contact_form-container a {
+.contact_section .contact_form-container button {
   display: inline-block;
   padding: 10px 50px;
   background-color: #fee0cd;

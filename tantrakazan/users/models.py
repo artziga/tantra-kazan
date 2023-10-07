@@ -80,7 +80,8 @@ class TherapistProfile(models.Model):
 
     @property
     def age_display(self):
-        return f'{str(self.age)} {self.years_suffix(self.age)}'
+        if self.age:
+            return f'{str(self.age)} {self.years_suffix(self.age)}'
 
     @property
     def experience_display(self):

@@ -1,3 +1,5 @@
+import logging
+
 from ckeditor.widgets import CKEditorWidget
 from django import forms
 
@@ -35,10 +37,25 @@ class TherapistDataForm(forms.Form):
     experience = forms.IntegerField(required=False, label='Опыт',
                                     widget=forms.NumberInput(attrs={'placeholder': 'Опыт'}))
 
+    def clean(self):
+        cleaned_data = super().clean()
+        massage_to_male_or_female = cleaned_data.pop('massage_to_male_or_female')
+        if massage_to_male_or_female is True:
+            cleaned_data['massage_to_female'] = False
+            cleaned_data['massage_to_male'] = True
+        elif massage_to_male_or_female is False:
+            cleaned_data['massage_to_male'] = False
+            cleaned_data['massage_to_female'] = True
+        else:
+            cleaned_data['massage_to_male'] = True
+            cleaned_data['massage_to_female'] = True
+        logging.info(f'cleaned data {cleaned_data}')
+        return cleaned_data
+
 
 class AboutForm(forms.Form):
     short_description = forms.CharField(required=False, label='О себе', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Короткое описание'}))
+        attrs={'class': 'form_input', 'placeholder': 'Короткое описание'}))
     description = forms.CharField(required=False, label='О себе', widget=CKEditorWidget(
         attrs={'class': 'form-input', 'placeholder': 'О себе'}))
 
@@ -46,16 +63,23 @@ class AboutForm(forms.Form):
 class ContactDataForm(forms.Form):
     address = forms.CharField(required=False, label='Адрес', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
-    show_address = forms.BooleanField(required=False)
     phone_number = forms.CharField(required=False, label='Телефон', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Телефон'}))
-    show_phone_number = forms.BooleanField(required=False, label='Показывать номер')
     telegram_profile = forms.CharField(required=False, label='Телеграм', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Телеграм'}))
-    show_telegram_profile = forms.BooleanField(required=False, label='Показывать ссылку на телеграмм')
     instagram_profile = forms.CharField(required=False, label='Инстаграм', widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Инстаграм'}))
-    show_instagram_profile = forms.BooleanField(required=False, label='Показывать ссылку на инстаграмм')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        address = cleaned_data['address']
+        if address:
+            raw_address = 'Казань, ' + cleaned_data['address']
+            place = Locator(raw_place=raw_address)
+            cleaned_data['address'] = place.location
+            cleaned_data['latitude'] = place.location.point.latitude
+            cleaned_data['longitude'] = place.location.point.longitude
+        return cleaned_data
 
 
 class ActivateProfileForm(forms.Form):

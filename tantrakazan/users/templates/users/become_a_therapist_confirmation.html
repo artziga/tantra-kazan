@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+  <h1>Добро пожаловать</h1>
+  <p>Вы действительно хотите завести анкету массажиста?</p>
+    <a href="{% url 'users:become_a_therapist_confirmation' %}">Да, заполнить анкету</a>
+    <a href="{% url 'users:profile' %}">Нет</a>
+{% endblock %}
+
+
+
+
+
+

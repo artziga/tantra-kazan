@@ -26,7 +26,7 @@ class DataMixin:
         }
         if user.is_authenticated:
             if not user.is_therapist:
-                create_therapist_profile_button['url_name'] = 'users:therapist_profile_completion'
+                create_therapist_profile_button['url_name'] = 'users:become_a_therapist'
                 user_menu.insert(0, create_therapist_profile_button)
         else:
             create_therapist_profile_button['url_name'] = 'accounts:therapist_registration'

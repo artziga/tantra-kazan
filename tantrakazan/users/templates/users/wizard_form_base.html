@@ -1,0 +1,37 @@
+{% extends "main/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+
+{% block content %}
+<!-- contact section -->
+<title>{{ title }}</title>
+<section class="contact_section layout_padding layout_padding-left">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="contact_form-container">
+            {% block form %}
+            {% endblock form %}
+            </div>
+      </div>
+      <div class="col-md-6 col-lg-5 offset-lg-1">
+        <div class="img-box">
+          <img src="{% static 'main/images/contact-img.jpg' %}" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  // Настройка автодополнения адресов
+  ymaps.ready(function () {
+    var addressInput = new ymaps.SuggestView('addressInput');
+  });
+</script>
+<!-- end contact section -->
+{% endblock content %}
