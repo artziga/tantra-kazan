@@ -79,6 +79,20 @@ class TherapistProfile(models.Model):
         return 'лет'
 
     @property
+    def display_years_suffix(self):
+        if not self.age:
+            return
+        return self.years_suffix(self.age) or None
+
+    @property
+    def display_experience_suffix(self):
+        if self.experience == 0:
+            return 'года'
+        if not self.experience:
+            return
+        return self.years_suffix(int(self.experience)) or None
+
+    @property
     def age_display(self):
         if self.age:
             return f'{str(self.age)} {self.years_suffix(self.age)}'

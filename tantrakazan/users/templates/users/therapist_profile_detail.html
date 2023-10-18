@@ -19,7 +19,7 @@
 <form method="post" action="{% url 'feedback:bookmark' therapist.pk content_type_id %}" class="bookmark-form" id="bookmark-form">
   {% csrf_token %}
   <input type="hidden" name="action" value="{% if is_bookmarked %}remove{% else %}add{% endif %}">
-  <input type="image" src="{% if is_bookmarked %}{% static 'main/images/bookmark-on-icon.png' %}{% else %}{% static 'main/images/bookmark-off-icon.png' %}{% endif %}" height="20" alt="Отправить" id="bookmark-button">
+  <input type="image" src="{% if is_bookmarked %}{% static 'main/images/like-on.svg' %}{% else %}{% static 'main/images/like-off.svg' %}{% endif %}" height="20" alt="Отправить" id="bookmark-button">
 </form>
 {% else %}
   <p>Чтобы добавить в закладки, войдите в систему.</p>
@@ -27,24 +27,22 @@
 
 
 
-
-
+ <div class="container">
                 <div class="row align-items-center flex-row-reverse">
                     <div class="col-lg-6">
                         <div class="about-text go-to">
-                            <h3 class="dark-color">{{therapist.username}}</h3>
-                            <h3 class="dark-color">{{therapist.is_therapist}}</h3>
-                            <h6 class="theme-color lead">{{therapist.therapist_profile.short_description}}</h6>
+                            <h3 class="dark-color">{{user.username}}</h3>
+                            <h6 class="theme-color lead">{{user.therapist_profile.short_description}}</h6>
                             <div class="row about-list">
                                 <div class="col-md-6">
-                                    {% if therapist.therapist_profile.birth_date %}
+                                    {% if user.therapist_profile.birth_date %}
                                     <div class="media">
                                         <label>День рождения</label>
-                                        <p>{{therapist.therapist_profile.birth_date}}</p>
+                                        <p>{{user.therapist_profile.birth_date}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Возраст</label>
-                                        <p>{{therapist.therapist_profile.str_age}}</p>
+                                        <p>{{user.therapist_profile.str_age}}</p>
                                     </div>
                                     {% endif %}
                                     <div class="media">
@@ -53,31 +51,32 @@
                                     </div>
                                     <div class="media">
                                         <label>Адрес</label>
-                                        <p>{{therapist.therapist_profile.address}}</p>
+                                        <p>{{user.therapist_profile.address}}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="media">
                                         <label>E-mail</label>
-                                        <p>{{therapist.email}}</p>
+                                        <p>{{user.email}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Телефон</label>
-                                        <p>{{therapist.therapist_profile.phone_number}}</p>
+                                        <p>{{user.therapist_profile.phone_number}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Телеграм</label>
-                                        <p>{{therapist.therapist_profile.telegram_profile}}</p>
+                                        <p>{{user.therapist_profile.telegram_profile}}</p>
                                     </div>
                                     <div class="media">
                                         <label>Инстаграм</label>
-                                        <p>{{therapist.therapist_profile.instagram_profile}}</p>
+                                        <p>{{user.therapist_profile.instagram_profile}}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+
+                <div class="row align-items-center flex-row-reverse">
                         <div class="about-avatar">
                             {% if therapist.avatar %}
                             <img src="{{ therapist.avatar.image.url }}" height="400" title="" alt="">
@@ -112,7 +111,6 @@
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'main/js/jquery-3.4.1.min.js' %}"></script>
 
   <script> $(document).ready(function () {
   $("#bookmark-form").submit(function (event) {
@@ -134,10 +132,10 @@
         // Обновите изображение на кнопке
         var button = $("#bookmark-button");
         if (data.result) {
-          button.attr("src", "{% static 'main/images/bookmark-on-icon.png' %}");
+          button.attr("src", "{% static 'main/images/like-on.svg' %}");
           button.attr("alt", "Удалить из закладок");
         } else {
-          button.attr("src", "{% static 'main/images/bookmark-off-icon.png' %}");
+          button.attr("src", "{% static 'main/images/like-off.svg' %}");
           button.attr("alt", "Добавить в закладки");
         }
       },

@@ -54,8 +54,6 @@ class TherapistDataForm(forms.Form):
 
 
 class AboutForm(forms.Form):
-    short_description = forms.CharField(required=False, label='О себе', widget=forms.TextInput(
-        attrs={'class': 'form_input', 'placeholder': 'Короткое описание'}))
     description = forms.CharField(required=False, label='О себе', widget=CKEditorWidget(
         attrs={'class': 'form-input', 'placeholder': 'О себе'}))
 

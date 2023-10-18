@@ -7,9 +7,9 @@
       <h3 class="contact-name">{{ therapist }}</h3>
         </a>
       {% if therapist.avatar %}
-        <img src="{{ therapist.avatar.url }}"alt="">
+        <img src="{{ therapist.avatar.thumbnail.url }}" alt="">
         {% else %}
-        <img src="{% static 'users/images/profile-icon.png' %}" height="258" title="" alt="">
+        <img src="{% static 'users/images/profile-icon.png' %}"  title="" alt="">
         {% endif %}
       <div class="contact-btn-container">
       <button class="contact-btn">Написать</button>
@@ -68,14 +68,16 @@
 
 
     <div class="contact-description">
-            <div class="top-info">
+        <div class="top-info">
     <h4 class="user-info-title">Информация о пользователе</h4>
     <div class="rating">
         {% ratings therapist %}
         Отзывов: {{ therapist.comments_count }}
     </div>
     </div>
-      <p>{{ therapist.therapist_profile.description }}</p>
+        <div>
+      <p>{{ therapist.therapist_profile.short_description }}</p>
+    </div>
     </div>
   </div>
 

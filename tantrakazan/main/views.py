@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.models import ContentType
+
 from listings.models import Listing
 from main.models import User
 
@@ -16,6 +18,8 @@ class IndexListView(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Главная')
+        content_type = ContentType.objects.get_for_model(self.request.user)
+        context['content_type_id'] = content_type.pk
         return dict(list(context.items()) + list(context_def.items()))
 
 

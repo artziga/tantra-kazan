@@ -542,7 +542,7 @@ a:focus {
   -webkit-transition: all .3s;
   transition: all .3s;
   border: 1px solid transparent;
-  margin-top: 35px;
+  margin-top: 10px;
 }
 
 .about_section .box .detail-box a:hover {
@@ -571,7 +571,7 @@ a:focus {
   display: -ms-flexbox;
   display: flex;
   padding-left: 10%;
-  margin-top: 45px;
+  margin-top: 5px;
   position: relative;
 }
 
@@ -641,7 +641,7 @@ a:focus {
 
 .spl_section .owl-carousel .owl-nav {
   position: absolute;
-  top: 23%;
+  top: 30%;
   left: 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1278,5 +1278,16 @@ a:focus {
   text-decoration: none;
 }
 
+
+.contact {
+  height: 100%; /* Максимальная высота изображений равна высоте родительского блока */
+  width: auto; /* Ширина рассчитывается автоматически для сохранения пропорций */
+  margin: 0 5px; /* Небольшие отступы между изображениями */
+  cursor: pointer;
+}
+
+.like {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=style.css.map */

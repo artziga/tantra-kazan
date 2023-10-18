@@ -29,7 +29,8 @@
   <link href="{% static 'main/css/style.css' %}" rel="stylesheet" />
   <!-- filter style -->
   <!-- profile card style -->
-<!--  <link href="{% static 'main/css/profile_card.css' %}" rel="stylesheet" />-->
+  <link href="{% static 'main/css/profile_card.css' %}" rel="stylesheet" />
+  <link href="{% static 'main/css/profile.css' %}" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'main/css/card.css' %}">
   <link href="{% static 'main/css/offers.css' %}" rel="stylesheet" />
   <!-- responsive style -->
@@ -301,6 +302,9 @@
 
 
   <script src="{% static 'main/js/jquery-3.4.1.min.js' %}"></script>
+{% block scripts %}
+{% endblock scripts %}
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
   <script>
     var nav = $(".custom_sidenav-container ");
@@ -323,6 +327,7 @@
       items: 3
     });
    </script>
+
 
 {% block form_media %}
 {% endblock form_media %}

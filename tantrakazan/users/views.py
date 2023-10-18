@@ -253,7 +253,8 @@ class TherapistListView(DataMixin, FilterFormMixin, ListView):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Специалисты')
         filter_params, parameters = self.filter_parameters()
-        context['filter_form'] = TherapistFilterForm(initial=parameters),
+        context['filter_form'] = TherapistFilterForm(initial=parameters)
+        context['content_type_id'] = ContentType.objects.get_for_model(User).pk
         return {**context, **context_def}
 
     def get_queryset(self):

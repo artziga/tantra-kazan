@@ -103,8 +103,22 @@
   transition: left 0.5s ease, opacity 0.5s ease;
   z-index: 1;
   display: flex;
+  flex-direction: column; /* Установите вертикальное направление элементов */
+  align-items: flex-start; /* Разместите элементы в начале контейнера по горизонтали */
+}
+
+.user-info-title {
+  margin: 0;
+}
+
+.rating {
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* Выравниваем элементы по правому краю */
+}
+
+.rating p {
+  margin-left: 10px; /* Добавляем отступ между текстом и рейтингом */
 }
 
 .contact-card:hover .contact-right {

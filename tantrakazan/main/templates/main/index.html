@@ -90,9 +90,11 @@
       </div>
     </div>
     <div class="spl_container">
-      <div class="owl-carousel owl-theme">
+      <div class="owl-carousel">
         {% for therapist in therapists %}
-           {% include 'users/profile_card.html' %}
+        <div class="spl-card">
+           {% include 'users/profile_card2.html' %}
+        </div>
           {% endfor %}
 
       </div>

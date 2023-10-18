@@ -240,7 +240,7 @@ class Avatar(BaseImage):
     image = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
     thumbnail = ImageSpecField(source='image',
                                processors=[CropFaceProcessor(margin_percent=0.6),
-                                           Thumbnail(100, 100)],
+                                           Thumbnail(250, 250)],
                                format='JPEG',
                                options={'quality': 90})
     mini_thumbnail = ImageSpecField(source='image',
