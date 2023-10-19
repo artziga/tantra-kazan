@@ -13,7 +13,7 @@ urlpatterns = [
     path('therapist/<str:therapist_username>/', views.TherapistProfileDetailView.as_view(), name='therapist_profile1'),
     path('avatar/', views.AddAvatar.as_view(), name='add_avatar'),
     path('edit_profile/', views.TherapistProfileWizard.as_view(), name='edit_profile'),
-    path('therapists/', views.TherapistListView.as_view(), name='therapists'),
+    path('therapists/', views.SpecialistsListView.as_view(), name='therapists'),
     path('therapists/on_map', views.TherapistOnMapListView.as_view(), name='therapists_on_map'),
 ]
 

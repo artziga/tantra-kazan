@@ -19,7 +19,8 @@ from users.forms import (TherapistProfileForm,
                          ContactDataForm,
                          AboutForm,
                          ActivateProfileForm,
-                         TherapistFilterForm)
+                         TherapistFilterForm,
+                         OrderingForm)
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from gallery.photo_processor import CropFace
 from gallery.models import Gallery, Avatar
@@ -244,27 +245,31 @@ class TherapistProfileDetailView(ProfileView):
         return ['users/therapist_profile_detail.html']
 
 
-class TherapistListView(DataMixin, FilterFormMixin, ListView):
+class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
     model = User
-    template_name = 'users/therapist_list.html'
-    context_object_name = 'therapists'
+    paginate_by = 20
+    template_name = 'users/specialists_list.html'
+    context_object_name = 'specialists'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Специалисты')
         filter_params, parameters = self.filter_parameters()
         context['filter_form'] = TherapistFilterForm(initial=parameters)
+        context['ordering_form'] = OrderingForm(initial={'order_by': '-age'})
         context['content_type_id'] = ContentType.objects.get_for_model(User).pk
         return {**context, **context_def}
 
     def get_queryset(self):
-        active_therapists = User.objects.with_comments_count()
-        sorted_users = active_therapists.filter(ratings__isnull=False).order_by('-ratings__average')
+        specialists = User.objects.with_comments_count()
+        sorted_users = specialists.filter(ratings__isnull=False).order_by('-ratings__average')
+
+        print(specialists.values('ratings__average').all())
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(sorted_users)
         return queryset
 
 
-class TherapistOnMapListView(TherapistListView):
-    template_name = 'users/therapists_on_map.html'
+class TherapistOnMapListView(SpecialistsListView):
+    template_name = 'users/specialists_on_map.html'

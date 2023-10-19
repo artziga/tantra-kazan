@@ -4112,11 +4112,26 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 .shop-products.grid .payne-product-list {
   display: none; }
 
+.shop-products.grid .payne-product-map {
+display: none; }
+
 .shop-products.list .payne-product {
   display: none; }
 
+
+
+
 .shop-products.list .payne-product-list {
   display: block; }
+
+.shop-products.map .payne-product-map {
+  display: block; }
+
+.shop-products.map .payne-product {
+  display: none; }
+
+.shop-products.map .payne-product-list {
+  display: none; }
 
 .shop-products.list .row > [class^="col"] {
   -webkit-flex-basis: 100%;

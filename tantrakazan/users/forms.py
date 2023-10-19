@@ -139,25 +139,11 @@ class TherapistProfileForm(CreateAvatarForm):
 
 
 class TherapistFilterForm(forms.Form):
-    min_age = forms.IntegerField(required=False, label='',
-                                 widget=forms.NumberInput(attrs={'placeholder': 'Возраст от'}))
-    max_age = forms.IntegerField(required=False, label='',
-                                 widget=forms.NumberInput(attrs={'placeholder': 'Возраст до'}))
     gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
         choices=((None, 'Не выбрано'), (True, 'Мужчина'), (False, 'Женщина'))))
-    massage_to_male_or_female = forms.NullBooleanField(required=False, label='массаж мужчинам',
-                                                       widget=forms.Select(
-                                                           choices=((None, 'Не выбрано'),
-                                                                    (True, 'Мужчинам'),
-                                                                    (False, 'Женщинам'))))
-    min_height = forms.IntegerField(required=False, label='',
-                                    widget=forms.NumberInput(attrs={'placeholder': 'Рост от'}))
-    max_height = forms.IntegerField(required=False, label='',
-                                    widget=forms.NumberInput(attrs={'placeholder': 'Рост до'}))
-    min_weight = forms.IntegerField(required=False, label='',
-                                    widget=forms.NumberInput(attrs={'placeholder': 'Вес от'}))
-    max_weight = forms.IntegerField(required=False, label='',
-                                    widget=forms.NumberInput(attrs={'placeholder': 'Вес до'}))
+    massage_to_male_or_female = forms.BooleanField(required=False, label='массаж мужчинам',
+                                                   widget=forms.CheckboxInput(
+                                                   ))
     min_experience = forms.IntegerField(required=False, label='Опыт',
                                         widget=forms.NumberInput(attrs={'placeholder': 'Опыт от'}))
 
@@ -203,3 +189,22 @@ class TherapistFilterForm(forms.Form):
             filters['therapist_profile__gender'] = gender
         queryset = queryset.filter(**filters).distinct()
         return queryset
+
+
+ORDERINGS = (('random', 'Случайная сортировка'),
+             ('ratings__average', 'Рейтинг'),
+             ('-price', 'Цена ↑'),
+             ('price', 'Цена ↓'),
+             ('-age', 'Возраст ↑'),
+             ('age', 'Возраст ↓'),
+             ('experience', 'Опыт'),
+             ('comments_count', 'Количество отзывов'),
+             ('added', 'Сначала новые'))
+
+
+class OrderingForm(forms.Form):
+    order_by = forms.ChoiceField(
+        label='',
+        widget=forms.Select(attrs={'class': 'product-ordering__select nice-select'}),
+        choices=ORDERINGS
+    )
