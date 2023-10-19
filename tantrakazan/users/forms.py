@@ -139,13 +139,14 @@ class TherapistProfileForm(CreateAvatarForm):
 
 
 class TherapistFilterForm(forms.Form):
-    gender = forms.NullBooleanField(required=False, label='', widget=forms.Select(
-        choices=((None, 'Не выбрано'), (True, 'Мужчина'), (False, 'Женщина'))))
-    massage_to_male_or_female = forms.BooleanField(required=False, label='массаж мужчинам',
-                                                   widget=forms.CheckboxInput(
-                                                   ))
-    min_experience = forms.IntegerField(required=False, label='Опыт',
-                                        widget=forms.NumberInput(attrs={'placeholder': 'Опыт от'}))
+    gender_male = forms.BooleanField(label='Мужчина', widget=forms.CheckboxInput())
+    gender_female = forms.BooleanField(label='Женщина', widget=forms.CheckboxInput())
+    massage_to_male = forms.BooleanField(label='Массаж мужчинам', widget=forms.CheckboxInput())
+    massage_to_female = forms.BooleanField(label='Массаж женщинам', widget=forms.CheckboxInput())
+    massage_to_couples = forms.BooleanField(label='Массаж парам', widget=forms.CheckboxInput())
+    price_lte_3000 = forms.BooleanField(label='₽1000 - ₽3000', widget=forms.CheckboxInput())
+    price_3000_7000 = forms.BooleanField(label='₽3000 - ₽7000', widget=forms.CheckboxInput())
+    price_gte_7000 = forms.BooleanField(label='₽7000 - ₽20000', widget=forms.CheckboxInput())
 
     def get_query_params(self):
         query_params = {}

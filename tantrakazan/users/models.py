@@ -28,6 +28,7 @@ class TherapistProfile(models.Model):
                                  choices=((True, 'Мужчина'), (False, 'Женщина')))
     massage_to_male = models.BooleanField(verbose_name='массаж мужчинам', default=True, blank=True)
     massage_to_female = models.BooleanField(verbose_name='женщинам', default=True, blank=True)
+    massage_to_couples = models.BooleanField(verbose_name='парам', default=True, blank=True)
     birth_date = models.DateField(verbose_name='Возраст', blank=True, null=True)
     height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True, blank=True)
     weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True, blank=True)

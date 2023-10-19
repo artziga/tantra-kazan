@@ -255,7 +255,7 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Специалисты')
         filter_params, parameters = self.filter_parameters()
-        context['filter_form'] = TherapistFilterForm(initial=parameters)
+        context['filter_form'] = TherapistFilterForm()
         context['ordering_form'] = OrderingForm(initial={'order_by': '-age'})
         context['content_type_id'] = ContentType.objects.get_for_model(User).pk
         return {**context, **context_def}
@@ -268,7 +268,7 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(sorted_users)
-        return queryset
+        return sorted_users
 
 
 class TherapistOnMapListView(SpecialistsListView):
