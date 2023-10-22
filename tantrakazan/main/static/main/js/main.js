@@ -724,6 +724,12 @@
         });
     });
 
+     $(document).ready(function() {
+        $('#id_order_by').on('change', function() {
+            $('#ordering-form').submit();
+        });
+    });
+
 	/**********************
 	*Sticky Sidebar
 	***********************/

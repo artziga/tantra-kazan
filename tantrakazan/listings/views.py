@@ -50,7 +50,7 @@ class ListingListView(DataMixin, ListView):
     model = Listing
     template_name = 'listings/listings_list.html'
     context_object_name = 'listings'
-    queryset = Listing.objects.filter(is_active=True)
+    queryset = Listing.objects.all()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -14,9 +14,8 @@
                                     <div class="col-md-5 mb-sm--30 mb-xs--10">
                                         <div class="shop-toolbar__left">
                                             <div class="product-ordering">
-                                                <form method="get">
-                                                    {{ ordering_form }}
-                                                </form>
+                                                <form method="get" id="ordering-form">
+                                                    {{ filter_form.order_by }}
                                             </div>
                                         </div>
                                     </div>
@@ -55,84 +54,48 @@
 
                         <div class="col-xl-3 col-lg-4 order-lg-1">
                             <aside class="shop-sidebar">
-                                <form method="get">
                                     <div class="shop-widget mb--40">
                                         <h3 class="widget-title mb--25">Пол</h3>
                                         <ul class="widget-list category-list">
+                                            {% for field in filter_form.gender %}
                                             <li class="category-title">
-                                                {{ filter_form.gender_male }}
+
+                                                {{ field }}
                                                 <span class="category-title">
-                                                {{ filter_form.gender_male.label }}
+                                                {{ field.label }}
                                                 </span>
                                                     <i class="fa fa-angle-double-right"></i>
                                             </li>
-                                            <li class="category-title">
-                                                {{ filter_form.gender_female }}
-                                                <span class="category-title">
-                                                {{ filter_form.gender_female.label }}
-                                                </span>
-                                                    <i class="fa fa-angle-double-right"></i>
-                                            </li>
+                                            {% endfor %}
 
                                         <div class="shop-widget mb--40">
                                         <h3 class="widget-title mb--25">Для кого массаж</h3>
                                         <ul class="widget-list category-list">
+                                            {% for field in filter_form.massage_for %}
                                             <li class="category-title">
-                                                {{ filter_form.massage_to_male }}
+                                                {{ field }}
                                                 <span class="category-title">
-                                                {{ filter_form.massage_to_male.label }}
+                                                {{ field.label }}
                                                 </span>
                                                     <i class="fa fa-angle-double-right"></i>
                                             </li>
-                                            <li class="category-title">
-                                                {{ filter_form.massage_to_female }}
-                                                <span class="category-title">
-                                                {{ filter_form.massage_to_female.label }}
-                                                </span>
-                                                    <i class="fa fa-angle-double-right"></i>
-                                            </li>
-                                            <li class="category-title">
-                                                {{ filter_form.massage_to_couples }}
-                                                <span class="category-title">
-                                                {{ filter_form.massage_to_couples.label }}
-                                                </span>
-                                                    <i class="fa fa-angle-double-right"></i>
-                                            </li>
+                                            {% endfor %}
                                     <div class="shop-widget mb--40">
                                         <h3 class="widget-title mb--25">Цена</h3>
                                         <ul class="widget-list price-list">
+                                            {% for field in filter_form.price %}
                                             <li>
-                                                    {{ filter_form.price_lte_3000 }}
-                                                    <strong class="font-weight-medium">{{ filter_form.price_lte_3000.label }}</strong>
+                                                    {{ field }}
+                                                    <strong class="font-weight-medium">{{ field.label }}</strong>
                                             </li>
-                                            <li>
-                                                    {{ filter_form.price_3000_7000 }}
-                                                    <strong class="font-weight-medium">{{ filter_form.price_3000_7000.label }}</strong>
-                                            </li>
-                                            <li>
-                                                    {{ filter_form.price_gte_7000 }}
-                                                    <strong class="font-weight-medium">{{ filter_form.price_gte_7000.label }}</strong>
-                                            </li>
+                                            {% endfor %}
                                         </ul>
                                     </div>
-
-                                <div class="shop-widget">
-                                    <h3 class="widget-title mb--25">Удобства</h3>
-                                    <div class="tagcloud">
-                                        <a href="shop.html">Cloth</a>
-                                        <a href="shop.html">Blazer</a>
-                                        <a href="shop.html">Jacket</a>
-                                        <a href="shop.html">Polo Shirt</a>
-                                        <a href="shop.html">T-Shirt</a>
-                                        <a href="shop.html">Shoes</a>
-                                        <a href="shop.html">Pant</a>
-                                        <a href="shop.html">Party Dress</a>
-                                        <a href="shop.html">Coktail Dress</a>
-                                        <a href="shop.html">Sweater</a>
-                                        <a href="shop.html">Jeans</a>
-                                    </div>
-                                </div>
+                                <button class="btn btn-size-sm" type="submit">Показать</button>
+                                            <a href="{% url 'users:therapists' %}" class="btn btn-size-sm">Cбросить</a>
                                 </form>
+
+
 
                             </aside>
                         </div>

@@ -3,6 +3,7 @@
 
 {% block payne_card %}
 <div class="col-xl-4 col-sm-6 mb--50">
+<!--    карточка в сетке   -->
     <div class="payne-product">
         <div class="product__inner">
             <div class="product__image">
@@ -11,21 +12,9 @@
                 </figure>
                 <a href="product-details.html" class="product__overlay"></a>
                 <div class="product__action">
-                    <a data-toggle="modal" data-target="#productModal" class="action-btn">
-                        <i class="fa fa-eye"></i>
-                        <span class="sr-only">Quick View</span>
-                    </a>
                     <a href="wishlist.html" class="action-btn">
                         <i class="fa fa-heart-o"></i>
                         <span class="sr-only">Add to wishlist</span>
-                    </a>
-                    <a href="compare.html" class="action-btn">
-                        <i class="fa fa-repeat"></i>
-                        <span class="sr-only">Add To Compare</span>
-                    </a>
-                    <a href="cart.html" class="action-btn">
-                        <i class="fa fa-shopping-cart"></i>
-                        <span class="sr-only">Add To Cart</span>
                     </a>
                 </div>
             </div>
@@ -38,7 +27,7 @@
                         {{ specialist.therapist_profile.age_display }}
                     </h3>
                     <div class="product__price">
-                        <span class="money">от 3000</span>
+                        <span class="money">от {{specialist.min_price}}</span>
                         <span class="sign">₽</span>
                     </div>
                 </div>
@@ -46,22 +35,20 @@
                     <span class="product__rating">
                         {% rating specialist.ratings.first.average %}
                     </span>
+                    <p>Отзывов: {{ specialist.comments_count }}</p>
                 </div>
+
             </div>
         </div>
     </div>
+    <!--    карточка в списке   -->
+
     <div class="payne-product-list">
         <div class="product__inner">
             <figure class="product__image">
                 <a href="product-details.html" class="d-block">
                     <img src="{{ specialist.avatar.thumbnail.url }}" alt="Products">
                 </a>
-                <div class="product__thumbnail-action">
-                    <a data-toggle="modal" data-target="#productModal" class="action-btn quick-view">
-                        <i class="fa fa-eye"></i>
-                        <span class="sr-only">Quick View</span>
-                    </a>
-                </div>
             </figure>
             <div class="product__info">
                 <h3 class="product__title">
@@ -71,19 +58,21 @@
                     {{ specialist.therapist_profile.age_display }}
                 </h3>
                 <div class="product__price">
-                    <span class="money">от 3000</span>
+                    <span class="money">от {{specialist.min_price}}</span>
                     <span class="sign">₽</span>
                 </div>
                 <span class="product__rating">
                     {% rating specialist.ratings.first.average %}
+                    <p>Отзывов: {{ specialist.comments_count }}</p>
                 </span>
-                <p class="product__short-description">
-                                        {{specialist.therapist_profile.address}}
 
-                    Donec accumsan auctor iaculis. Sed suscipit arcu ligula, at egestas magna molestie a. Proin ac ex maximus, ultrices justo eget, sodales orci. Aliquam egestas libero ac turpis pharetra
-                </p>
+                <p>
+                    <img src="{% static 'main/img/icons/marker.png' %}" alt="marker" style="width: 15px; height: 15px;">
+                    {{specialist.therapist_profile.address}}</p>
+                <p class="product__short-description">
+                        {{specialist.therapist_profile.description|truncatechars:250}}</p>
                 <div class="d-flex product__list-action">
-                    <a href="cart.html" class="btn btn-size-sm">Add To Cart</a>
+                    <a href="cart.html" class="btn btn-size-sm">Подробнее</a>
                     <a href="compare.html" class="action-btn">
                         <i class="fa fa-repeat"></i>
                         <span class="sr-only">Add To Compare</span>

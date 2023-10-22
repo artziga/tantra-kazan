@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
@@ -20,7 +21,7 @@ from users.forms import (TherapistProfileForm,
                          AboutForm,
                          ActivateProfileForm,
                          TherapistFilterForm,
-                         OrderingForm)
+                         OrderingForm, MassageForForm, FeaturesForm)
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from gallery.photo_processor import CropFace
 from gallery.models import Gallery, Avatar
@@ -254,21 +255,22 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Специалисты')
-        filter_params, parameters = self.filter_parameters()
-        context['filter_form'] = TherapistFilterForm()
-        context['ordering_form'] = OrderingForm(initial={'order_by': '-age'})
+        context['filter_form'] = TherapistFilterForm(initial=self.request.GET)
         context['content_type_id'] = ContentType.objects.get_for_model(User).pk
         return {**context, **context_def}
 
     def get_queryset(self):
-        specialists = User.objects.with_comments_count()
+        specialists = User.objects.annotate(
+            comments_count=Count('comments'),
+            min_price=F('therapist_profile__basicserviceprice__home_price') #TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
+            )
         sorted_users = specialists.filter(ratings__isnull=False).order_by('-ratings__average')
-
-        print(specialists.values('ratings__average').all())
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(sorted_users)
-        return sorted_users
+        else:
+            logging.error(form.errors)
+        return queryset
 
 
 class TherapistOnMapListView(SpecialistsListView):

@@ -14,19 +14,19 @@
         });
 
 
-{% for therapist in therapists %}
+{% for specialist in specialists %}
 
             // Создаём макет содержимого.
 MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-    '<div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;"><img src="{{ therapist.avatar.mini_thumbnail.url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;"></div>'
+    '<div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;"><img src="{{ specialist.avatar.mini_thumbnail.url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;"></div>'
 ),
 
 
 myPlacemark = new ymaps.Placemark(
-    {{therapist.therapist_profile.point}},
+    {{specialist.therapist_profile.point}},
     {
-        hintContent: '{{ therapist.therapist_profile.address }}',
-        balloonContent: '{{ therapist }}',
+        hintContent: '{{ specialist.therapist_profile.address }}',
+        balloonContent: '{{ specialist }}',
 
     },
     {

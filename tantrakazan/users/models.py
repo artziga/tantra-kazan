@@ -8,6 +8,7 @@ from star_ratings.models import Rating
 from ckeditor.fields import RichTextField
 
 from feedback.models import Comment
+from listings.models import MassageFor, Feature, BasicServicePrice, BasicService
 from tantrakazan.settings import AUTH_USER_MODEL as USER
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -23,12 +24,14 @@ class TherapistProfile(models.Model):
         USER,
         on_delete=models.CASCADE,
 
-        related_name='therapist_profile')
+        related_name='therapist_profile',
+        related_query_name='therapist_profile'
+    )
     gender = models.BooleanField(verbose_name='Пол', null=True, blank=True,
                                  choices=((True, 'Мужчина'), (False, 'Женщина')))
-    massage_to_male = models.BooleanField(verbose_name='массаж мужчинам', default=True, blank=True)
-    massage_to_female = models.BooleanField(verbose_name='женщинам', default=True, blank=True)
-    massage_to_couples = models.BooleanField(verbose_name='парам', default=True, blank=True)
+    massage_for = models.ManyToManyField(MassageFor)
+    basic_services = models.ManyToManyField(BasicService, blank=True)
+    features = models.ManyToManyField(Feature, blank=True)
     birth_date = models.DateField(verbose_name='Возраст', blank=True, null=True)
     height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True, blank=True)
     weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True, blank=True)
@@ -36,15 +39,10 @@ class TherapistProfile(models.Model):
     address = models.CharField(max_length=200, verbose_name='Адрес', null=True, blank=True)
     latitude = models.FloatField(verbose_name='широта', null=True, blank=True)
     longitude = models.FloatField(verbose_name='долгота', null=True, blank=True)
-    show_address = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20, verbose_name='Номер телефона', null=True, blank=True)
-    show_phone_number = models.BooleanField(default=True)
     telegram_profile = models.CharField(max_length=20, verbose_name='Телеграмм', null=True, blank=True)
-    show_telegram_profile = models.BooleanField(default=True)
     instagram_profile = models.CharField(max_length=20, verbose_name='Инстаграм', null=True, blank=True)
-    show_instagram_profile = models.BooleanField(default=True)
-    short_description = models.TextField(verbose_name='Короткое описание', null=True, blank=True)
-    description = RichTextField(verbose_name='О себе', null=True, blank=True)
+    description = models.TextField(verbose_name='О себе', null=True, blank=True)
     is_profile_active = models.BooleanField(default=True)
     ratings = GenericRelation(Rating, related_query_name='therapists')
 
