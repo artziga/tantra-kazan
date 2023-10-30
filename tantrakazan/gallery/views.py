@@ -52,7 +52,7 @@ class GalleryDeleteView(DeleteView):
 
 class AddPhotosView(DataMixin, FormView):
     form_class = AddPhotoForm
-    template_name = 'users/profile.html'
+    template_name = 'main/form.html'
     success_url = reverse_lazy('users:profile')
 
     def get_context_data(self, *, object_list=None, **kwargs):

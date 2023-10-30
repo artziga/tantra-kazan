@@ -30,6 +30,7 @@ class BasicServicePrice(models.Model):
 class MassageFor(models.Model):
     massage_for = models.CharField(max_length=50, verbose_name='Массаж для')
     slug = models.SlugField()
+    icon = models.CharField(max_length=50, verbose_name='Иконка')
 
     def __str__(self):
         return self.slug

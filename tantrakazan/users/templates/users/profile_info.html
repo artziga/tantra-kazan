@@ -1,0 +1,37 @@
+      <div class="grid-container">
+
+      <div class="param-name">Пол</div>
+          <div class="param-value">
+               {% if specialist.therapist_profile.gender is True %}
+                <i class="fa fa-mars" aria-hidden="true"></i>
+               {% elif specialist.therapist_profile.gender is False %}
+                <i class="fa fa-venus" aria-hidden="true"></i>
+               {% endif %}
+          </div>
+              {% if specialist.therapist_profile.age %}
+      <div class="param-name">Возраст</div>
+      <div class="param-value">{{ specialist.therapist_profile.age }}</div>
+      <div class="param-additional">{{ specialist.therapist_profile.display_years_suffix }}</div>
+              {% endif %}
+              {% if specialist.therapist_profile.experience is not None %}
+      <div class="param-name">Опыт</div>
+              {% if specialist.therapist_profile.experience == 0 %}
+      <div class="param-value">< 1</div>
+              {% else %}
+      <div class="param-value">{{ specialist.therapist_profile.experience }}</div>
+              {% endif %}
+      <div class="param-additional">{{ specialist.therapist_profile.display_experience_suffix }}</div>
+              {% endif %}
+      <div class="param-name">Массаж для</div>
+      <div class="param-value">
+          {% for massage_for in specialist.therapist_profile.massage_for.all %}
+            <i class="fa {{massage_for.icon}}" aria-hidden="true"></i>
+          {% endfor %}
+      </div>
+      <div class="param-name">Цена дома</div>
+      <div class="param-value">{{ specialist.therapist_profile.basicserviceprice_set.first.home_price }}</div>
+      <div class="param-additional">₽</div>
+      <div class="param-name">Цена с выездом</div>
+      <div class="param-value">{{ specialist.therapist_profile.basicserviceprice_set.first.on_site_price }}</div>
+      <div class="param-additional">₽</div>
+            </div>

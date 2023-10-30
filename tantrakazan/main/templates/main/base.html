@@ -155,9 +155,34 @@
                             </div>
                             <div class="header__col header__right">
                                 <div class="toolbar-item d-none d-lg-block">
-                                    <a href="login-register.html" class="toolbar-btn">
-                                        <span>Войти</span>
-                                    </a>
+                                    {% if request.user.is_authenticated %}
+              {% if request.user.is_therapist %}
+              <a href="{% url 'users:profile' %}">
+                <img src="{% if user.avatar %}
+              {{ user.avatar.comment_thumbnail.url }}
+              {% else %}
+              {% static 'main/img/others/profile-icon.png' %}
+              {% endif %}" alt="Avatar"
+        class="avatar">
+              </a>
+              {% else %}
+              <a href="{% url 'users:profile'%}">
+                <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt="">
+              </a>
+              {% endif %}
+              <a href="{%url 'accounts:logout' %}">
+                Выйти
+              </a>
+              <p>
+              {% else %}
+              <a href="{%url 'accounts:login' %}">
+                Вход
+              </a>
+              <a href="{%url 'accounts:registration' %}">
+                Регистрация
+              </a>
+                </p>
+              {% endif %}
                                 </div>
                                 <div class="toolbar-item d-block d-lg-none">
                                     <a href="#offcanvasnav" class="hamburger-icon js-toolbar menu-btn">
@@ -828,6 +853,8 @@
 
     <!-- Main JS -->
     <script src="{% static 'main/js/main.js' %}"></script>
+{% block script %}
+{% endblock script %}
 </body>
 
 </html>

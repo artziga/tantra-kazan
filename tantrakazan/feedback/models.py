@@ -3,26 +3,46 @@ from datetime import datetime
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from star_ratings.models import Rating, UserRating
 
 from feedback.managers import LikeDislikeManager
 from tantrakazan import settings
 
 
-class Comment(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор', related_query_name='comments')
-    text = models.TextField(max_length=255, verbose_name='комментарий')
+class BaseComment(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL,
+                               on_delete=models.CASCADE,
+                               verbose_name='автор',
+                               related_query_name='review',
+                               related_name='reviews')
+    text = models.TextField(max_length=255, verbose_name='Отзыв')
     parent = models.ForeignKey(
         'self',
         null=True,
         blank=True,
         on_delete=models.CASCADE,
-        verbose_name='родительский комментарий',
+        verbose_name='Родительский комментарий',
+        related_name='child_comment',
         related_query_name='child_comments')
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    date_added = models.DateTimeField('дата создания',
+    date_added = models.DateTimeField('Дата создания',
                                       default=datetime.now())
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        abstract = True
+
+
+class Review(models.Model):
+    text = models.TextField(max_length=255, verbose_name='Отзыв')
+    score = models.OneToOneField(
+        UserRating,
+        verbose_name='Оценка',
+        on_delete=models.CASCADE,
+        related_name='review',
+        related_query_name='review',
+    )
+
+    def __del__(self):
+        pass
 
 
 class Bookmark(models.Model):

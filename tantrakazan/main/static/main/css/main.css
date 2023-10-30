@@ -597,6 +597,8 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   display: -ms-flexbox;
   display: flex; }
 
+.
+
 .breadcrumb, .pagination {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
@@ -643,6 +645,14 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   -moz-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap; }
+
+.review__icons {
+  position: absolute;
+  font-size: 24px;
+  margin: 4px;
+  bottom: 0;
+  right: 0;
+}
 
 .searchform__body, .shipping-method {
   -webkit-box-direction: normal;
@@ -931,7 +941,7 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   margin-right: auto;
   height: 14px;
   line-height: 14px;
-  letter-spacing: 5px;
+  letter-spacing: 5.5px;
   width: 90px;
   font-family: FontAwesome;
   direction: ltr;
@@ -969,6 +979,8 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
     width: 50%; }
   .star-rating.star-half span {
     width: 10%; }
+  .star-rating.star-null span {
+    width: 0%; }
 
 /*-- Quantity --*/
 .quantity {
@@ -3543,7 +3555,19 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   -ms-flex-preferred-size: 60px;
   flex-basis: 60px;
   max-width: 60px;
-  height: 60px; }
+  height: 60px;
+  border-radius: 50%;}
+
+.avatar{
+   -webkit-flex-basis: 60px;
+  -moz-flex-basis: 60px;
+  -ms-flex-preferred-size: 60px;
+  flex-basis: 60px;
+  max-width: 60px;
+  height: 60px;
+  margin: 5px;
+  border-radius: 50%;
+}
 
 .product-reviews .review__text {
   -webkit-flex-basis: calc(100% - 60px);
@@ -4154,6 +4178,36 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   -ms-flex-preferred-size: 100%;
   flex-basis: 100%;
   max-width: 100%; }
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px; /* Пространство между столбцами */
+  text-align: center; /* Центрирование текста по горизонтали */
+
+}
+
+.param-name, .param-value, .param-additional {
+  padding: 1%; /* Поля вокруг содержимого ячейки */
+}
+
+.param-name {
+  grid-column: 1;
+}
+
+.param-value  {
+  grid-column: 2;
+  font-size: 150%;
+  color: #5e6063;
+  font-weight: bold; /* Жирный текст для значений */
+}
+
+
+
+
+
+
 
 
 /*****************************

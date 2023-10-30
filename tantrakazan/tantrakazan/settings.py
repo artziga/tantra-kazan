@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
     'feedback.apps.FeedbackConfig',
+    'silk',
     ]
 
 MIDDLEWARE = [
@@ -68,6 +69,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'silk.middleware.SilkyMiddleware',
+
 ]
 
 ROOT_URLCONF = 'tantrakazan.urls'
@@ -156,7 +159,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Ваш пароль о
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')  # От какого адреса отправлять письма
 
 LOGIN_REDIRECT_URL = reverse_lazy('users:profile')
-LOGOUT_REDIRECT_URL = reverse_lazy('main:home')
+LOGOUT_REDIRECT_URL = reverse_lazy('users:therapists')
 
 LOGGING = {
     'version': 1,

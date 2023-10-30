@@ -6,5 +6,5 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = '__all__'
 
 
-admin.site.register(Comment)
+admin.site.register(Review)
 

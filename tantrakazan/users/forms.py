@@ -154,7 +154,6 @@ ORDERINGS = (('?', 'Случайная сортировка'),
 
 
 class TherapistFilterForm(forms.Form):
-
     gender = forms.MultipleChoiceField(
         required=False,
         widget=forms.CheckboxSelectMultiple,
@@ -164,7 +163,8 @@ class TherapistFilterForm(forms.Form):
     massage_for = forms.MultipleChoiceField(
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        choices=MassageFor.objects.values_list('slug', 'massage_for') #TODO: так нельзя оставлять. сломается при сносе бд
+        choices=MassageFor.objects.values_list('slug', 'massage_for')
+        # TODO: так нельзя оставлять. сломается при сносе бд
     )
     price = forms.ChoiceField(required=False,
                               widget=forms.RadioSelect,
@@ -191,9 +191,9 @@ class TherapistFilterForm(forms.Form):
         price = self.cleaned_data.get('price')
         queryset = (queryset.
                     filter(
-                           therapist_profile__gender__in=genders,
-                           therapist_profile__massage_for__slug__in=massage_for
-                           )
+            therapist_profile__gender__in=genders,
+            therapist_profile__massage_for__slug__in=massage_for
+        )
                     .distinct())
         if price:
             price_filter = Q(min_price__gte=price_range[price][0], min_price__lte=price_range[price][1])
@@ -203,23 +203,6 @@ class TherapistFilterForm(forms.Form):
         if ordering:
             queryset = queryset.order_by(ordering)
         return queryset
-
-
-
-class MassageForForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        massage_for_choices = MassageFor.objects.values_list('slug', 'massage_for')
-
-        for massage_for_slug, massage_for_name in massage_for_choices:
-            field_name = f'massage_for_{massage_for_slug}'
-            self.fields[field_name] = forms.BooleanField(
-                required=False,
-                label=massage_for_name,
-                widget=forms.CheckboxInput()
-            )
 
 
 class FeaturesForm(forms.Form):

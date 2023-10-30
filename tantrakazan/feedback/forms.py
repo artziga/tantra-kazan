@@ -1,16 +1,14 @@
 from django import forms
-from feedback.models import Comment, Bookmark, LikeDislike
+from feedback.models import Review, Bookmark, LikeDislike
+from feedback.widgets import StarRatingWidget
 
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['text', 'content_type', 'object_id']
-        widgets = {
-            'text': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Введите комментарий'}),
-            'content_type': forms.HiddenInput(),
-            'object_id': forms.HiddenInput(),
-        }
+class ReviewForm(forms.Form):
+
+    text = forms.CharField(label='Отзыв', widget=forms.Textarea(
+                attrs={'class': 'form__input form__input--textarea', 'placeholder': 'Оставьте отзыв'}))
+    review_for = forms.IntegerField(widget=forms.HiddenInput(), required=False)  # Создайте поле 'review_for'
+    score = forms.IntegerField(label='Оценка', widget=StarRatingWidget())
 
 
 class LikeForm(forms.ModelForm):

@@ -1,13 +1,12 @@
 from django.urls import path
-from feedback.views import AddCommentView, DeleteCommentView, PutLikeView, BookmarkView
+from feedback.views import AddReviewView, delete_review, BookmarkView
 
 app_name = 'feedback'
 
 urlpatterns = [
-    path('<str:from_user>/', AddCommentView.as_view(), name='add_comment'),
-    path('delete/<int:pk>/', DeleteCommentView.as_view(), name='delete_comment'),
-    path('<str:from_user>/<int:parent_comment_id>/', AddCommentView.as_view(), name='add_comment_with_parent'),
-
-    path('bookmark/<int:obj_pk>/<int:content_type_id>/', BookmarkView.as_view(), name='bookmark'),
+    path('like/', BookmarkView.as_view(), name='like'),
+    path('add/', AddReviewView.as_view(), name='add_comment'),
+    path('delete/<int:review_for>/', delete_review, name='delete_review'),
+    path('<str:from_user>/<int:parent_comment_id>/', AddReviewView.as_view(), name='add_comment_with_parent'),
 ]
 

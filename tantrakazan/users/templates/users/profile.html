@@ -1,66 +1,232 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load rating_tags %}
+{% load like %}
+
 
 
 {% block content %}
-<!-- contact section -->
-  <title>{{ title }}</title>
-  <section class="contact_section layout_padding layout_padding-left">
-    <div class="container">
-      <div class="heading_container">
-        <h2>
-          {{ title }}
-        </h2>
-      </div>
-      <div class="">
-        <div class="row">
-          <div class="col-md-6 ">
-          <div class="contact_form-container">
-          <form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-              {{form.non_field_errors}}
-  {% for field in form %}
-    <div>
-        {{ form.media }}
-      {{ field.label_tag }}
-      {% if field.name == 'avatar' %}
-        {% if field.value %}
-<!--        {{ field.value}}-->
-          <img src="{{ field.value.url }}" height="200" alt="Фото профиля">
-        {% endif %}
-      {% endif %}
-      {{ field }}
-      {% if field.errors %}
-        <ul class="errorlist">
-          {% for error in field.errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    </div>
-  {% endfor %}
-  <button class="contact_section contact_form-container button" type="submit">Сохранить</button>
-</form>
+<style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
 
-            </div>
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #ffffff;
+        }
+
+        /* Стиль заголовка */
+        .program-title {
+            font-weight: bold;
+        }
+
+        /* Стиль столбца с ценой */
+        .program-price {
+        }
+
+        /* Стиль столбца с продолжительностью */
+        .program-duration {
+        }
+
+        /* Стиль описания */
+        .program-description {
+            font-style: italic;
+        }
+    </style>
+<div class="main-content-wrapper">
+            <div class="page-content-inner pt--80 pt-md--60">
+                <div class="container">
+                    <div class="row no-gutters mb--80 mb-md--57">
+                        {% include 'users/profile_gallery.html' %}
+                        <div class="col-xl-4 offset-xl-1 col-lg-5 product-main-details mt-md--50">
+                            <div class="product-summary pl-lg--30 pl-md--0">
+                                <h3 class="product-title mb--20">{{ specialist }}</h3>
+                                <div class="product-rating d-flex mb--20">
+                                    <div class="star-rating {% rating_class specialist.rating.first.average %}">
+                                        <span>Rated <strong class="rating">{% rating_class specialist.ratings.first.average %}</strong> out of 5</span>
+                                    </div>
+                                    Отзывов: {{ specialist.rating.first.count|default:"0" }}
+                                </div>
+
+                                        <div class="table-content table-responsive">
+                                            {% include 'users/profile_info.html' %}
+                                        </div>
+
+<!--                                лайк-->
+{% like_button specialist.pk content_type_id is_bookmarked %}
+
+
+<!--                                -->
+                                <div id="bookmark-result"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mb--77 mb-md--57">
+                        <div class="col-12">
+                            <div class="tab-style-1">
+                                <div class="nav nav-tabs mb--35 mb-sm--25" id="product-tab" role="tablist">
+                                    <a class="nav-link active" id="nav-description-tab" data-toggle="tab"
+                                        href="#nav-description" role="tab" aria-selected="true">
+                                        <span>Описание</span>
+                                    </a>
+                                    <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab"
+                                        aria-selected="true">
+                                        <span>Программы</span>
+                                    </a>
+                                    <a class="nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews"
+                                        role="tab" aria-selected="true">
+                                        <span>Отзывы ({{ reviews.count }})</span>
+                                    </a>
+                                </div>
+                                <div class="tab-content" id="product-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-description" role="tabpanel"
+                                        aria-labelledby="nav-description-tab">
+                                        <div class="product-description">
+                                            {{ specialist.therapist_profile.description|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-info" role="tabpanel"
+                                        aria-labelledby="nav-info-tab">
+                                        <div class="table-content table-responsive">
+                                            <table class="table shop_attributes">
+                                                <tbody>
+                                                {% for listing in listings %}
+                                                    <tr>
+                                                        <th class="program-title">{{ listing.title }}</th>
+                                                        <th class="program-price">{{ listing.price }}</th>
+                                                        <th class="program-duration">{{ listing.duration }}</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="program-description">{{ listing.description }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-reviews" role="tabpanel"
+                                        aria-labelledby="nav-reviews-tab">
+                                        <div class="product-reviews">
+                                            <h3 class="review__title">Отзывов: {{ specialist.rating.first.count|default:"0" }}</h3>
+                                            <ul class="review__list">
+                                                {% for review in reviews %}
+                                                <li class="review__item">
+                                                    {% include 'feedback/review.html' %}
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="review-form-wrapper">
+                                                <div class="row">
+                                                    <div class="col-lg-8">
+                                                        <span class="reply-title">Оставить отзыв</span>
+                                                        <form method="post" action="{% url 'feedback:add_comment' %}" class="form pr--30">
+                                                            {% csrf_token %}
+                                                            {{review_form.review_for}}
+                                                            <div class="form__group mb--10">
+                                                                <label class="form__label d-block mb--10">{{review_form.score.label}}</label>
+                                                                {{review_form.score}}
+                                                            </div>
+                                                            <div class="form__group mb--10">
+                                                                <label class="form__label d-block mb--10">{{review_form.text.label}}<span class="required">*</span></label>
+                                                                {{review_form.text }}
+                                                            </div>
+                                                            <div class="form__group">
+                                                                <div class="form-row">
+                                                                    <div class="col-12">
+                                                                        <input type="submit" value="Отправить"
+                                                                            class="btn btn-size-md">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-6 col-lg-5 offset-lg-1">
-            <div class="img-box">
-              <img src="{% static 'main/images/contact-img.jpg' %}" alt="">
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-    <script>
-        // Настройка автодополнения адресов
-        ymaps.ready(function () {
-            var addressInput = new ymaps.SuggestView('addressInput');
-        });
-    </script>
-  <!-- end contact section -->
 {% endblock content %}
+
+{% block script %}
+<script>
+function sendPostRequest(link) {
+    const obj_pk = link.getAttribute("data-obj-pk");
+    const content_type_id = link.getAttribute("data-content-type-id");
+
+    const url = "{% url 'feedback:like' %}";
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    const data = JSON.stringify({ obj_pk: obj_pk, content_type_id: content_type_id });
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            const response = JSON.parse(xhr.responseText);
+            console.log("POST запрос выполнен успешно");
+            console.log("Результат: " + response.result);
+            console.log("Количество: " + response.count);
+
+            // Обновите значок на "пустое сердце" или "заполненное сердце" здесь
+            const heartIcon = link.querySelector('i.fa');
+            if (response.result) {
+                heartIcon.classList.remove('fa-heart-o');
+                heartIcon.classList.add('fa-heart');
+            } else {
+                heartIcon.classList.remove('fa-heart');
+                heartIcon.classList.add('fa-heart-o');
+            }
+        } else {
+            console.error("Ошибка при выполнении POST запроса");
+        }
+    };
+
+    xhr.send(data);
+}
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('id_score');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = star.getAttribute('data-rating');
+            stars.forEach(s => {
+                if (s.getAttribute('data-rating') <= rating) {
+                    s.classList.remove('fa-star-o');
+                    s.classList.add('fa-star');
+                } else {
+                    s.classList.add('fa-star-o');
+                    s.classList.remove('fa-star');
+                }
+            });
+            ratingInput.value = rating;
+        });
+    });
+});
+</script>
+{% endblock script %}

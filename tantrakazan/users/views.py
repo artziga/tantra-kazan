@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField
+from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField, OuterRef, Value, BooleanField, Subquery
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, TemplateView
@@ -8,7 +8,9 @@ from django.db.utils import IntegrityError
 from formtools.wizard.views import SessionWizardView
 import logging
 
-from feedback.forms import CommentForm, LikeForm
+from star_ratings.models import UserRating
+
+from feedback.forms import ReviewForm, LikeForm
 from feedback.models import LikeDislike, Bookmark
 from listings.models import Listing
 from users.models import *
@@ -21,7 +23,7 @@ from users.forms import (TherapistProfileForm,
                          AboutForm,
                          ActivateProfileForm,
                          TherapistFilterForm,
-                         OrderingForm, MassageForForm, FeaturesForm)
+                         )
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from gallery.photo_processor import CropFace
 from gallery.models import Gallery, Avatar
@@ -38,16 +40,12 @@ FORMS_NAMES = ["Общие данные",
                "О себе"]
 
 
-def test(request):
-    return render(request, 'users/test.html', context={'one': FORMS_NAMES})
-
 
 def make_user_a_therapist(user):
     user.is_therapist = True
     user.save()
     TherapistProfile.objects.create(user=user)
-    Gallery.objects.create(user=user, title='Мои сертификаты')
-    Gallery.objects.create(user=user, title='Мои фото')
+    Gallery.objects.create(user=user, title='Галерея', slug='gallery')
 
 
 @login_required
@@ -175,9 +173,9 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
 
     def get_template_names(self):
         if self.request.user.is_therapist:
-            return ['users/therapist_self_profile_detail.html']
+            return ['users/profile.html']
         else:
-            return ['users/user_profile_detail.html']
+            return ['users/profile.html']
 
     def get_user_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,36 +184,35 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
 
     def get_therapist_context_data(self, *args, **kwargs):
         context = self.get_user_context(**kwargs)
-        therapist = self.get_therapist()
-        offers = Listing.objects.filter(therapist_id=therapist.pk)
-        galleries = Gallery.objects.filter(user=therapist)
-        content_type = ContentType.objects.get_for_model(therapist)
-        comments = Comment.objects.filter(
-            content_type=content_type,
-            object_id=therapist.pk
-        )
-        like_to_therapist_form = self.get_like_form(content_type=content_type, therapist=therapist)
-        comment_form = self.get_comment_form(content_type=content_type, therapist=therapist)
-        context['therapist'] = therapist
-        logging.info(therapist)
-        context['content_type_id'] = content_type.pk
+        specialist = self.get_therapist()
+        offers = Listing.objects.filter(therapist_id=specialist.pk)
+        gallery = Gallery.objects.filter(user=specialist).first()
+        avatar = specialist.avatar
+        photos = gallery.photos.all()
+        all_photos = [avatar] + list(photos)
+        ct = ContentType.objects.get_for_model(specialist)
+        reviews = UserRating.objects.filter(rating__content_type=ct, rating__object_id=specialist.pk)
+        like_to_therapist_form = self.get_like_form(content_type=ct, therapist=specialist)
+        review_form = self.get_review_form(specialist=specialist)
+        context['specialist'] = specialist
+        context['content_type_id'] = ct.pk
         context['offers'] = offers
-        context['galleries'] = galleries
-        context['count'] = Bookmark.objects.filter(object_id=therapist.pk, content_type_id=content_type.pk).count()
-        context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=content_type.pk,
+        context['all_photos'] = all_photos
+        context['count'] = Bookmark.objects.filter(object_id=specialist.pk, content_type_id=ct.pk).count()
+        context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=ct.pk,
                                                            user_id=self.request.user.pk,
-                                                           object_id=therapist.pk).exists()
-        context['comments'] = comments
+                                                           object_id=specialist.pk).exists()
+        context['reviews'] = reviews
         context['like_to_therapist_form'] = like_to_therapist_form
-        context['comment_form'] = comment_form
+        context['review_form'] = review_form
+        context['listings'] = specialist.listings.all()
         return context
 
     @staticmethod
-    def get_comment_form(content_type, therapist):
-        comment_form = CommentForm()
-        comment_form.fields['content_type'].initial = content_type
-        comment_form.fields['object_id'].initial = therapist.pk
-        return comment_form
+    def get_review_form(specialist):
+        review_form = ReviewForm()
+        review_form.fields['review_for'].initial = specialist.pk
+        return review_form
 
     def get_like_form(self, content_type, therapist):
         like_form = LikeForm()
@@ -243,7 +240,7 @@ class TherapistProfileDetailView(ProfileView):
         return therapist
 
     def get_template_names(self):
-        return ['users/therapist_profile_detail.html']
+        return ['users/profile.html']
 
 
 class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
@@ -261,13 +258,21 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
 
     def get_queryset(self):
         specialists = User.objects.annotate(
-            comments_count=Count('comments'),
-            min_price=F('therapist_profile__basicserviceprice__home_price') #TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
+            min_price=F('therapist_profile__basicserviceprice__home_price'), #TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
             )
-        sorted_users = specialists.filter(ratings__isnull=False).order_by('-ratings__average')
+        bookmarked_subquery = Bookmark.objects.filter(
+            user=self.request.user,
+            content_type=ContentType.objects.get_for_model(User),
+            object_id=OuterRef('pk')
+        ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
+
+        # Получаем список пользователей с полем is_bookmarked
+        specialists = specialists.annotate(
+            is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
+        )
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
-            queryset = form.filter(sorted_users)
+            queryset = form.filter(specialists)
         else:
             logging.error(form.errors)
         return queryset
