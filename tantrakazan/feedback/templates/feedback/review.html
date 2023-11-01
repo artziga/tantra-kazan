@@ -23,10 +23,12 @@
             </div>
         </div>
         <p class="review__description">{{ review.review.text|linebreaksbr }}</p>
+        {% if user == review.user %}
         <div class="review__icons">
             <a href="{% url 'feedback:delete_review' specialist.pk %}">
             <i class="fa fa-trash" aria-hidden="true"></i>
             </a>
         </div>
+        {% endif %}
     </div>
 </div>

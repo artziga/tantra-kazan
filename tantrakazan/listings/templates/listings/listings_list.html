@@ -1,21 +1,18 @@
-{% extends 'main/base.html' %}
-{% load static %}
+<div class="table-content table-responsive">
+    {% if user == specialist %}
+    <div class="article-title mb--50">
+        <a href="{% url 'listings:create_offer' specialist.pk %}">
+            <h2>
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Добавить программу
+            </h2>
+        </a>
+    </div>
+    {% endif %}
+    {% for listing in listings %}
+    {% include 'listings/listing.html' %}
+    {% endfor %}
+</div>
 
-{% block content %}
-  <section class="contact_section layout_padding layout_padding-left">
-    <div class="container">
-      <div class="heading_container">
-{% for listing in listings %}
-          {{listing.service.name}}
-          {{listing.therapist.username}}
-          {{listing.therapist.profile.avatar.url}}
-          <img src="{{ listing.photo.url }}" height="256">
-          {% endfor %}
 
-
-          </div>
-      </div>
-  </section>
-
-{% endblock content %}
 

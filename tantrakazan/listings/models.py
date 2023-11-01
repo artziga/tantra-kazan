@@ -59,12 +59,6 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def display_duration(self):
-        hours = self.duration.seconds // 3600
-        minutes = (self.duration.seconds // 60) % 60
-        return f'{hours:02d} ч {minutes:02d} м'
-
 
 class Feature(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')

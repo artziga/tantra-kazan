@@ -209,8 +209,6 @@ class Photo(BaseImage):
                                format='JPEG',
                                options={'quality': 80})
 
-
-
     def save(self, *args, **kwargs):
         self.thumbnail.generate()
         self.admin_thumbnail.generate()

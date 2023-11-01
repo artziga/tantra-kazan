@@ -1,4 +1,6 @@
-      <div class="grid-container">
+{% load format_years %}
+
+<div class="grid-container">
 
       <div class="param-name">Пол</div>
           <div class="param-value">
@@ -11,7 +13,7 @@
               {% if specialist.therapist_profile.age %}
       <div class="param-name">Возраст</div>
       <div class="param-value">{{ specialist.therapist_profile.age }}</div>
-      <div class="param-additional">{{ specialist.therapist_profile.display_years_suffix }}</div>
+      <div class="param-additional">{{ specialist.therapist_profile.age|years_suffix }}</div>
               {% endif %}
               {% if specialist.therapist_profile.experience is not None %}
       <div class="param-name">Опыт</div>
@@ -20,7 +22,7 @@
               {% else %}
       <div class="param-value">{{ specialist.therapist_profile.experience }}</div>
               {% endif %}
-      <div class="param-additional">{{ specialist.therapist_profile.display_experience_suffix }}</div>
+      <div class="param-additional">{{ specialist.therapist_profile.experience|years_suffix }}</div>
               {% endif %}
       <div class="param-name">Массаж для</div>
       <div class="param-value">

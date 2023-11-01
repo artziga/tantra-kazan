@@ -164,8 +164,9 @@ class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
         return initial_dict
 
 
-class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
+class ProfileView(DataMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
+        return self.get_therapist_context_data(self, *args, **kwargs)
         if self.request.user.is_therapist:
             return self.get_therapist_context_data(self, *args, **kwargs)
         else:
@@ -192,8 +193,9 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
         all_photos = [avatar] + list(photos)
         ct = ContentType.objects.get_for_model(specialist)
         reviews = UserRating.objects.filter(rating__content_type=ct, rating__object_id=specialist.pk)
-        like_to_therapist_form = self.get_like_form(content_type=ct, therapist=specialist)
+        is_reviewed = self.request.user in [review.user for review in reviews]
         review_form = self.get_review_form(specialist=specialist)
+        context['is_reviewed'] = is_reviewed
         context['specialist'] = specialist
         context['content_type_id'] = ct.pk
         context['offers'] = offers
@@ -203,7 +205,6 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
                                                            user_id=self.request.user.pk,
                                                            object_id=specialist.pk).exists()
         context['reviews'] = reviews
-        context['like_to_therapist_form'] = like_to_therapist_form
         context['review_form'] = review_form
         context['listings'] = specialist.listings.all()
         return context
@@ -213,21 +214,6 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
         review_form = ReviewForm()
         review_form.fields['review_for'].initial = specialist.pk
         return review_form
-
-    def get_like_form(self, content_type, therapist):
-        like_form = LikeForm()
-        try:
-            like_or_dislike = LikeDislike.objects.get(
-                user=self.request.user,
-                object_id=therapist.pk,
-                content_type=content_type
-            )
-            like_form.fields['like_or_dislike'].initial = like_or_dislike.like_or_dislike
-        except LikeDislike.DoesNotExist:
-            like_form.fields['like_or_dislike'].initial = None
-        like_form.fields['content_type'].initial = content_type
-        like_form.fields['object_id'].initial = therapist.pk
-        return like_form
 
     def get_therapist(self):
         return self.request.user
@@ -260,16 +246,17 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
         specialists = User.objects.annotate(
             min_price=F('therapist_profile__basicserviceprice__home_price'), #TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
             )
-        bookmarked_subquery = Bookmark.objects.filter(
-            user=self.request.user,
-            content_type=ContentType.objects.get_for_model(User),
-            object_id=OuterRef('pk')
-        ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
+        if self.request.user.is_authenticated:
+            bookmarked_subquery = Bookmark.objects.filter(
+                user=self.request.user,
+                content_type=ContentType.objects.get_for_model(User),
+                object_id=OuterRef('pk')
+            ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
 
-        # Получаем список пользователей с полем is_bookmarked
-        specialists = specialists.annotate(
-            is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
-        )
+            # Получаем список пользователей с полем is_bookmarked
+            specialists = specialists.annotate(
+                is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
+            )
         form = TherapistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(specialists)

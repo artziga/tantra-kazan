@@ -6,13 +6,13 @@ from main.models import User
 
 class RegisterUserForm(UserCreationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Имя пользователя'}))
+        attrs={'class': 'form__input'}))
     email = forms.EmailField(label='Email', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'E-Mail'}))
+        attrs={'class': 'form__input'}))
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(
-        attrs={'class': 'form-input', 'placeholder': 'Пароль'}))
+        attrs={'class': 'form__input'}))
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput(
-        attrs={'class': 'form-input', 'placeholder': 'Повторите пароль'}))
+        attrs={'class': 'form__input'}))
 
     class Meta:
         model = User
@@ -20,9 +20,8 @@ class RegisterUserForm(UserCreationForm):
 
 
 class LoginUserForm(AuthenticationForm):
-    username = forms.CharField(label='', widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Логин'}))
-    password = forms.CharField(label='',
-                               widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Пароль'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form__input'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form__input'}))
 
     class Meta:
         model = User

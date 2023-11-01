@@ -92,7 +92,7 @@ INDEX:
     Default Body Font:          'Roboto', sans-serif
 
 */
-@import url("https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,900&display=swap");
 /*****************************
 00 - Base - Global
 *****************************/
@@ -114,7 +114,7 @@ html {
 
 body {
   font-size: 15px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #222;
   line-height: 1.625;
   background-color: #fff;
@@ -124,7 +124,7 @@ body {
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   font-weight: 700;
-  font-family: "Poppins", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #222;
   margin-bottom: 15px;
   line-height: 1.18; }
@@ -2089,8 +2089,12 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   padding: 0 10px; }
 
 .form--checkout .form__label, .form--track .form__label {
-  margin-bottom: 8px; }
+  margin-bottom: 8px;
+  }
 
+.new_line {
+ display: block;
+}
 /*-- 25.02 - Search Form --*/
 .searchform {
   max-width: 800px; }
@@ -2810,7 +2814,7 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
         font-size: 24px; } }
     .single-post__info blockquote:before {
       content: '\0022';
-      font-family: "Poppins", sans-serif;
+      font-family: "Montserrat", sans-serif;
       line-height: 0;
       font-size: 140px;
       color: #191a1d;
@@ -3740,7 +3744,8 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
     line-height: 22px; }
   .table.shop_attributes th {
     color: #181818;
-    min-width: 140px; }
+    min-width: 140px;
+     }
 
 .table-style-2 thead th {
   background: #f6f6f6; }
@@ -3847,6 +3852,7 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 .tab-content {
   width: 100%; }
   .tab-content .tab-pane {
+
     display: none;
     height: 0;
     max-width: 100%;
@@ -4179,11 +4185,13 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   flex-basis: 100%;
   max-width: 100%; }
 
+/*****************************
+Мои стили
+*****************************/
 
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px; /* Пространство между столбцами */
   text-align: center; /* Центрирование текста по горизонтали */
 
 }
@@ -4202,6 +4210,78 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   color: #5e6063;
   font-weight: bold; /* Жирный текст для значений */
 }
+
+.header-flex-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.like-button {
+    font-size: 150%;
+}
+
+
+.link-container {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0; /* Светло-серый цвет фона */
+  padding: 10px; /* Добавьте отступы по вашему усмотрению */
+}
+
+.article {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.article-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd; /* Линия под заголовком */
+  padding-bottom: 10px; /* Отступ под линией */
+}
+
+.article-title h2 {
+  margin: 0;
+  font-size: 24px; /* Размер шрифта заголовка */
+  color: #333; /* Цвет текста заголовка */
+}
+
+.article-title p {
+  margin: 0;
+  font-size: 16px; /* Размер шрифта подзаголовков (продолжительности и цены) */
+  color: #777; /* Цвет текста подзаголовков */
+}
+
+.article-text {
+  position: relative;
+  font-size: 18px; /* Размер шрифта текста статьи */
+  color: #555; /* Цвет текста статьи */
+  line-height: 1.6; /* Межстрочный интервал текста */
+}
+
+.duration__form__group {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: left; /* Располагаем элементы по краям */
+}
+
+.duration__form__group .form__group {
+  display: flex;
+  align-items: center;
+}
+
+.w--50 {
+  width: 50px;
+}
+
+
+.duration__form__group .form__label {
+  order: 2; /* Поместить метки после полей */
+  margin-left: 10px; /* Расстояние между меткой и полем, настройте по своему усмотрению */
+}
+
 
 
 

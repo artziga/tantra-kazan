@@ -62,7 +62,7 @@
 <!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
 <!--                                            <a href="index.html" class="mainmenu__link">Главная</a>-->
 <!--                                        </li>-->
-                                        <li class="mainmenu__item menu-item-has-children position-relative">
+                                        <li class="mainmenu__item position-relative">
                                             <a href="{% url 'users:therapists' %}" class="mainmenu__link">Специалисты</a>
 <!--                                            <div class="inner-menu">-->
 <!--                                                <ul class="sub-menu">-->
@@ -78,8 +78,9 @@
 <!--                                                </ul>-->
 <!--                                            </div>-->
                                         </li>
+                                        {% if user.is_authenticated %}
                                         <li class="mainmenu__item menu-item-has-children position-relative">
-                                            <a href="#" class="mainmenu__link">Действия</a>
+                                            <a href="#" class="mainmenu__link">Профиль</a>
                                             <div class="inner-menu">
                                                 <ul class="sub-menu">
                                                     <li>
@@ -103,6 +104,7 @@
                                                 </ul>
                                             </div>
                                         </li>
+                                        {% endif %}
 <!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
 <!--                                            <a href="#" class="mainmenu__link">Блог</a>-->
 <!--                                            <div class="inner-menu">-->
@@ -154,36 +156,39 @@
                                 </nav>
                             </div>
                             <div class="header__col header__right">
-                                <div class="toolbar-item d-none d-lg-block">
+                                <nav class="main-navigation d-none d-lg-block">
+                                    <ul class="mainmenu">
                                     {% if request.user.is_authenticated %}
-              {% if request.user.is_therapist %}
-              <a href="{% url 'users:profile' %}">
-                <img src="{% if user.avatar %}
-              {{ user.avatar.comment_thumbnail.url }}
-              {% else %}
-              {% static 'main/img/others/profile-icon.png' %}
-              {% endif %}" alt="Avatar"
-        class="avatar">
-              </a>
-              {% else %}
-              <a href="{% url 'users:profile'%}">
-                <img src="{% static 'main/images/profile-icon.png' %}" width="50" height="50" alt="">
-              </a>
-              {% endif %}
-              <a href="{%url 'accounts:logout' %}">
-                Выйти
-              </a>
-              <p>
-              {% else %}
-              <a href="{%url 'accounts:login' %}">
-                Вход
-              </a>
-              <a href="{%url 'accounts:registration' %}">
-                Регистрация
-              </a>
-                </p>
-              {% endif %}
-                                </div>
+                                          <a href="{% url 'users:profile' %}">
+                                            <img src="{% if user.avatar %}
+                                          {{ user.avatar.comment_thumbnail.url }}
+                                          {% else %}
+                                          {% static 'main/img/others/profile-icon.png' %}
+                                          {% endif %}" alt="Avatar" class="avatar">
+                                          </a>
+                                        <li class="mainmenu__item position-relative">
+                                          <a class="mainmenu__link" href="{%url 'accounts:logout' %}">
+                                            Выйти
+                                          </a>
+                                        </li>
+                                        {% else %}
+                                        <li class="mainmenu__item">
+                                          <a class="mainmenu__link" href="{%url 'accounts:login' %}">
+                                            Вход
+                                          </a>
+                                        </li>
+                                        <li class="mainmenu__item position-relative">
+                                        <span class="mainmenu__item">|</span>
+                                        </li>
+                                        <li class="mainmenu__item">
+                                          <a class="mainmenu__link mr--10" class="mainmenu__item position-relative" href="{%url 'accounts:registration' %}">
+                                            Регистрация
+                                          </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
                                 <div class="toolbar-item d-block d-lg-none">
                                     <a href="#offcanvasnav" class="hamburger-icon js-toolbar menu-btn">
                                         <span></span>

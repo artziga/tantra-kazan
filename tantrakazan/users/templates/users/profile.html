@@ -2,49 +2,11 @@
 {% load static %}
 {% load rating_tags %}
 {% load like %}
+{% load format_duration %}
 
 
 
 {% block content %}
-<style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        td {
-            background-color: #ffffff;
-        }
-
-        /* Стиль заголовка */
-        .program-title {
-            font-weight: bold;
-        }
-
-        /* Стиль столбца с ценой */
-        .program-price {
-        }
-
-        /* Стиль столбца с продолжительностью */
-        .program-duration {
-        }
-
-        /* Стиль описания */
-        .program-description {
-            font-style: italic;
-        }
-    </style>
 <div class="main-content-wrapper">
             <div class="page-content-inner pt--80 pt-md--60">
                 <div class="container">
@@ -52,7 +14,12 @@
                         {% include 'users/profile_gallery.html' %}
                         <div class="col-xl-4 offset-xl-1 col-lg-5 product-main-details mt-md--50">
                             <div class="product-summary pl-lg--30 pl-md--0">
+                                <div class="header-flex-container">
                                 <h3 class="product-title mb--20">{{ specialist }}</h3>
+                                    <div class="like-button">
+                                    {% like_button specialist.pk content_type_id is_bookmarked %}
+                                    </div>
+                                </div>
                                 <div class="product-rating d-flex mb--20">
                                     <div class="star-rating {% rating_class specialist.rating.first.average %}">
                                         <span>Rated <strong class="rating">{% rating_class specialist.ratings.first.average %}</strong> out of 5</span>
@@ -63,12 +30,11 @@
                                         <div class="table-content table-responsive">
                                             {% include 'users/profile_info.html' %}
                                         </div>
+                                <p>
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    {{specialist.therapist_profile.address}}</p>
 
-<!--                                лайк-->
-{% like_button specialist.pk content_type_id is_bookmarked %}
 
-
-<!--                                -->
                                 <div id="bookmark-result"></div>
                             </div>
                         </div>
@@ -81,10 +47,12 @@
                                         href="#nav-description" role="tab" aria-selected="true">
                                         <span>Описание</span>
                                     </a>
+                                    {% if listings %}
                                     <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab"
                                         aria-selected="true">
                                         <span>Программы</span>
                                     </a>
+                                    {% endif %}
                                     <a class="nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews"
                                         role="tab" aria-selected="true">
                                         <span>Отзывы ({{ reviews.count }})</span>
@@ -99,63 +67,9 @@
                                     </div>
                                     <div class="tab-pane fade" id="nav-info" role="tabpanel"
                                         aria-labelledby="nav-info-tab">
-                                        <div class="table-content table-responsive">
-                                            <table class="table shop_attributes">
-                                                <tbody>
-                                                {% for listing in listings %}
-                                                    <tr>
-                                                        <th class="program-title">{{ listing.title }}</th>
-                                                        <th class="program-price">{{ listing.price }}</th>
-                                                        <th class="program-duration">{{ listing.duration }}</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="program-description">{{ listing.description }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    {% include 'listings/listings_list.html' %}
                                     </div>
-                                    <div class="tab-pane fade" id="nav-reviews" role="tabpanel"
-                                        aria-labelledby="nav-reviews-tab">
-                                        <div class="product-reviews">
-                                            <h3 class="review__title">Отзывов: {{ specialist.rating.first.count|default:"0" }}</h3>
-                                            <ul class="review__list">
-                                                {% for review in reviews %}
-                                                <li class="review__item">
-                                                    {% include 'feedback/review.html' %}
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                            <div class="review-form-wrapper">
-                                                <div class="row">
-                                                    <div class="col-lg-8">
-                                                        <span class="reply-title">Оставить отзыв</span>
-                                                        <form method="post" action="{% url 'feedback:add_comment' %}" class="form pr--30">
-                                                            {% csrf_token %}
-                                                            {{review_form.review_for}}
-                                                            <div class="form__group mb--10">
-                                                                <label class="form__label d-block mb--10">{{review_form.score.label}}</label>
-                                                                {{review_form.score}}
-                                                            </div>
-                                                            <div class="form__group mb--10">
-                                                                <label class="form__label d-block mb--10">{{review_form.text.label}}<span class="required">*</span></label>
-                                                                {{review_form.text }}
-                                                            </div>
-                                                            <div class="form__group">
-                                                                <div class="form-row">
-                                                                    <div class="col-12">
-                                                                        <input type="submit" value="Отправить"
-                                                                            class="btn btn-size-md">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% include 'feedback/review_block.html' %}
                                 </div>
                             </div>
                         </div>

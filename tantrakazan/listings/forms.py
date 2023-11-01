@@ -10,13 +10,16 @@ from listings.models import Listing, Tag
 
 
 class CreateOfferForm(autocomplete.FutureModelForm):
-    photo = forms.ImageField(label='Фото', required=False)
-    tags = TagField(
-        required=False,
-        widget=autocomplete.TaggitSelect2('tag_autocomplete', attrs={'placeholder': 'Вводите тэги через запятую'})
-    )
-    hours = forms.IntegerField()
-    minutes = forms.IntegerField()
+    # tags = TagField(
+    #     required=False,
+    #     widget=autocomplete.TaggitSelect2('tag_autocomplete', attrs={'placeholder': 'Вводите тэги через запятую'})
+    # )
+    title = forms.CharField(label='Название', widget=forms.TextInput(attrs={'class': 'form__input'}))
+    description = forms.CharField(label='Описание', widget=forms.Textarea(
+        attrs={'class': 'form__input form__input--textarea', 'placeholder': 'Оставьте отзыв'}))
+    price = forms.IntegerField(label='Цена', widget=forms.NumberInput(attrs={'class': 'form__input'}))
+    hours = forms.IntegerField(label='ч.', widget=forms.NumberInput(attrs={'class': 'form__input w--50'}))
+    minutes = forms.IntegerField(label='мин.', widget=forms.NumberInput(attrs={'class': 'form__input w--50'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -42,4 +45,5 @@ class CreateOfferForm(autocomplete.FutureModelForm):
 
     class Meta:
         model = Listing
-        exclude = ['therapist', 'duration']
+        exclude = ['therapist', 'duration', 'tags']
+        widgets = {}

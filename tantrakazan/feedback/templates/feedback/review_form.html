@@ -1,0 +1,27 @@
+<div class="review-form-wrapper mt-50">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h3 class="reply-title">Оставить отзыв</h3>
+                    <form method="post" action="{% url 'feedback:add_comment' %}" class="form pr--30">
+                        {% csrf_token %}
+                        {{review_form.review_for}}
+                        <div class="form__group mb--10">
+                            <label class="form__label d-block mb--10">{{review_form.score.label}}</label>
+                            {{review_form.score}}
+                        </div>
+                        <div class="form__group mb--10">
+                            <label class="form__label d-block mb--10">{{review_form.text.label}}<span class="required">*</span></label>
+                            {{review_form.text }}
+                        </div>
+                        <div class="form__group">
+                            <div class="form-row">
+                                <div class="col-12">
+                                    <input type="submit" value="Отправить"
+                                        class="btn btn-size-md">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
