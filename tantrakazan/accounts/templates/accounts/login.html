@@ -22,7 +22,7 @@
                                 </ul>
                               {% endif %}
                                 <div class="form__group mb--20">
-                                    <label class="form__label new_line">{{ form.username.label_tag }} <span class="required">*</span></label>
+                                    <label class="form__label">{{ form.username.label_tag }} <span class="required">*</span></label>
                                     {{ form.username }}
                                 </div>
                                 {{ form.non_field_errors }}
@@ -34,17 +34,19 @@
                                 </ul>
                               {% endif %}
                                 <div class="form__group mb--20">
-                                    <label class="form__label new_line">{{ form.password.label_tag }} <span class="required">*</span></label>
+                                    <label class="form__label">{{ form.password.label_tag }} <span class="required">*</span></label>
                                     {{ form.password }}
                                 </div>
-                                <div class="d-flex align-items-center mb--20">
+                                <div class="d-flex align-items-center justify-content-center mb--20">
                                     <div class="form__group mr--30">
                                         <button type="submit" class="btn btn-size-sm">Войти</button>
                                     </div>
                                 </div>
+                                <div class="row justify-content-center">
                                 <a class="forgot-pass" href="{% url 'accounts:registration' %}">Регистрация</a>
-                                <span>|</span>
+                                <span class="ml--20 mr--20">|</span>
                                 <a class="forgot-pass" href="{% url 'accounts:password_reset' %}">Сбросить пароль</a>
+                                </div>
                             </form>
                         </div>
                     </div>

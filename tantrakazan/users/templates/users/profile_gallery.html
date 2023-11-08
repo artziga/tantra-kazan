@@ -18,8 +18,14 @@
                                 <img src="{{ photo.image.url }}"
                                     alt="Фото">
                                 <div class="product-gallery__actions">
-                                    <button class="action-btn btn-zoom-popup"><i
-                                            class="fa fa-eye"></i></button>
+                                    <button class="action-btn btn-zoom-popup">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                    {% if user == specialist %}
+                                    <a class="action-btn" href="{% url 'gallery:add_photos' %}">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                    </a>
+                                    {% endif %}
                                 </div>
                             </figure>
                         </div>

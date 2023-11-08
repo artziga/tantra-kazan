@@ -47,10 +47,16 @@
                                         href="#nav-description" role="tab" aria-selected="true">
                                         <span>Описание</span>
                                     </a>
-                                    {% if listings %}
+                                    {% if listings or user == specialist  %}
                                     <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab"
                                         aria-selected="true">
                                         <span>Программы</span>
+                                    </a>
+                                    {% endif %}
+                                    {% if specialist.therapist_profile.address %}
+                                    <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-map" role="tab"
+                                        aria-selected="true">
+                                        <span>На карте</span>
                                     </a>
                                     {% endif %}
                                     <a class="nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews"
@@ -62,7 +68,13 @@
                                     <div class="tab-pane fade show active" id="nav-description" role="tabpanel"
                                         aria-labelledby="nav-description-tab">
                                         <div class="product-description">
-                                            {{ specialist.therapist_profile.description|linebreaksbr }}
+                                            {{ specialist.therapist_profile.description|safe }}
+                                        </div>
+                                    </div>
+                                        <div class="tab-pane fade" id="nav-map" role="tabpanel"
+                                        aria-labelledby="nav-description-tab">
+                                        <div id="map" style="width: 100%; height: 65vh;;" >
+                                            {% include 'users/map_single.html' %}
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="nav-info" role="tabpanel"
@@ -80,6 +92,7 @@
 {% endblock content %}
 
 {% block script %}
+{% csrf_token %}
 <script>
 function sendPostRequest(link) {
     const obj_pk = link.getAttribute("data-obj-pk");

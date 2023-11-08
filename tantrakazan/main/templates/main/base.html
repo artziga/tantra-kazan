@@ -78,33 +78,6 @@
 <!--                                                </ul>-->
 <!--                                            </div>-->
                                         </li>
-                                        {% if user.is_authenticated %}
-                                        <li class="mainmenu__item menu-item-has-children position-relative">
-                                            <a href="#" class="mainmenu__link">Профиль</a>
-                                            <div class="inner-menu">
-                                                <ul class="sub-menu">
-                                                    <li>
-                                                        <a href="my-account.html">My Account</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="checkout.html">Checkout</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="cart.html">Cart</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="compare.html">Compare</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="order-tracking.html">Track Order</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="wishlist.html">Wishlist</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                        {% endif %}
 <!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
 <!--                                            <a href="#" class="mainmenu__link">Блог</a>-->
 <!--                                            <div class="inner-menu">-->
@@ -149,8 +122,24 @@
 <!--                                                </ul>-->
 <!--                                            </div>-->
 <!--                                        </li>-->
-                                        <li class="mainmenu__item">
-                                            <a href="contact-us.html" class="mainmenu__link">Обратная связь</a>
+                                        <li class="mainmenu__item menu-item-has-children position-relative">
+                                            <a href="#" class="mainmenu__link">Дополнительно</a>
+                                            <div class="inner-menu">
+                                                <ul class="sub-menu">
+                                                    <li>
+                                                        <a href="{% url 'main:contact-us' %}">Обратная связь</a>
+                                                    </li>
+                                                    {% if user.is_therapist %}
+                                                    <li>
+                                                        <a href="{% url 'users:delete_a_therapist' %}">Удалить профиль массажиста</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li>
+                                                        <a href="{% url 'users:become_a_therapist' %}">Создать профиль массажиста</a>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
                                         </li>
                                     </ul>
                                 </nav>
@@ -158,19 +147,35 @@
                             <div class="header__col header__right">
                                 <nav class="main-navigation d-none d-lg-block">
                                     <ul class="mainmenu">
-                                    {% if request.user.is_authenticated %}
-                                          <a href="{% url 'users:profile' %}">
-                                            <img src="{% if user.avatar %}
-                                          {{ user.avatar.comment_thumbnail.url }}
+                                    {% if user.is_authenticated %}
+                                        <li class="mainmenu__item menu-item-has-children position-relative">
+                                            <a href="#" class="mainmenu__link"><i class="fa fa-chevron-down" aria-hidden="true"></i></a>
+                                            <div class="inner-menu">
+                                                <ul class="sub-menu">
+                                                    <li>
+                                                        <a href="{% url 'users:profile' %}">Профиль</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{% url 'users:edit_profile' %}">Редактировать профиль</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="wishlist.html">Избранное</a>
+                                                    </li>
+                                                    <li>
+                                                      <a href="{%url 'accounts:logout' %}">
+                                                        Выйти
+                                                      </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <a href="{% url 'users:profile' %}">
+                                            <img src="{% if avatar %}
+                                          {{ avatar.mini_thumbnail.url }}
                                           {% else %}
                                           {% static 'main/img/others/profile-icon.png' %}
                                           {% endif %}" alt="Avatar" class="avatar">
                                           </a>
-                                        <li class="mainmenu__item position-relative">
-                                          <a class="mainmenu__link" href="{%url 'accounts:logout' %}">
-                                            Выйти
-                                          </a>
-                                        </li>
                                         {% else %}
                                         <li class="mainmenu__item">
                                           <a class="mainmenu__link" href="{%url 'accounts:login' %}">
@@ -181,14 +186,15 @@
                                         <span class="mainmenu__item">|</span>
                                         </li>
                                         <li class="mainmenu__item">
-                                          <a class="mainmenu__link mr--10" class="mainmenu__item position-relative" href="{%url 'accounts:registration' %}">
+                                          <a class="mainmenu__link mr--10" class="mainmenu__item position-relative"
+                                             href="{%url 'accounts:registration' %}">
                                             Регистрация
                                           </a>
                                         </li>
                                         {% endif %}
                                     </ul>
                                 </nav>
-                            </div>
+
                                 <div class="toolbar-item d-block d-lg-none">
                                     <a href="#offcanvasnav" class="hamburger-icon js-toolbar menu-btn">
                                         <span></span>
@@ -199,20 +205,6 @@
                                         <span></span>
                                     </a>
                                 </div>
-                                <div class="toolbar-item">
-                                    <a href="wishlist.html" class="toolbar-btn">
-                                        <i class="flaticon-heart"></i>
-                                    </a>
-                                </div>
-                                <div class="toolbar-item mini-cart-btn">
-                                    <a href="#miniCart" class="toolbar-btn js-toolbar">
-                                        <span class="mini-cart-btn__icon">
-                                            <i class="flaticon-bag"></i>
-                                        </span>
-                                        <sup class="mini-cart-btn__count">
-                                            02
-                                        </sup>
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +212,6 @@
                 </div>
                 <div class="header-sticky-height"></div>
             </div>
-        </header>
         <!-- Header End -->
 
 

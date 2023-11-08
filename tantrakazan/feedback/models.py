@@ -25,7 +25,7 @@ class BaseComment(models.Model):
         related_name='child_comment',
         related_query_name='child_comments')
     date_added = models.DateTimeField('Дата создания',
-                                      default=datetime.now())
+                                      auto_now_add=True)
 
     class Meta:
         abstract = True

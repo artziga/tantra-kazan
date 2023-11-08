@@ -16,8 +16,6 @@ from django.urls import reverse
 from image_cropping import ImageRatioField
 from tantrakazan.utils import Locator
 
-from gallery.models import Gallery
-
 
 class TherapistProfile(models.Model):
     user = models.OneToOneField(
@@ -29,13 +27,13 @@ class TherapistProfile(models.Model):
     )
     gender = models.BooleanField(verbose_name='Пол', null=True, blank=True,
                                  choices=((True, 'Мужчина'), (False, 'Женщина')))
-    massage_for = models.ManyToManyField(MassageFor)
+    massage_for = models.ManyToManyField(MassageFor, related_name='specialists', related_query_name='specialist')
     basic_services = models.ManyToManyField(BasicService, blank=True)
     features = models.ManyToManyField(Feature, blank=True)
     birth_date = models.DateField(verbose_name='Возраст', blank=True, null=True)
     height = models.PositiveSmallIntegerField(verbose_name='Рост', null=True, blank=True)
     weight = models.PositiveSmallIntegerField(verbose_name='Вес', null=True, blank=True)
-    experience = models.PositiveSmallIntegerField(verbose_name='Опыт', null=True, blank=True)
+    practice_start_date = models.DateField(verbose_name='Дата начала практики', blank=True, null=True)
     address = models.CharField(max_length=200, verbose_name='Адрес', null=True, blank=True)
     latitude = models.FloatField(verbose_name='широта', null=True, blank=True)
     longitude = models.FloatField(verbose_name='долгота', null=True, blank=True)

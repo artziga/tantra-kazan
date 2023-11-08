@@ -4,56 +4,52 @@ import logging
 from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.db.models import Q
+from multiupload.fields import MultiImageField
 
+from gallery.forms import MultiImageUploadForm
 from listings.models import MassageFor
 from users.models import *
 
 
-class CreateAvatarForm(forms.Form):
-    avatar = forms.ImageField(label='АВАТАР', required=False, widget=forms.ClearableFileInput())
+class AvatarForm(forms.Form):
+    avatar = forms.ImageField(label='Аватар', required=False, widget=forms.ClearableFileInput())
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.cleaned_data.pop('avatar', None)
-        return cleaned_data
+
+class AddPhotosForm(MultiImageUploadForm, AvatarForm):
+    pass
 
 
 class PersonDataForm(forms.Form):
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Имя'}))
+        attrs={'class': 'form__input', 'placeholder': 'Имя'}))
     last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Фамилия'}))
-    gender = forms.NullBooleanField(label='', widget=forms.Select(
+        attrs={'class': 'form__input', 'placeholder': 'Фамилия'}))
+    gender = forms.NullBooleanField(label='Пол', widget=forms.Select(attrs={'class': 'form__input'},
         choices=((None, 'Укажите свой пол'), (True, 'Мужчина'), (False, 'Женщина'))))
     birth_date = forms.DateField(label='Дата рождения', required=False,
-                                 widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Дата рождения'}))
-    height = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Рост'}))
-    weight = forms.IntegerField(required=False, label='', widget=forms.NumberInput(attrs={'placeholder': 'Вес'}))
+                                 widget=forms.DateInput(attrs={'type': 'date', 'class': 'form__input'}))
+    height = forms.IntegerField(required=False, label='Рост', widget=forms.NumberInput(attrs={'class': 'form__input'}))
+    weight = forms.IntegerField(required=False, label='Вес', widget=forms.NumberInput(attrs={'class': 'form__input'}))
 
 
 class TherapistDataForm(forms.Form):
-    massage_to_male_or_female = forms.NullBooleanField(required=False, label='Кому делаете массаж?',
-                                                       widget=forms.Select(
-                                                           choices=((None, 'Всем'),
-                                                                    (True, 'Мужчинам'),
-                                                                    (False, 'Женщинам'))))
-    experience = forms.IntegerField(required=False, label='Опыт',
-                                    widget=forms.NumberInput(attrs={'placeholder': 'Опыт'}))
 
-    def clean(self):
-        cleaned_data = super().clean()
-        massage_to_male_or_female = cleaned_data.pop('massage_to_male_or_female')
-        if massage_to_male_or_female is True:
-            cleaned_data['massage_to_female'] = False
-            cleaned_data['massage_to_male'] = True
-        elif massage_to_male_or_female is False:
-            cleaned_data['massage_to_male'] = False
-            cleaned_data['massage_to_female'] = True
-        else:
-            cleaned_data['massage_to_male'] = True
-            cleaned_data['massage_to_female'] = True
-        logging.info(f'cleaned data {cleaned_data}')
-        return cleaned_data
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['massage_for'].choices = MassageFor.objects.values_list('pk', 'massage_for')
+
+    massage_for = forms.MultipleChoiceField(label='Для кого вы делаете массаж',
+                                            required=False,
+                                            widget=forms.CheckboxSelectMultiple(),
+                                            )
+    practice_start_date = forms.DateField(label='Дата начала практики', required=False,
+                                          widget=forms.DateInput(
+                                              attrs={'type': 'date', 'class': 'form__input'}))
+
+    home_price = forms.IntegerField(label='Цена базовой программы дома, ₽',
+                                    widget=forms.NumberInput(attrs={'class': 'form__input'}))
+    on_site_price = forms.IntegerField(label='Цена базовой программы с выездом, ₽',
+                                       widget=forms.NumberInput(attrs={'class': 'form__input'}))
 
 
 class AboutForm(forms.Form):
@@ -63,13 +59,13 @@ class AboutForm(forms.Form):
 
 class ContactDataForm(forms.Form):
     address = forms.CharField(required=False, label='Адрес', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
+        attrs={'class': 'form__input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
     phone_number = forms.CharField(required=False, label='Телефон', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Телефон'}))
+        attrs={'class': 'form__input', 'placeholder': 'Телефон'}))
     telegram_profile = forms.CharField(required=False, label='Телеграм', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Телеграм'}))
+        attrs={'class': 'form__input', 'placeholder': 'Телеграм'}))
     instagram_profile = forms.CharField(required=False, label='Инстаграм', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Инстаграм'}))
+        attrs={'class': 'form__input', 'placeholder': 'Инстаграм'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -87,7 +83,7 @@ class ActivateProfileForm(forms.Form):
     is_profile_active = forms.BooleanField(required=False)
 
 
-class TherapistProfileForm(CreateAvatarForm):
+class TherapistProfileForm(AvatarForm):
     first_name = forms.CharField(label='Имя', required=False, widget=forms.TextInput(
         attrs={'class': 'form-input', 'placeholder': 'Имя'}))
     last_name = forms.CharField(label='Фамилия', required=False, widget=forms.TextInput(

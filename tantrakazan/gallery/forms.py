@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from multiupload.fields import MultiImageField
 from django.core.validators import validate_image_file_extension
-from gallery.models import Gallery, Photo
+from gallery.models import Photo
 
 
 def validate_image_files_extension(value):
@@ -14,8 +14,9 @@ def validate_image_files_extension(value):
             raise ValidationError('Допустимы только файлы с расширениями jpg, jpeg, png и gif.')
 
 
-class MultiImageUploadForm(forms.ModelForm):
-    image = MultiImageField(
+class MultiImageUploadForm(forms.Form):
+    photos = MultiImageField(
+        label='Фотографии',
         min_num=1,
         max_num=10,
         max_file_size=1024 * 1024 * 5,
@@ -24,18 +25,12 @@ class MultiImageUploadForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        add_photo_validators = self.fields['image'].validators
+        add_photo_validators = self.fields['photos'].validators
         add_photo_validators.remove(validate_image_file_extension)
         add_photo_validators.append(validate_image_files_extension)
 
 
-class CreateGalleryForm(MultiImageUploadForm):
-    class Meta:
-        model = Gallery
-        fields = ['title', 'description', 'is_public']
-
-
-class AddPhotoForm(MultiImageUploadForm):
+class AddPhotosForm(MultiImageUploadForm):
     class Meta:
         model = Photo
-        fields = ['image']
+        fields = ['photos']

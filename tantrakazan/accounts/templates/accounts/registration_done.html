@@ -4,16 +4,20 @@
 
 {% block content %}
 <title>{{ title }}</title>
-  <section class="contact_section layout_padding layout_padding-left">
-      <div class="heading_container">
-        <h2>
-          Регистрация завершена
-        </h2>
-          <p>На адрес электронной почты, указанный пользователем, выслано письмо для активации</p>
-      </div>
-    <div class="col-md-6 col-lg-5 offset-lg-1">
-          <div class="img-box">
-            <img src="{% static 'users/images/contact-img.jpg' %}" alt="">
-          </div>
-        </div>
+        <main class="main-content-wrapper">
+            <div class="pt--90 pt-xl--70 pb--120 pb-xl--100 pb-lg--95 pb-sm--90">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-7 col-lg-8 text-center">
+                            <div class="error">
+                                <h1><i class="fa fa-check" aria-hidden="true"></i></h1>
+                                <h2>Регистрация завершена</h2>
+                                <p>На указанный адрес электронной почты выслано письмо для активации</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
 {% endblock content %}

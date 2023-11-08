@@ -38,154 +38,43 @@ CROP_ANCHOR_CHOICES = (
     ('center', 'Center (Default)'),
 )
 #
-# logger = logging.getLogger('gallery.models')
-#
+logger = logging.getLogger('gallery.models')
+
 IMAGE_DIR = 'img/albums'
 IMAGE_DIR_FOR_THUMB = 'media/img/albums'
 
 
 def get_storage_path(instance, filename: str) -> str:
-    user = instance.gallery.user.username
-    gallery = instance.gallery.slug
-    return os.path.join(IMAGE_DIR, user, gallery, filename)
-
-
-class ThumbnailsMixin:
-    thumbnail_sizes = None
-    thumbnail_fields = None
-
-    @staticmethod
-    def _filename(field: FieldFile) -> str:
-        image = field
-        return os.path.basename(image.name)
-
-    def get_storage_path(self, filename: str) -> str:
-        """Метод возвращает путь сохранения файла в папку для
-         сохранения файла на основе параметра поля upload_to"""
-
-        upload_to = get_storage_path(self, filename)
-
-        return os.path.join('media/', upload_to)
-
-    def generate_thumbnail_name(self, field: FieldFile, thumbnail_type: str) -> str:
-        filename = self._filename(field)
-        filename_body, ext = os.path.splitext(filename)
-        if hasattr(self, 'slug') and self.slug is not None:
-            return f"{thumbnail_type}_{self.slug}{ext}"
-        else:
-            return f"{thumbnail_type}_{filename}"
-
-    # @property
-    # def admin_thumbnail(self):
-    #     thumbnail_name = self.generate_thumbnail_name('admin_thumbnail')
-    #     return f'/{get_storage_path(image_field="image", filename=thumbnail_name)}'
-    #
-    # @property
-    # def thumbnail(self):
-    #     thumbnail_name = self.generate_thumbnail_name('thumbnail')
-    #     return f'/{get_storage_path(image_field="image", filename=thumbnail_name)}'
-
-    def create_thumbnail(self, field: FieldFile, thumbnail_type: str) -> None:
-        image_field = field
-        image_field.file.seek(0)
-        img_bytes = image_field.file.read()
-        img = Image.open(BytesIO(img_bytes))
-        img = get_square_borders(img)
-        img.thumbnail(size=self.thumbnail_sizes[thumbnail_type])
-        thumbnail_name = self.generate_thumbnail_name(thumbnail_type=thumbnail_type, field=field)
-        thumbnail_path = self.get_storage_path(filename=thumbnail_name)
-        os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
-        img.save(thumbnail_path)
-
-    def generate_thumbnails(self):
-        for field in self.thumbnail_fields:
-            model_field = getattr(self, field)
-            for thumbnail_type in self.thumbnail_fields[field]:
-                self.create_thumbnail(field=model_field, thumbnail_type=thumbnail_type)
-
-
-@receiver(post_save)
-def create_thumbnails(sender, instance, **kwargs):
-    if issubclass(sender, ThumbnailsMixin):
-        instance.generate_thumbnails()
-
-
-class Gallery(models.Model):
-    user = models.ForeignKey(USER, on_delete=models.CASCADE, verbose_name='Пользователь')
-    date_added = models.DateTimeField('дата создания',
-                                      default=datetime.now())
-    title = models.CharField('название',
-                             max_length=250,
-                             unique=False)
-    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from='title')
-    description = models.TextField('описание',
-                                   blank=True)
-    is_public = models.BooleanField('отображать',
-                                    default=True,
-                                    help_text='Public galleries will be displayed '
-                                              'in the default views.')
-    objects = GalleryQuerySet
-
-    class Meta:
-        unique_together = [('user', 'slug'), ('user', 'title')]
-        ordering = ['-date_added', '-pk']
-        get_latest_by = 'date_added'
-        verbose_name = 'альбом'
-        verbose_name_plural = 'альбомы'
-
-    def __str__(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse('gallery:gallery', args=[self.slug])
-
-    def latest(self, limit=LATEST_LIMIT, public=True):
-        if not limit:
-            limit = self.photo_count()
-        if public:
-            return self.public()[:limit]
-        else:
-            return self.photos.photo_count()[:limit]
-
-    def sample(self, count=None):
-        """Return a sample of photos, ordered at random.
-        If the 'count' is not specified, it will return a number of photos
-        limited by the GALLERY_SAMPLE_SIZE setting.
-        """
-        if count:
-            if count > self.photo_count():
-                count = self.photo_count()
-        else:
-            count = SAMPLE_SIZE
-        photo_set = self.photos.all()
-        return random.sample(set(photo_set), count)
-
-    def photo_count(self, public=True):
-        """Return a count of all the photos in this gallery."""
-        return self.photos.count()
-
-    photo_count.short_description = 'количество'
+    user = instance.user.username
+    path = os.path.join(IMAGE_DIR, user, filename)
+    logger.info(f'{filename} сохранится в {path}')
+    return path
 
 
 class BaseImage(models.Model):
-    image_size = (1000, 1000)
+    image_size = (540, 600)
 
     def generate_slug(self):
-        if self.title:
-            return self.title
-        elif self.image:
+        if self.image:
             image_name, ext = os.path.splitext(self.image.name)
             return image_name
         else:
-            return 'no-title-and-no-image'
+            return 'no-name'
 
-    title = models.CharField(max_length=100, null=True, verbose_name='название')
-    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from=generate_slug)
+    user = models.ForeignKey(
+        USER,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='photos',
+        related_query_name='photo'
+    )
     image = ProcessedImageField(verbose_name='фото',
-                                processors=[ResizeToFit(*image_size)],
+                                processors=[SmartResize(*image_size)],
                                 max_length=IMAGE_FIELD_MAX_LENGTH,
                                 upload_to=get_storage_path,
                                 )
+    slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from=generate_slug)
     admin_thumbnail = ImageSpecField(source='image',
                                      processors=[Thumbnail(100, 100)
                                                  ],
@@ -198,20 +87,26 @@ class BaseImage(models.Model):
 
 
 class Photo(BaseImage):
-    gallery = models.ForeignKey(Gallery,
-                                on_delete=models.CASCADE,
-                                verbose_name='альбом',
-                                related_query_name='photos',
-                                related_name='photos')
-    description = models.CharField(max_length=150, null=True, blank=True)
-    thumbnail = ImageSpecField(source='image',
-                               processors=[Thumbnail(300, 300)],
-                               format='JPEG',
-                               options={'quality': 80})
+    is_avatar = models.BooleanField(verbose_name='Аватар', default=False)
+    comment_thumbnail = ImageSpecField(source='image',
+                                       processors=[CropFaceProcessor(margin_percent=0.6),
+                                                   Thumbnail(90, 90)],
+                                       format='JPEG',
+                                       options={'quality': 90})
+    mini_thumbnail = ImageSpecField(source='comment_thumbnail',
+                                    processors=[Thumbnail(50, 50)],
+                                    format='JPEG',
+                                    options={'quality': 90})
+
+    @property
+    def avatar(self):
+        return self.objects.get(is_avatar=True)
 
     def save(self, *args, **kwargs):
-        self.thumbnail.generate()
         self.admin_thumbnail.generate()
+        if self.is_avatar is True:
+            self.mini_thumbnail.generate()
+            self.comment_thumbnail.generate()
         return super().save()
 
     def next(self):
@@ -229,26 +124,6 @@ class Photo(BaseImage):
         return prev_photo
 
     class Meta:
-        ordering = ['-upload_date', '-pk']
+        ordering = ['-is_avatar', '-upload_date', '-pk']
         get_latest_by = 'upload_date'
         verbose_name = 'фото'
-
-
-class Avatar(BaseImage):
-    image = models.ImageField(upload_to='img/avatars', verbose_name='Фото профиля', null=True, blank=True)
-    thumbnail = ImageSpecField(source='image',
-                               processors=[CropFaceProcessor(margin_percent=0.6),
-                                           Thumbnail(270, 300)],
-                               format='JPEG',
-                               options={'quality': 90})
-    mini_thumbnail = ImageSpecField(source='image',
-                                    processors=[CropFaceProcessor(margin_percent=0.6),
-                                                Thumbnail(50, 50)],
-                                    format='JPEG',
-                                    options={'quality': 90})
-
-    comment_thumbnail = ImageSpecField(source='image',
-                                       processors=[CropFaceProcessor(margin_percent=0.6),
-                                                   Thumbnail(100, 100)],
-                                       format='JPEG',
-                                       options={'quality': 90})

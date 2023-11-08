@@ -1,10 +1,24 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-  <h1>Добро пожаловать</h1>
-  <p>Вы действительно хотите завести анкету массажиста?</p>
-    <a href="{% url 'users:become_a_therapist_confirmation' %}">Да, заполнить анкету</a>
-    <a href="{% url 'users:profile' %}">Нет</a>
+<title>{{ title }}</title>
+        <main class="main-content-wrapper">
+            <div class="pt--50 pt-xl--50 pb--120 pb-xl--100 pb-lg--95 pb-sm--90">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-7 col-lg-8 text-center">
+                            <div class="error">
+                                <h1><i class="fa fa-question" aria-hidden="true"></i></h1>
+                                  <h2>Добро пожаловать</h2>
+                                  <p>Вы действительно хотите завести анкету массажиста?</p>
+                                  <a class="btn btn-size-sm mr--20" href="{% url 'users:become_a_therapist_confirmation' %}">Да, заполнить анкету</a>
+                                  <a class="btn btn-size-sm" href="{% url 'users:profile' %}">Нет</a>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
 {% endblock %}
 
 

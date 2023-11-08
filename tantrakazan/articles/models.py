@@ -19,9 +19,9 @@ class Article(models.Model):
     slug = AutoSlugField(verbose_name='слаг', db_index=True, unique=True, populate_from='title')
     text = RichTextField(verbose_name='Текст статьи')
     date_added = models.DateTimeField('дата создания',
-                                      default=datetime.now())
+                                      auto_now_add=True)
     last_update = models.DateTimeField('дата редактирования',
-                                       default=datetime.now())
+                                       auto_now=True)
     tags = TaggableManager()
 
     class Meta:

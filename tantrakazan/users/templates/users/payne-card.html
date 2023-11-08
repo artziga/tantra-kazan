@@ -11,7 +11,7 @@
         <div class="product__inner">
             <div class="product__image">
                 <figure class="product__image--holder">
-                    <img src="{{ specialist.avatar.thumbnail.url }}" alt="Product">
+                    <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
                 </figure>
                 <a href="{% url 'users:specialist_profile' specialist.username %}" class="product__overlay"></a>
                 <div class="product__action like-button">
@@ -49,7 +49,7 @@
         <div class="product__inner">
             <figure class="product__image">
                 <a href="product-details.html" class="d-block">
-                    <img src="{{ specialist.avatar.thumbnail.url }}" alt="Products">
+                        <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
                 </a>
             </figure>
             <div class="product__info">
@@ -74,7 +74,7 @@
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                     {{specialist.therapist_profile.address}}</p>
                 <p class="product__short-description">
-                        {{specialist.therapist_profile.description|linebreaksbr|truncatechars:150}}</p>
+                        {{specialist.therapist_profile.description|safe|linebreaksbr|truncatechars:250}}</p>
                 <div class="d-flex product__list-action like-button">
                     {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
                 </div>

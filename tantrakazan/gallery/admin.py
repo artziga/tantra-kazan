@@ -1,13 +1,11 @@
 from django.contrib import admin
-from gallery.models import Gallery, Photo
+from gallery.models import Photo
 from imagekit.admin import AdminThumbnail
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'gallery', 'slug', 'title', 'admin_thumbnail',)
+    list_display = ('pk', 'slug', 'admin_thumbnail',)
     admin_thumbnail = AdminThumbnail(image_field='admin_thumbnail')
 
 
 admin.site.register(Photo, PhotoAdmin)
-
-admin.site.register(Gallery)

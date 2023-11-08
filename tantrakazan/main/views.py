@@ -1,10 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
 
 from listings.models import Listing
+from main.forms import ContactUsForm
 from main.models import User
 
 from django.db.models import Q
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, FormView
 
 from tantrakazan.utils import DataMixin
 
@@ -49,3 +50,8 @@ class SearchView(DataMixin, TemplateView):
             Q(title__icontains=key)
         )
         return relevant_listings
+
+
+class ContactUsView(FormView):
+    template_name = 'main/contact-us.html'
+    form_class = ContactUsForm

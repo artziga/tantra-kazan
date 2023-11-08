@@ -16,8 +16,8 @@ class CreateOfferForm(autocomplete.FutureModelForm):
     # )
     title = forms.CharField(label='Название', widget=forms.TextInput(attrs={'class': 'form__input'}))
     description = forms.CharField(label='Описание', widget=forms.Textarea(
-        attrs={'class': 'form__input form__input--textarea', 'placeholder': 'Оставьте отзыв'}))
-    price = forms.IntegerField(label='Цена', widget=forms.NumberInput(attrs={'class': 'form__input'}))
+        attrs={'class': 'form__input form__input--textarea'}))
+    price = forms.IntegerField(label='Цена, ₽', widget=forms.NumberInput(attrs={'class': 'form__input'}))
     hours = forms.IntegerField(label='ч.', widget=forms.NumberInput(attrs={'class': 'form__input w--50'}))
     minutes = forms.IntegerField(label='мин.', widget=forms.NumberInput(attrs={'class': 'form__input w--50'}))
 

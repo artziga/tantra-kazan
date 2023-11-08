@@ -15,14 +15,16 @@
       <div class="param-value">{{ specialist.therapist_profile.age }}</div>
       <div class="param-additional">{{ specialist.therapist_profile.age|years_suffix }}</div>
               {% endif %}
-              {% if specialist.therapist_profile.experience is not None %}
+              {% if specialist.therapist_profile.practice_start_date is not None %}
       <div class="param-name">Опыт</div>
-              {% if specialist.therapist_profile.experience == 0 %}
+              {% if specialist.therapist_profile.practice_start_date|years_from_date == 0 %}
       <div class="param-value">< 1</div>
               {% else %}
-      <div class="param-value">{{ specialist.therapist_profile.experience }}</div>
+      <div class="param-value">{{ specialist.therapist_profile.practice_start_date|years_from_date }}</div>
               {% endif %}
-      <div class="param-additional">{{ specialist.therapist_profile.experience|years_suffix }}</div>
+      <div class="param-additional">
+          {{ specialist.therapist_profile.practice_start_date|years_from_date|years_suffix }}
+      </div>
               {% endif %}
       <div class="param-name">Массаж для</div>
       <div class="param-value">

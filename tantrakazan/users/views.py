@@ -1,10 +1,19 @@
+import os
+
+import six
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField, OuterRef, Value, BooleanField, Subquery
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils.datastructures import MultiValueDict
+from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.views.generic import ListView, FormView, TemplateView
 from django.db.utils import IntegrityError
+from formtools.wizard.storage import NoFileStorageConfigured, BaseStorage
 from formtools.wizard.views import SessionWizardView
 import logging
 
@@ -12,40 +21,47 @@ from star_ratings.models import UserRating
 
 from feedback.forms import ReviewForm, LikeForm
 from feedback.models import LikeDislike, Bookmark
+from gallery.forms import MultiImageUploadForm
 from listings.models import Listing
+from tantrakazan import settings
 from users.models import *
 from main.models import User
 from users.forms import (TherapistProfileForm,
-                         CreateAvatarForm,
+                         AvatarForm,
                          PersonDataForm,
                          TherapistDataForm,
                          ContactDataForm,
                          AboutForm,
                          ActivateProfileForm,
-                         TherapistFilterForm,
+                         TherapistFilterForm, AddPhotosForm,
                          )
+from gallery.forms import AddPhotosForm as AFF
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from gallery.photo_processor import CropFace
-from gallery.models import Gallery, Avatar
+from gallery.models import Photo
 
-FORMS = [("person_data", PersonDataForm),
-         ("therapist_data", TherapistDataForm),
-         ("contact_data", ContactDataForm),
-         ("about", AboutForm)
-         ]
+FORMS = [
+    ('photos', AddPhotosForm),
+    ("person_data", PersonDataForm),
+    ("therapist_data", TherapistDataForm),
+    ("contact_data", ContactDataForm),
+    ("about", AboutForm),
 
-FORMS_NAMES = ["Общие данные",
-               "Профессиональные данные",
-               "Контактные данные",
-               "О себе"]
+]
+FORMS_NAMES = [
 
+    "Общие данные",
+    "Профессиональные данные",
+    "Контактные данные",
+    "О себе",
+    "Фото",
+]
 
 
 def make_user_a_therapist(user):
     user.is_therapist = True
     user.save()
     TherapistProfile.objects.create(user=user)
-    Gallery.objects.create(user=user, title='Галерея', slug='gallery')
 
 
 @login_required
@@ -56,12 +72,12 @@ def become_a_therapist(request):
 def become_a_therapist_confirmation(request):
     user = request.user
     make_user_a_therapist(user)
-    return redirect('users:add_avatar')
+    return redirect('users:edit_profile')
 
 
 class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
-    model = Avatar
-    form_class = CreateAvatarForm
+    model = Photo
+    form_class = AvatarForm
     template_name = 'users/profile.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -78,7 +94,7 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
         photo = self.request.FILES.get('avatar')
         if photo:
             user = self.request.user
-            users_avatar = Avatar.objects.create(image=photo)
+            users_avatar = Photo.objects.create(image=photo, is_avatar=True)
             user.avatar = users_avatar
             user.save()
         return super().form_valid(form)
@@ -87,17 +103,7 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
 class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
     form_list = FORMS
     template_name = 'users/wizard_form.html'
-
-    def done(self, form_list, **kwargs):
-        cleaned_data = self.get_all_cleaned_data()
-        user = self.request.user
-        user.first_name = cleaned_data.pop('first_name', '')
-        user.last_name = cleaned_data.pop('last_name', '')
-        tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=cleaned_data)
-        user.save()
-        tp.save()
-        logging.info("Wizard is done")
-        return redirect('users:profile')
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'photos'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,10 +111,60 @@ class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
         context['steps'] = FORMS_NAMES
         return dict(list(context.items()) + list(context_def.items()))
 
+    def get_form_step_files(self, form):
+        if self.steps.current == 'photos':
+            self.add_avatar(form)
+            self.add_photos(form)
+        return super().get_form_step_files(form)
+
+    def done(self, form_list, **kwargs):
+        cleaned_data = self.get_all_cleaned_data()
+        user = self.request.user
+        user.first_name = cleaned_data.pop('first_name', '')
+        user.last_name = cleaned_data.pop('last_name', '')
+        self.set_price({
+            'home_price': cleaned_data.pop('home_price', ''),
+            'on_site_price': cleaned_data.pop('on_site_price', '')
+                        })
+        massage_for_set = cleaned_data.pop('massage_for', [])
+        tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=cleaned_data)
+        tp.massage_for.set(massage_for_set)
+        user.save()
+        tp.save()
+        logging.info("Wizard is done")
+        return redirect('users:profile')
+
+    def add_avatar(self, form):
+        avatar = form.files.get('photos-avatar')
+        if avatar:
+            current_avatar = Photo.objects.filter(user=self.request.user, is_avatar=True)
+            if current_avatar.exists():
+                current_avatar = current_avatar.first()
+                current_avatar.is_avatar = False
+                current_avatar.save()
+            Photo.objects.create(image=avatar, user=self.request.user, is_avatar=True)
+
+    def add_photos(self, form):
+        photos = form.files.getlist('photos-photos')
+        if photos:
+            for photo in photos:
+                Photo.objects.create(image=photo, user=self.request.user)
+
+    def set_price(self, data):
+        bs = BasicService.objects.get(pk=1)
+        BasicServicePrice.objects.update_or_create(
+            service=bs,
+            specialist=TherapistProfile.objects.get(user=self.request.user),
+            home_price=data['home_price'],
+            on_site_price=data['on_site_price']
+        )
+
     def get_form_initial(self, step):
         initial_dict = {}
         user = self.request.user
-        if step == 'person_data':
+        if step == 'photos':
+            initial_dict = {}
+        elif step == 'person_data':
             profile_data = TherapistProfile.objects.filter(user=user).values(
                 'gender',
                 'birth_date',
@@ -128,45 +184,44 @@ class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
                     initial_dict['birth_date'] = bd.isoformat()
         elif step == 'therapist_data':
             profile_data = TherapistProfile.objects.filter(user=user).values(
-                'experience',
-                'massage_to_male',
-                'massage_to_female'
+                'practice_start_date',
+                'massage_for',
             ).first()
-            logging.info(profile_data)
+            mf = TherapistProfile.objects.filter(user=user).values_list('massage_for', flat=True).all()
+            if mf:
+                initial_dict['massage_for'] = list(mf)
             if profile_data:
-                if profile_data['massage_to_male'] is not True:
-                    massage_to_male_or_female = False
-                elif profile_data['massage_to_female'] is not True:
-                    massage_to_male_or_female = True
-                else:
-                    massage_to_male_or_female = None
-                initial_dict = {'experience': profile_data['experience'],
-                                'massage_to_male_or_female': massage_to_male_or_female}
+                psd = profile_data.get('practice_start_date')
+                if psd:
+                    initial_dict['practice_start_date'] = psd.isoformat()
+            bs = BasicService.objects.get(pk=1)
+            prices = BasicServicePrice.objects.filter(
+                service=bs,
+                specialist=TherapistProfile.objects.get(user=self.request.user)
+            ).values('home_price', 'on_site_price').first()
+            if prices:
+                initial_dict.update(prices)
         elif step == 'contact_data':
             initial_dict = TherapistProfile.objects.filter(user=user).values(
                 'address',
-                'show_address',
                 'phone_number',
-                'show_phone_number',
                 'telegram_profile',
-                'show_telegram_profile',
                 'instagram_profile',
-                'show_instagram_profile',
             ).first()
         elif step == 'about':
-            initial_dict = TherapistProfile.objects.filter(user=user).values(
-                'short_description',
+            description = TherapistProfile.objects.filter(user=user).values(
                 'description',
             ).first()
+            formatted_description = mark_safe(description['description'])
+            initial_dict['description'] = formatted_description
         else:
             raise KeyError(f'Такой анкеты нет. Передано {step}, ожидается одно из {FORMS}')
-        logging.info(initial_dict)
+        logging.debug(initial_dict)
         return initial_dict
 
 
-class ProfileView(DataMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
-        return self.get_therapist_context_data(self, *args, **kwargs)
         if self.request.user.is_therapist:
             return self.get_therapist_context_data(self, *args, **kwargs)
         else:
@@ -187,10 +242,7 @@ class ProfileView(DataMixin, TemplateView):
         context = self.get_user_context(**kwargs)
         specialist = self.get_therapist()
         offers = Listing.objects.filter(therapist_id=specialist.pk)
-        gallery = Gallery.objects.filter(user=specialist).first()
-        avatar = specialist.avatar
-        photos = gallery.photos.all()
-        all_photos = [avatar] + list(photos)
+        photos = Photo.objects.filter(user=specialist)
         ct = ContentType.objects.get_for_model(specialist)
         reviews = UserRating.objects.filter(rating__content_type=ct, rating__object_id=specialist.pk)
         is_reviewed = self.request.user in [review.user for review in reviews]
@@ -199,7 +251,7 @@ class ProfileView(DataMixin, TemplateView):
         context['specialist'] = specialist
         context['content_type_id'] = ct.pk
         context['offers'] = offers
-        context['all_photos'] = all_photos
+        context['all_photos'] = photos
         context['count'] = Bookmark.objects.filter(object_id=specialist.pk, content_type_id=ct.pk).count()
         context['is_bookmarked'] = Bookmark.objects.filter(content_type_id=ct.pk,
                                                            user_id=self.request.user.pk,
@@ -244,8 +296,9 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
 
     def get_queryset(self):
         specialists = User.objects.annotate(
-            min_price=F('therapist_profile__basicserviceprice__home_price'), #TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
-            )
+            min_price=F('therapist_profile__basicserviceprice__home_price'),
+            # TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
+        )
         if self.request.user.is_authenticated:
             bookmarked_subquery = Bookmark.objects.filter(
                 user=self.request.user,

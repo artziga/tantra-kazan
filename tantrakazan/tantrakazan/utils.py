@@ -3,6 +3,7 @@ from django.db.models import Count
 from geopy import Yandex
 from geopy import Point
 from taggit.models import Tag
+from gallery.models import Photo
 
 from tantrakazan.settings import YANDEX_GEOCODER_API_KEY as API_KEY
 
@@ -34,6 +35,8 @@ class DataMixin:
         context = kwargs
         context['menu'] = user_menu
         context['API_KEY'] = API_KEY
+        if user.is_authenticated:
+            context['avatar'] = Photo.objects.filter(user=user, is_avatar=True).first()
         if self.title:
             context['title'] = self.title
         return context
