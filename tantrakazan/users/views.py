@@ -58,20 +58,19 @@ FORMS_NAMES = [
 ]
 
 
-def make_user_a_therapist(user):
+def make_user_a_specialist(user):
     user.is_therapist = True
     user.save()
     TherapistProfile.objects.create(user=user)
 
 
-@login_required
-def become_a_therapist(request):
-    return render(request, template_name='users/become_a_therapist_confirmation.html')
+def become_a_specialist(request):
+    return render(request, template_name='users/become_a_specialist_confirmation.html')
 
 
-def become_a_therapist_confirmation(request):
+def become_a_specialist_confirmation(request):
     user = request.user
-    make_user_a_therapist(user)
+    make_user_a_specialist(user)
     return redirect('users:edit_profile')
 
 
@@ -79,28 +78,24 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
     model = Photo
     form_class = AvatarForm
     template_name = 'users/profile.html'
+    success_url = reverse_lazy('users:profile')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Добавление фото пользователя')
         return dict(list(context.items()) + list(context_def.items()))
 
-    def get_success_url(self):
-        if self.request.user.is_therapist:
-            return reverse_lazy('users:edit_profile')
-        return reverse_lazy('users:profile')
-
     def form_valid(self, form):
-        photo = self.request.FILES.get('avatar')
-        if photo:
+        image = self.request.FILES.get('avatar')
+        if image:
             user = self.request.user
-            users_avatar = Photo.objects.create(image=photo, is_avatar=True)
-            user.avatar = users_avatar
-            user.save()
+            photo, created = Photo.objects.get_or_create(is_avatar=True, user=user)
+            photo.image = image
+            photo.save()
         return super().form_valid(form)
 
 
-class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
+class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
     form_list = FORMS
     template_name = 'users/wizard_form.html'
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'photos'))
@@ -125,7 +120,7 @@ class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
         self.set_price({
             'home_price': cleaned_data.pop('home_price', ''),
             'on_site_price': cleaned_data.pop('on_site_price', '')
-                        })
+        })
         massage_for_set = cleaned_data.pop('massage_for', [])
         tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=cleaned_data)
         tp.massage_for.set(massage_for_set)
@@ -221,24 +216,28 @@ class TherapistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
 
 
 class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
+    template_name = 'users/profile.html'
+
     def get_context_data(self, *args, **kwargs):
-        if self.request.user.is_therapist:
-            return self.get_therapist_context_data(self, *args, **kwargs)
-        else:
-            return self.get_user_context_data(self, *args, **kwargs)
-
-    def get_template_names(self):
-        if self.request.user.is_therapist:
-            return ['users/profile.html']
-        else:
-            return ['users/profile.html']
-
-    def get_user_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
+        ct = ContentType.objects.get_for_model(User)
+        favorite_specialists_pk = (Bookmark.objects.
+                                   filter(content_type=ct, user=self.request.user).values_list('object_id', flat=True))
+        favorite_specialists = User.objects.filter(pk__in=favorite_specialists_pk)
+        avatar_form = AvatarForm()
+        context['avatar_form'] = avatar_form
+        context['favorite_specialists'] = favorite_specialists
         context_def = self.get_user_context(title='Профиль')
         return {**context, **context_def}
 
-    def get_therapist_context_data(self, *args, **kwargs):
+    def get_forms(self):
+        avatar_form = AvatarForm()
+
+
+class SpecialistProfileDetailView(ProfileView):
+    template_name = 'users/specialist_profile.html'
+
+    def get_context_data(self, *args, **kwargs):
         context = self.get_user_context(**kwargs)
         specialist = self.get_therapist()
         offers = Listing.objects.filter(therapist_id=specialist.pk)
@@ -261,24 +260,16 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
         context['listings'] = specialist.listings.all()
         return context
 
+    def get_therapist(self):
+        therapist_name = self.kwargs.get('specialist_username')
+        therapist = User.objects.get(username=therapist_name)
+        return therapist
+
     @staticmethod
     def get_review_form(specialist):
         review_form = ReviewForm()
         review_form.fields['review_for'].initial = specialist.pk
         return review_form
-
-    def get_therapist(self):
-        return self.request.user
-
-
-class TherapistProfileDetailView(ProfileView):
-    def get_therapist(self):
-        therapist_name = self.kwargs.get('therapist_username')
-        therapist = User.objects.get(username=therapist_name)
-        return therapist
-
-    def get_template_names(self):
-        return ['users/profile.html']
 
 
 class SpecialistsListView(DataMixin, FilterFormMixin, ListView):

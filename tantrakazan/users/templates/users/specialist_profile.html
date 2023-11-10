@@ -1,0 +1,159 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load rating_tags %}
+{% load like %}
+{% load format_duration %}
+
+
+
+{% block content %}
+<div class="main-content-wrapper">
+            <div class="page-content-inner pt--80 pt-md--60">
+                <div class="container">
+                    <div class="row no-gutters mb--80 mb-md--57">
+                        {% include 'users/profile_gallery.html' %}
+                        <div class="col-xl-4 offset-xl-1 col-lg-5 product-main-details mt-md--50">
+                            <div class="product-summary pl-lg--30 pl-md--0">
+                                <div class="header-flex-container">
+                                <h3 class="product-title mb--20">{{ specialist }}</h3>
+                                    <div class="like-button">
+                                    {% like_button specialist.pk content_type_id is_bookmarked %}
+                                    </div>
+                                </div>
+                                <div class="product-rating d-flex mb--20">
+                                    <div class="star-rating {% rating_class specialist.rating.first.average %}">
+                                        <span>Rated <strong class="rating">{% rating_class specialist.ratings.first.average %}</strong> out of 5</span>
+                                    </div>
+                                    Отзывов: {{ specialist.rating.first.count|default:"0" }}
+                                </div>
+
+                                        <div class="table-content table-responsive">
+                                            {% include 'users/profile_info.html' %}
+                                        </div>
+                                <p>
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    {{specialist.therapist_profile.address}}</p>
+
+
+                                <div id="bookmark-result"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mb--77 mb-md--57">
+                        <div class="col-12">
+                            <div class="tab-style-1">
+                                <div class="nav nav-tabs mb--35 mb-sm--25" id="product-tab" role="tablist">
+                                    <a class="nav-link active" id="nav-description-tab" data-toggle="tab"
+                                        href="#nav-description" role="tab" aria-selected="true">
+                                        <span>Описание</span>
+                                    </a>
+                                    {% if listings or user == specialist  %}
+                                    <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab"
+                                        aria-selected="true">
+                                        <span>Программы</span>
+                                    </a>
+                                    {% endif %}
+                                    {% if specialist.therapist_profile.address %}
+                                    <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-map" role="tab"
+                                        aria-selected="true">
+                                        <span>На карте</span>
+                                    </a>
+                                    {% endif %}
+                                    <a class="nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews"
+                                        role="tab" aria-selected="true">
+                                        <span>Отзывы ({{ reviews.count }})</span>
+                                    </a>
+                                </div>
+                                <div class="tab-content" id="product-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-description" role="tabpanel"
+                                        aria-labelledby="nav-description-tab">
+                                        <div class="product-description">
+                                            {{ specialist.therapist_profile.description|safe }}
+                                        </div>
+                                    </div>
+                                        <div class="tab-pane fade" id="nav-map" role="tabpanel"
+                                        aria-labelledby="nav-description-tab">
+                                        <div id="map" style="width: 100%; height: 65vh;;" >
+                                            {% include 'users/map_single.html' %}
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-info" role="tabpanel"
+                                        aria-labelledby="nav-info-tab">
+                                    {% include 'listings/listings_list.html' %}
+                                    </div>
+                                    {% include 'feedback/review_block.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock content %}
+
+{% block script %}
+{% csrf_token %}
+<script>
+function sendPostRequest(link) {
+    const obj_pk = link.getAttribute("data-obj-pk");
+    const content_type_id = link.getAttribute("data-content-type-id");
+
+    const url = "{% url 'feedback:like' %}";
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    const data = JSON.stringify({ obj_pk: obj_pk, content_type_id: content_type_id });
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            const response = JSON.parse(xhr.responseText);
+            console.log("POST запрос выполнен успешно");
+            console.log("Результат: " + response.result);
+            console.log("Количество: " + response.count);
+
+            // Обновите значок на "пустое сердце" или "заполненное сердце" здесь
+            const heartIcon = link.querySelector('i.fa');
+            if (response.result) {
+                heartIcon.classList.remove('fa-heart-o');
+                heartIcon.classList.add('fa-heart');
+            } else {
+                heartIcon.classList.remove('fa-heart');
+                heartIcon.classList.add('fa-heart-o');
+            }
+        } else {
+            console.error("Ошибка при выполнении POST запроса");
+        }
+    };
+
+    xhr.send(data);
+}
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('id_score');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = star.getAttribute('data-rating');
+            stars.forEach(s => {
+                if (s.getAttribute('data-rating') <= rating) {
+                    s.classList.remove('fa-star-o');
+                    s.classList.add('fa-star');
+                } else {
+                    s.classList.add('fa-star-o');
+                    s.classList.remove('fa-star');
+                }
+            });
+            ratingInput.value = rating;
+        });
+    });
+});
+</script>
+{% endblock script %}

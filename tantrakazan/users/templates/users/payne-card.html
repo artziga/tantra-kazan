@@ -10,19 +10,28 @@
     <div class="payne-product">
         <div class="product__inner">
             <div class="product__image">
+
                 <figure class="product__image--holder">
                     <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
+
                 </figure>
-                <a href="{% url 'users:specialist_profile' specialist.username %}" class="product__overlay"></a>
+
+
+                {% if user.is_authenticated %}
                 <div class="product__action like-button">
                     {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
                 </div>
+                {% endif %}
             </div>
             <div class="product__info">
                 <div class="product__info--left">
                     <div class="header-flex-container">
                     <h3 class="product__title">
+                        {% if user == specialist %}
+                        <a href="{% url 'users:profile' %}">
+                        {% else %}
                         <a href="{% url 'users:specialist_profile' specialist.username %}">
+                        {% endif %}
                             {{ specialist.name }}
                         </a>
                         {{ specialist.therapist_profile.age|format_years }}
@@ -48,14 +57,24 @@
     <div class="payne-product-list">
         <div class="product__inner">
             <figure class="product__image">
-                <a href="product-details.html" class="d-block">
+                <a href="{% url
+                {% if user == specialist %}
+                'users:specialist_profile' specialist.username
+                {% else %}
+                'users:profile'
+                {% endif %}
+                 %}" class="d-block">
                         <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
                 </a>
             </figure>
             <div class="product__info">
                 <div class="header-flex-container">
                 <h3 class="product__title">
-                    <a href="{% url 'users:specialist_profile' specialist.username %}">
+                    {% if user == specialist %}
+                        <a href="{% url 'users:profile' %}">
+                        {% else %}
+                        <a href="{% url 'users:specialist_profile' specialist.username %}">
+                        {% endif %}
                         {{ specialist.name }}
                     </a>
                     {{ specialist.therapist_profile.age|format_years }}
@@ -75,9 +94,11 @@
                     {{specialist.therapist_profile.address}}</p>
                 <p class="product__short-description">
                         {{specialist.therapist_profile.description|safe|linebreaksbr|truncatechars:250}}</p>
+                {% if user.is_authenticated %}
                 <div class="d-flex product__list-action like-button">
                     {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -10,7 +10,7 @@ from main.models import User
 from tantrakazan.utils import DataMixin
 from accounts.utils import signer
 from users.models import TherapistProfile
-from users.views import make_user_a_therapist
+from users.views import make_user_a_specialist
 
 
 class RegisterUserCreateView(DataMixin, CreateView):
@@ -35,7 +35,7 @@ class RegisterTherapistCreateView(RegisterUserCreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.object
-        make_user_a_therapist(user)
+        make_user_a_specialist(user)
         return response
 
 
@@ -63,4 +63,5 @@ def user_activate(request, sign):
     user.is_activated = True
     user.save()
     login(request, user)
-    return redirect('users:profile')
+    goto = 'users:edit_profile' if user.is_therapist else 'users:profile'
+    return redirect(goto)

@@ -7,12 +7,14 @@ from django.db.models import Q
 from multiupload.fields import MultiImageField
 
 from gallery.forms import MultiImageUploadForm
+from gallery.models import Photo
 from listings.models import MassageFor
 from users.models import *
 
 
 class AvatarForm(forms.Form):
     avatar = forms.ImageField(label='Аватар', required=False, widget=forms.ClearableFileInput())
+
 
 
 class AddPhotosForm(MultiImageUploadForm, AvatarForm):

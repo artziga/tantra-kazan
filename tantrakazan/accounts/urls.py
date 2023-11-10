@@ -8,7 +8,7 @@ app_name = 'accounts'
 
 urlpatterns = [
     path("registration/", RegisterUserCreateView.as_view(), name="registration"),
-    path("registration/therapist", RegisterTherapistCreateView.as_view(), name="therapist_registration"),
+    path("specialist_registration/", RegisterTherapistCreateView.as_view(), name="specialist_registration"),
     path("registration/done", RegistrationDone.as_view(), name="registration_done"),
     path("registration/activate/<str:sign>", user_activate, name="register_activate"),
     path("login/", views.LoginView.as_view(template_name="accounts/login.html", form_class=LoginUserForm), name="login"),

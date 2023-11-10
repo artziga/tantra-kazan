@@ -101,7 +101,7 @@ class BookmarkView(LoginRequiredMixin, View):
         )
 
 
-class PutLikeView(View):
+class PutLikeView(LoginRequiredMixin,  View):
     def post(self, request, from_user):
         form = LikeForm(self.request.POST)
         if form.is_valid():
