@@ -4,9 +4,11 @@ import six
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import UploadedFile
-from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField, OuterRef, Value, BooleanField, Subquery
+from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField, OuterRef, Value, BooleanField, \
+    Subquery, ExpressionWrapper
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.datastructures import MultiValueDict
@@ -62,17 +64,9 @@ class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        avatar_form = AvatarForm()
-        change_password_form = MyPasswordChangeForm(user=self.request.user)
-        edit_form = None
-        context['change_password_form'] = change_password_form
-        context['avatar_form'] = avatar_form
         context_def = self.get_user_context(title='Профиль')
+        context['selected'] = self.request.user.username
         return {**context, **context_def}
-
-    def get_forms(self):
-        avatar_form = AvatarForm()
 
 
 class Favorite(ListView):
@@ -83,8 +77,17 @@ class Favorite(ListView):
         ct = ContentType.objects.get_for_model(User)
         favorite_specialists_pk = (Bookmark.objects.
                                    filter(content_type=ct, user=self.request.user).values_list('object_id', flat=True))
-        favorite_specialists = User.objects.filter(pk__in=favorite_specialists_pk)
+        favorite_specialists = User.objects.filter(pk__in=favorite_specialists_pk).annotate(
+            is_bookmarked=ExpressionWrapper(
+                Value(True, output_field=BooleanField()),
+                output_field=BooleanField(),
+            ))
         return favorite_specialists
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected'] = 'Избранное'
+        return context
 
 
 class EditProfile(UpdateView):
@@ -101,5 +104,17 @@ class EditProfile(UpdateView):
             current_avatar.save()
         return super().form_valid(form)
 
-    def form_invalid(self, form):
-        print(form.errors)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected'] = 'Редактировать профиль'
+        return context
+
+
+class UserPasswordChangeView(PasswordChangeView):
+    template_name = 'users/profile_change_password.html'
+    form_class = MyPasswordChangeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected'] = 'Сменить пароль'
+        return context

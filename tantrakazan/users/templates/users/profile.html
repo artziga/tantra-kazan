@@ -1,29 +1,26 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load sidebar %}
 
 {% block content %}
 <div class="main-content-wrapper">
-            <div class="page-content-inner ptb--80 ptb-md--60 pb-sm--55">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="user-dashboard-tab flex-column flex-md-row">
-                                <div class="user-dashboard-tab__head nav flex-md-column" role="tablist" aria-orientation="vertical">
-                                    <a class="nav-link active" href="{% url 'users:profile' %}">Привет</a>
-                                    <a class="nav-link" href="{% url 'users:favorite' %}">Избранное</a>
-<!--                                    <a class="nav-link" data-toggle="pill" role="tab" href="#appointments" aria-controls="appointments" aria-selected="true">Записи</a>-->
-                                    <a class="nav-link" href="{% url 'users:edit_profile' user.pk  %}">Редактировать профиль</a>
-                                    <a class="nav-link" data-toggle="pill" role="tab" href="#change_password" aria-controls="change_password" aria-selected="true">Сменить пароль</a>
-                                    <a class="nav-link" href="{% url 'accounts:logout' %}">Выйти</a>
-                                </div>
-                                <div class="user-dashboard-tab__content tab-content">
-                                    {% block profile_info %}
-                                    {% endblock profile_info %}
-                                </div>
-                            </div>
+    <div class="page-content-inner ptb--80 ptb-md--60 pb-sm--55">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="user-dashboard-tab flex-column flex-md-row">
+                            {% sidebar user selected %}
+                        <div class="user-dashboard-tab__content tab-content">
+                            {% block profile_info %}
+                            {% endblock profile_info %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 {% endblock %}
+
+{% block script %}
+{% endblock script %}

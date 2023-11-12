@@ -239,8 +239,6 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
                 content_type=ContentType.objects.get_for_model(User),
                 object_id=OuterRef('pk')
             ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
-
-            # Получаем список пользователей с полем is_bookmarked
             specialists = specialists.annotate(
                 is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
             )

@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm, PasswordChangeForm, \
+    SetPasswordForm
 
 from main.models import User
 
@@ -33,23 +34,29 @@ class LoginUserForm(AuthenticationForm):
 class UserPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(
         max_length=254,
-        widget=forms.EmailInput(attrs={'class': 'form__input', "autocomplete": "email", 'placeholder': 'email'}),
+        widget=forms.EmailInput(attrs={'class': 'form__input', "autocomplete": "email"}),
     )
 
 
-class MyPasswordChangeForm(PasswordChangeForm):
+class MySetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+        self.fields['new_password1'].widget = forms.PasswordInput(attrs={
+            'class': 'form__input'
+        })
+
+        self.fields['new_password2'].widget = forms.PasswordInput(attrs={
+            'class': 'form__input'
+        })
+
+
+class MyPasswordChangeForm(MySetPasswordForm, PasswordChangeForm):
     old_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form__input'}),
         label='Текущий пароль'
     )
 
-    new_password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form__input'}),
-        label='Новый пароль'
-    )
 
-    new_password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form__input'}),
-        label='Повторите новый пароль'
-    )
+
+
