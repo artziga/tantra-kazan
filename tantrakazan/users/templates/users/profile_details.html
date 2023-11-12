@@ -1,0 +1,16 @@
+{% extends 'users/profile.html' %}
+{% load static %}
+
+{% block profile_info %}
+<div class="tab-pane fade show active" id="dashboard">
+    <p>Привет, <strong>{{ user }}</strong></p>
+    <p>E-mail: {{ user.email }}</p>
+    <p>Зарегестрирован: {{ user.date_joined }}</p>
+    <p>Последний вход: {{ user.last_login }}</p>
+    <img src="{% if avatar %}
+      {{ user.avatar.image.url }}
+      {% else %}
+      {% static 'main/img/others/profile-icon.png' %}
+      {% endif %}" alt="Avatar">
+</div>
+{% endblock profile_info %}

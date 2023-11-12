@@ -9,8 +9,7 @@ from accounts.forms import RegisterUserForm
 from main.models import User
 from tantrakazan.utils import DataMixin
 from accounts.utils import signer
-from users.models import TherapistProfile
-from users.views import make_user_a_specialist
+from specialists.views import make_user_a_specialist
 
 
 class RegisterUserCreateView(DataMixin, CreateView):
@@ -31,7 +30,7 @@ class RegisterUserCreateView(DataMixin, CreateView):
         return response
 
 
-class RegisterTherapistCreateView(RegisterUserCreateView):
+class RegisterSpecialistCreateView(RegisterUserCreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.object

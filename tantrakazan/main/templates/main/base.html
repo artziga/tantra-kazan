@@ -47,7 +47,7 @@
                     <div class="container">
                         <div class="header__main">
                             <div class="header__col header__left">
-                                <a href="{% url 'users:specialists' %}" class="logo">
+                                <a href="{% url 'specialists:specialists' %}" class="logo">
                                     <figure class="logo--normal">
                                         <img src="{% static 'main/img/logo/logo.png' %}" alt="Logo">
                                     </figure>
@@ -63,7 +63,7 @@
 <!--                                            <a href="index.html" class="mainmenu__link">Главная</a>-->
 <!--                                        </li>-->
                                         <li class="mainmenu__item position-relative">
-                                            <a href="{% url 'users:specialists' %}" class="mainmenu__link">Специалисты</a>
+                                            <a href="{% url 'specialists:specialists' %}" class="mainmenu__link">Специалисты</a>
 <!--                                            <div class="inner-menu">-->
 <!--                                                <ul class="sub-menu">-->
 <!--                                                    <li>-->
@@ -132,9 +132,9 @@
                                                     <li>
                                                     {% if user.is_authenticated %}
                                                         {% if user.is_therapist %}
-                                                            <a href="{% url 'users:delete_a_specialist' %}">Удалить профиль массажиста</a>
+                                                            <a href="{% url 'specialists:delete_a_specialist' %}">Удалить профиль массажиста</a>
                                                         {% else %}
-                                                            <a href="{% url 'users:become_a_specialist' %}">Создать профиль массажиста</a>
+                                                            <a href="{% url 'specialists:become_a_specialist' %}">Создать профиль массажиста</a>
                                                         {% endif %}
                                                     {% else %}
                                                         <a href="{% url 'accounts:specialist_registration' %}">Создать профиль массажиста</a>
@@ -158,7 +158,7 @@
                                                         <a href="{% url 'users:profile' %}">Профиль</a>
                                                     </li>
                                                     <li>
-                                                        <a href="{% url 'users:edit_profile' %}">Редактировать профиль</a>
+                                                        <a href="{% url 'users:edit_profile' user.pk %}">Редактировать профиль</a>
                                                     </li>
                                                     <li>
                                                         <a href="wishlist.html">Избранное</a>

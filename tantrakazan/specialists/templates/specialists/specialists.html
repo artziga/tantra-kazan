@@ -38,10 +38,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="shop-products list">
+                            <div class="shop-products">
                                 <div class="row">
                                 {% for specialist in specialists %}
-                                    {% include 'users/payne-card.html' %}
+                                    <div class="col-xl-4 col-sm-6 mb--50">
+                                    <!--    карточка в сетке   -->
+                                        {% include 'specialists/specialist_card_grid.html' %}
+                                    <!--    карточка в списке   -->
+                                        {% include 'specialists/specialist_card_list.html' %}
+                                    </div>
                                 {% endfor %}
                                 </div>
                                 <div class="payne-product-map">
@@ -94,7 +99,7 @@
                                         </ul>
                                     </div>
                                 <button class="btn btn-size-sm mb--10" type="submit">Показать</button>
-                                            <a href="{% url 'users:specialists' %}" class="btn btn-size-sm mb--10">Cбросить</a>
+                                            <a href="{% url 'specialists:specialists' %}" class="btn btn-size-sm mb--10">Cбросить</a>
                                 </form>
 
 

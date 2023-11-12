@@ -1,0 +1,47 @@
+{% load rating_tags %}
+{% load like %}
+{% load format_years %}
+
+<div class="payne-product">
+    <div class="product__inner">
+        <div class="product__image">
+
+            <figure class="product__image--holder">
+                <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
+
+            </figure>
+            {% if user.is_authenticated %}
+            <div class="product__action like-button">
+                {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="product__info">
+            <div class="product__info--left">
+                <div class="header-flex-container">
+                <h3 class="product__title">
+                    {% if user == specialist %}
+                    <a href="{% url 'specialists:profile' %}">
+                    {% else %}
+                    <a href="{% url 'specialists:specialist_profile' specialist.username %}">
+                    {% endif %}
+                        {{ specialist.name }}
+                    </a>
+                    {{ specialist.therapist_profile.age|format_years }}
+                </h3>
+                </div>
+                <div class="product__price">
+                    <span class="money">от {{specialist.min_price}}</span>
+                    <span class="sign">₽</span>
+                </div>
+            </div>
+            <div class="product__info--right">
+                <span class="product__rating">
+                    {% rating specialist.rating.first.average %}
+                </span>
+                <p>Отзывов: {{ specialist.rating.first.count|default:"0" }}</p>
+            </div>
+
+        </div>
+    </div>
+</div>

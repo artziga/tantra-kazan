@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from star_ratings.models import Rating
 
 from feedback.models import Review, Bookmark
+from gallery.models import Photo
 from main.managers import CustomUserManager
 
 
@@ -33,3 +34,7 @@ class User(AbstractUser):
     @property
     def name(self):
         return self.first_name or self.username
+
+    @property
+    def avatar(self):
+        return Photo.objects.get(user=self, is_avatar=True)

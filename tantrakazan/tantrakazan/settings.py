@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
+    'specialists.apps.SpecialistsConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
     'feedback.apps.FeedbackConfig',
@@ -159,7 +160,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Ваш пароль о
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')  # От какого адреса отправлять письма
 
 LOGIN_REDIRECT_URL = reverse_lazy('users:profile')
-LOGOUT_REDIRECT_URL = reverse_lazy('users:therapists')
+LOGOUT_REDIRECT_URL = reverse_lazy('specialists:specialists')
 
 LOGGING = {
     'version': 1,

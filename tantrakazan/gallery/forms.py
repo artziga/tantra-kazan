@@ -14,6 +14,10 @@ def validate_image_files_extension(value):
             raise ValidationError('Допустимы только файлы с расширениями jpg, jpeg, png и gif.')
 
 
+class AvatarForm(forms.Form):
+    avatar = forms.ImageField(label='Аватар', required=False, widget=forms.ClearableFileInput())
+
+
 class MultiImageUploadForm(forms.Form):
     photos = MultiImageField(
         label='Фотографии',
@@ -30,7 +34,5 @@ class MultiImageUploadForm(forms.Form):
         add_photo_validators.append(validate_image_files_extension)
 
 
-class AddPhotosForm(MultiImageUploadForm):
-    class Meta:
-        model = Photo
-        fields = ['photos']
+class AddPhotosForm(AvatarForm, MultiImageUploadForm):
+    pass
