@@ -7,6 +7,7 @@ from datetime import datetime
 from PIL import Image
 from autoslug import AutoSlugField
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
 from django.db.models.fields.files import FieldFile
 from django.db.models.signals import post_save
@@ -98,30 +99,15 @@ class Photo(BaseImage):
                                     format='JPEG',
                                     options={'quality': 90})
 
-    @property
-    def avatar(self):
-        return self.objects.get(is_avatar=True)
-
-    def save(self, *args, **kwargs):
-        self.admin_thumbnail.generate()
-        if self.is_avatar is True:
-            self.mini_thumbnail.generate()
-            self.comment_thumbnail.generate()
-        return super().save()
-
-    def next(self):
-        photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
-        next_photo = photo_gallery.filter(pk__gt=self.pk).order_by('pk').first()
-        if not next_photo:
-            next_photo = photo_gallery.last()
-        return next_photo
-
-    def prev(self):
-        photo_gallery = self.__class__.objects.filter(gallery=self.gallery)
-        prev_photo = photo_gallery.filter(pk__lt=self.pk).order_by('-pk').first()
-        if not prev_photo:
-            prev_photo = photo_gallery.first()
-        return prev_photo
+    def make_as_avatar(self):
+        current_avatar = self.user.avatar
+        if current_avatar:
+            current_avatar.is_avatar = False
+            current_avatar.save()
+        self.is_avatar = True
+        self.mini_thumbnail.generate()
+        self.comment_thumbnail.generate()
+        self.save()
 
     class Meta:
         ordering = ['-is_avatar', '-upload_date', '-pk']

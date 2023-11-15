@@ -5,14 +5,12 @@
 <div class="payne-product-list">
     <div class="product__inner">
         <figure class="product__image">
-            <a href="{% url
             {% if user == specialist %}
-            'specialists:specialist_profile' specialist.username
+            <a href="{% url 'specialists:profile' %}">
             {% else %}
-            'users:profile'
+            <a href="{% url 'specialists:specialist_profile' specialist.username %}">
             {% endif %}
-             %}" class="d-block">
-                    <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
+                <img src="{{ specialist.avatar.image.url }}" alt="Специалист">
             </a>
         </figure>
         <div class="product__info">

@@ -72,14 +72,13 @@ class ActivateProfileForm(forms.Form):
 
 
 price_range = {'low': (1000, 3000), 'medium': (3000, 7000), 'high': (7000, 20000)}
-ORDERINGS = (('?', 'Случайная сортировка'),
-             ('-ratings__average', 'Рейтинг'),
-             ('min_price', 'Цена ↑'),
-             ('-min_price', 'Цена ↓'),
-             ('-therapist_profile__birth_date', 'Возраст ↑'),
-             ('therapist_profile__birth_date', 'Возраст ↓'),
-             ('therapist_profile__experience', 'Опыт'),
-             ('-comments_count', 'Количество отзывов'),
+ORDERINGS = (('-rating__average', 'Рейтинг'),
+             ('min_price', '<i class="fa fa-arrow-up" aria-hidden="true">Цена</i>'),
+             ('-min_price', '<i class="fa fa-arrow-down" aria-hidden="true">Цена</i>'),
+             ('-therapist_profile__birth_date', '<i class="fa fa-arrow-up" aria-hidden="true">Возраст</i>'),
+             ('therapist_profile__birth_date', '<i class="fa fa-arrow-down" aria-hidden="true">Возраст</i>'),
+             ('therapist_profile__practice_start_date', 'Опыт'),
+             ('-reviews', 'Количество отзывов'),
              ('-date_joined', 'Сначала новые'))
 
 

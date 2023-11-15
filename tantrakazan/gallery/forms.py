@@ -35,4 +35,5 @@ class MultiImageUploadForm(forms.Form):
 
 
 class AddPhotosForm(AvatarForm, MultiImageUploadForm):
-    pass
+    class Meta:
+        fields = ['photos', 'avatar']

@@ -12,7 +12,6 @@
                               <h2 class="heading__tertiary mb--30">Вход</h2>
                             <form method="post" class="form form--login">
                                 {% csrf_token %}
-                                {{ form.non_field_errors }}
                                 {% include 'main/form_content.html' %}
                                 <div class="d-flex align-items-center justify-content-center mb--20">
                                     <div class="form__group mr--30">

@@ -1,11 +1,12 @@
 from django.urls import path
 from gallery import views
+from gallery.views import change_avatar, change_avatar_confirm
 
 app_name = 'gallery'
 
 urlpatterns = [
-    path('add_photos/', views.AddPhotosView.as_view(), name='add_photos'),
-    path('photo/<str:slug>/', views.PhotoDetailView.as_view(), name='photo'),
-    path('photo/update/<str:slug>/', views.PhotoUpdateView.as_view(), name='update_photo_description'),
-    path('photo/delete/<str:slug>', views.PhotoDeleteView.as_view(), name='delete_photo'),
+    path('edit_gallery/', views.EditGallery.as_view(), name='edit_gallery'),
+    path('delete_photo/<int:pk>', views.PhotoDeleteView.as_view(), name='delete_photo'),
+    path('change_avatar/<int:pk>', change_avatar, name='change_avatar'),
+    path('change_avatar_confirmation/<int:pk>', change_avatar_confirm, name='change_avatar_confirmation'),
 ]

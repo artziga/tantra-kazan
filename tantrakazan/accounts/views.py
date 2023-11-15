@@ -1,16 +1,24 @@
 from django.contrib.auth import login
-from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfirmView, LoginView
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 
 from accounts.apps import user_registered
-from accounts.forms import RegisterUserForm, MySetPasswordForm
+from accounts.forms import RegisterUserForm, MySetPasswordForm, LoginUserForm
 from main.models import User
 from tantrakazan.utils import DataMixin
 from accounts.utils import signer
 from specialists.views import make_user_a_specialist
+
+
+class MyLoginView(LoginView):
+    template_name = "accounts/login.html"
+    form_class = LoginUserForm
+
+    def get_success_url(self):
+        return reverse_lazy('specialists:profile') if self.request.user.is_therapist else reverse_lazy('users:profile')
 
 
 class RegisterUserCreateView(DataMixin, CreateView):

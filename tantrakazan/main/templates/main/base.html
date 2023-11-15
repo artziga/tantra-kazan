@@ -41,179 +41,8 @@
     <!-- Main Wrapper Start -->
     <div class="wrapper">
         <!-- Header Start -->
-        <header class="header header-default site-header">
-            <div class="header__outer">
-                <div class="header__inner header--fixed">
-                    <div class="container">
-                        <div class="header__main">
-                            <div class="header__col header__left">
-                                <a href="{% url 'specialists:specialists' %}" class="logo">
-                                    <figure class="logo--normal">
-                                        <img src="{% static 'main/img/logo/logo.png' %}" alt="Logo">
-                                    </figure>
-                                    <figure class="logo--transparency">
-                                        <img src="{% static 'main/img/logo/logo.png' %}" alt="Logo">
-                                    </figure>
-                                </a>
-                            </div>
-                            <div class="header__col header__center">
-                                <nav class="main-navigation d-none d-lg-block">
-                                    <ul class="mainmenu">
-<!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
-<!--                                            <a href="index.html" class="mainmenu__link">Главная</a>-->
-<!--                                        </li>-->
-                                        <li class="mainmenu__item position-relative">
-                                            <a href="{% url 'specialists:specialists' %}" class="mainmenu__link">Специалисты</a>
-<!--                                            <div class="inner-menu">-->
-<!--                                                <ul class="sub-menu">-->
-<!--                                                    <li>-->
-<!--                                                        <a href="my-account.html">С наивысшим рейтингом</a>-->
-<!--                                                    </li>-->
-<!--                                                    <li>-->
-<!--                                                        <a href="checkout.html">Новые</a>-->
-<!--                                                    </li>-->
-<!--                                                    <li>-->
-<!--                                                        <a href="cart.html">Ждут звонка</a>-->
-<!--                                                    </li>-->
-<!--                                                </ul>-->
-<!--                                            </div>-->
-                                        </li>
-<!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
-<!--                                            <a href="#" class="mainmenu__link">Блог</a>-->
-<!--                                            <div class="inner-menu">-->
-<!--                                                <ul class="sub-menu">-->
-<!--                                                    <li class="has-children">-->
-<!--                                                        <a href="#">Blog Grid</a>-->
-<!--                                                        <ul class="sub-menu">-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-left-sidebar.html">Left Sidebar</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog.html">Right Sidebar</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-01-column.html">One Column</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-02-columns.html">Two Columns</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-03-columns.html">Three Columns</a>-->
-<!--                                                            </li>-->
-<!--                                                        </ul>-->
-<!--                                                    </li>-->
-<!--                                                    <li class="has-children">-->
-<!--                                                        <a href="#">Blog Details</a>-->
-<!--                                                        <ul class="sub-menu">-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-details-image.html">Image Post</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-details-audio.html">Audio Post</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-details-video.html">Video Post</a>-->
-<!--                                                            </li>-->
-<!--                                                            <li>-->
-<!--                                                                <a href="blog-details-gallery.html">Gallery Post</a>-->
-<!--                                                            </li>-->
-<!--                                                        </ul>-->
-<!--                                                    </li>-->
-<!--                                                </ul>-->
-<!--                                            </div>-->
-<!--                                        </li>-->
-                                        <li class="mainmenu__item menu-item-has-children position-relative">
-                                            <a href="#" class="mainmenu__link">Дополнительно</a>
-                                            <div class="inner-menu">
-                                                <ul class="sub-menu">
-                                                    <li>
-                                                        <a href="{% url 'main:contact-us' %}">Обратная связь</a>
-                                                    </li>
-                                                    <li>
-                                                    {% if user.is_authenticated %}
-                                                        {% if user.is_therapist %}
-                                                            <a href="{% url 'specialists:delete_a_specialist' %}">Удалить профиль массажиста</a>
-                                                        {% else %}
-                                                            <a href="{% url 'specialists:become_a_specialist' %}">Создать профиль массажиста</a>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <a href="{% url 'accounts:specialist_registration' %}">Создать профиль массажиста</a>
-                                                    {% endif %}
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                            <div class="header__col header__right">
-                                <nav class="main-navigation d-none d-lg-block">
-                                    <ul class="mainmenu">
-                                    {% if user.is_authenticated %}
-                                        <li class="mainmenu__item menu-item-has-children position-relative">
-                                            <a href="#" class="mainmenu__link"><i class="fa fa-chevron-down" aria-hidden="true"></i></a>
-                                            <div class="inner-menu">
-                                                <ul class="sub-menu">
-                                                    <li>
-                                                        <a href="{% url 'users:profile' %}">Профиль</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'users:edit_profile' user.pk %}">Редактировать профиль</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="wishlist.html">Избранное</a>
-                                                    </li>
-                                                    <li>
-                                                      <a href="{%url 'accounts:logout' %}">
-                                                        Выйти
-                                                      </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                        <a href="{% url 'users:profile' %}">
-                                            <img src="{% if avatar %}
-                                          {{ avatar.mini_thumbnail.url }}
-                                          {% else %}
-                                          {% static 'main/img/others/profile-icon.png' %}
-                                          {% endif %}" alt="Avatar" class="avatar">
-                                          </a>
-                                        {% else %}
-                                        <li class="mainmenu__item">
-                                          <a class="mainmenu__link" href="{%url 'accounts:login' %}">
-                                            Вход
-                                          </a>
-                                        </li>
-                                        <li class="mainmenu__item position-relative">
-                                        <span class="mainmenu__item">|</span>
-                                        </li>
-                                        <li class="mainmenu__item">
-                                          <a class="mainmenu__link mr--10" class="mainmenu__item position-relative"
-                                             href="{%url 'accounts:registration' %}">
-                                            Регистрация
-                                          </a>
-                                        </li>
-                                        {% endif %}
-                                    </ul>
-                                </nav>
-
-                                <div class="toolbar-item d-block d-lg-none">
-                                    <a href="#offcanvasnav" class="hamburger-icon js-toolbar menu-btn">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </a>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="header-sticky-height"></div>
-            </div>
+        {% include 'main/header.html' %}
+    </div>
         <!-- Header End -->
 
 
@@ -647,192 +476,192 @@
         </aside>
         <!-- OffCanvas Menu End -->
 
-        <!-- Mini Cart Start -->
-        <aside class="mini-cart" id="miniCart">
-            <div class="mini-cart-wrapper">
-                <div class="mini-cart__close">
-                    <a href="#" class="btn-close"><i class="flaticon-cross"></i></a>
-                </div>
-                <div class="mini-cart-inner">
-                    <h3 class="mini-cart__heading mb--45">Shopping Cart</h3>
-                    <div class="mini-cart__content">
-                        <ul class="mini-cart__list">
-                            <li class="mini-cart__product">
-                                <a href="#" class="mini-cart__product-remove">
-                                    <i class="flaticon-cross"></i>
-                                </a>
-                                <div class="mini-cart__product-image">
-                                    <img src="assets/img/products/product-11-90x90.jpg" alt="products">
-                                </div>
-                                <div class="mini-cart__product-content">
-                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>
-                                    <span class="mini-cart__product-quantity">1 x $49.00</span>
-                                </div>
-                            </li>
-                            <li class="mini-cart__product">
-                                <a href="#" class="mini-cart__product-remove">
-                                    <i class="flaticon-cross"></i>
-                                </a>
-                                <div class="mini-cart__product-image">
-                                    <img src="assets/img/products/product-12-90x90.jpg" alt="products">
-                                </div>
-                                <div class="mini-cart__product-content">
-                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>
-                                    <span class="mini-cart__product-quantity">1 x $49.00</span>
-                                </div>
-                            </li>
-                            <li class="mini-cart__product">
-                                <a href="#" class="mini-cart__product-remove">
-                                    <i class="flaticon-cross"></i>
-                                </a>
-                                <div class="mini-cart__product-image">
-                                    <img src="assets/img/products/product-13-90x90.jpg" alt="products">
-                                </div>
-                                <div class="mini-cart__product-content">
-                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>
-                                    <span class="mini-cart__product-quantity">1 x $49.00</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="mini-cart__total">
-                            <span>Subtotal</span>
-                            <span class="ammount">$98.00</span>
-                        </div>
-                        <div class="mini-cart__buttons">
-                            <a href="cart.html" class="btn btn-fullwidth btn-bg-primary mb--20">View Cart</a>
-                            <a href="checkout.html" class="btn btn-fullwidth btn-bg-primary">Checkout</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-        <!-- Mini Cart End -->
+<!--        &lt;!&ndash; Mini Cart Start &ndash;&gt;-->
+<!--        <aside class="mini-cart" id="miniCart">-->
+<!--            <div class="mini-cart-wrapper">-->
+<!--                <div class="mini-cart__close">-->
+<!--                    <a href="#" class="btn-close"><i class="flaticon-cross"></i></a>-->
+<!--                </div>-->
+<!--                <div class="mini-cart-inner">-->
+<!--                    <h3 class="mini-cart__heading mb&#45;&#45;45">Shopping Cart</h3>-->
+<!--                    <div class="mini-cart__content">-->
+<!--                        <ul class="mini-cart__list">-->
+<!--                            <li class="mini-cart__product">-->
+<!--                                <a href="#" class="mini-cart__product-remove">-->
+<!--                                    <i class="flaticon-cross"></i>-->
+<!--                                </a>-->
+<!--                                <div class="mini-cart__product-image">-->
+<!--                                    <img src="assets/img/products/product-11-90x90.jpg" alt="products">-->
+<!--                                </div>-->
+<!--                                <div class="mini-cart__product-content">-->
+<!--                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>-->
+<!--                                    <span class="mini-cart__product-quantity">1 x $49.00</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                            <li class="mini-cart__product">-->
+<!--                                <a href="#" class="mini-cart__product-remove">-->
+<!--                                    <i class="flaticon-cross"></i>-->
+<!--                                </a>-->
+<!--                                <div class="mini-cart__product-image">-->
+<!--                                    <img src="assets/img/products/product-12-90x90.jpg" alt="products">-->
+<!--                                </div>-->
+<!--                                <div class="mini-cart__product-content">-->
+<!--                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>-->
+<!--                                    <span class="mini-cart__product-quantity">1 x $49.00</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                            <li class="mini-cart__product">-->
+<!--                                <a href="#" class="mini-cart__product-remove">-->
+<!--                                    <i class="flaticon-cross"></i>-->
+<!--                                </a>-->
+<!--                                <div class="mini-cart__product-image">-->
+<!--                                    <img src="assets/img/products/product-13-90x90.jpg" alt="products">-->
+<!--                                </div>-->
+<!--                                <div class="mini-cart__product-content">-->
+<!--                                    <a class="mini-cart__product-title" href="product-details.html">Lexbaro Begadi</a>-->
+<!--                                    <span class="mini-cart__product-quantity">1 x $49.00</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                        <div class="mini-cart__total">-->
+<!--                            <span>Subtotal</span>-->
+<!--                            <span class="ammount">$98.00</span>-->
+<!--                        </div>-->
+<!--                        <div class="mini-cart__buttons">-->
+<!--                            <a href="cart.html" class="btn btn-fullwidth btn-bg-primary mb&#45;&#45;20">View Cart</a>-->
+<!--                            <a href="checkout.html" class="btn btn-fullwidth btn-bg-primary">Checkout</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </aside>-->
+<!--        &lt;!&ndash; Mini Cart End &ndash;&gt;-->
 
-        <!-- Qicuk View Modal Start -->
-        <div class="modal fade product-modal" id="productModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true"><i class="flaticon-cross"></i></span>
-                        </button>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="element-carousel slick-vertical-center" data-slick-options='{
-                                    "slidesToShow": 1,
-                                    "slidesToScroll": 1,
-                                    "arrows": true,
-                                    "prevArrow": {"buttonClass": "slick-btn slick-prev", "iconClass": "fa fa-angle-double-left" },
-                                    "nextArrow": {"buttonClass": "slick-btn slick-next", "iconClass": "fa fa-angle-double-right" }
-                                }'>
-                                <div class="item">
-                                    <figure class="product-gallery__image">
-                                        <img src="assets/img/products/product-03-270x300.jpg" alt="Product">
-                                        <span class="product-badge sale">Sale</span>
-                                    </figure>
-                                </div>
-                                <div class="item">
-                                    <figure class="product-gallery__image">
-                                        <img src="assets/img/products/product-04-270x300.jpg" alt="Product">
-                                        <span class="product-badge sale">Sale</span>
-                                    </figure>
-                                </div>
-                                <div class="item">
-                                    <figure class="product-gallery__image">
-                                        <img src="assets/img/products/product-05-270x300.jpg" alt="Product">
-                                        <span class="product-badge sale">Sale</span>
-                                    </figure>
-                                </div>
-                                <div class="item">
-                                    <figure class="product-gallery__image">
-                                        <img src="assets/img/products/product-06-270x300.jpg" alt="Product">
-                                        <span class="product-badge sale">Sale</span>
-                                    </figure>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="modal-box product-summary">
-                                    <div class="product-navigation text-right mb--20">
-                                        <a href="#" class="prev"><i class="fa fa-angle-double-left"></i></a>
-                                        <a href="#" class="next"><i class="fa fa-angle-double-right"></i></a>
-                                    </div>
-                                    <div class="product-rating d-flex mb--20">
-                                        <div class="star-rating star-four">
-                                            <span>Rated <strong class="rating">5.00</strong> out of 5</span>
-                                        </div>
-                                    </div>
-                                    <h3 class="product-title mb--20">Golden Easy Spot Chair.</h3>
-                                    <p class="product-short-description mb--20">Donec accumsan auctor iaculis. Sed suscipit
-                                        arcu ligula, at egestas magna molestie a. Proin ac ex maximus, ultrices justo eget,
-                                        sodales orci. Aliquam egestas libero ac turpis pharetra, in vehicula lacus
-                                        scelerisque. Vestibulum ut sem laoreet, feugiat tellus at, hendrerit arcu.</p>
-                                    <div class="product-price-wrapper mb--25">
-                                        <span class="money">$200.00</span>
-                                        <span class="price-separator">-</span>
-                                        <span class="money">$400.00</span>
-                                    </div>
-                                    <form action="#" class="variation-form mb--20">
-                                        <div class="product-size-variations d-flex align-items-center mb--15">
-                                            <p class="variation-label">Size:</p>
-                                            <div class="product-size-variation variation-wrapper">
-                                                <div class="variation">
-                                                    <a class="product-size-variation-btn selected" data-toggle="tooltip"
-                                                        data-placement="top" title="S">
-                                                        <span class="product-size-variation-label">S</span>
-                                                    </a>
-                                                </div>
-                                                <div class="variation">
-                                                    <a class="product-size-variation-btn" data-toggle="tooltip"
-                                                        data-placement="top" title="M">
-                                                        <span class="product-size-variation-label">M</span>
-                                                    </a>
-                                                </div>
-                                                <div class="variation">
-                                                    <a class="product-size-variation-btn" data-toggle="tooltip"
-                                                        data-placement="top" title="L">
-                                                        <span class="product-size-variation-label">L</span>
-                                                    </a>
-                                                </div>
-                                                <div class="variation">
-                                                    <a class="product-size-variation-btn" data-toggle="tooltip"
-                                                        data-placement="top" title="XL">
-                                                        <span class="product-size-variation-label">XL</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <a href="" class="reset_variations">Clear</a>
-                                    </form>
-                                    <div class="product-action d-flex flex-sm-row align-items-sm-center flex-column align-items-start mb--30">
-                                        <div class="quantity-wrapper d-flex align-items-center mr--30 mr-xs--0 mb-xs--30">
-                                            <label class="quantity-label" for="qty">Quantity:</label>
-                                            <div class="quantity">
-                                                <input type="number" class="quantity-input" name="qty" id="qty" value="1"
-                                                    min="1">
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-shape-square btn-size-sm"
-                                            onclick="window.location.href='cart.html'">
-                                            Add To Cart
-                                        </button>
-                                    </div>
-                                    <div class="product-footer-meta">
-                                        <p><span>Category:</span>
-                                            <a href="shop.html">Full Sweater</a>,
-                                            <a href="shop.html">SweatShirt</a>,
-                                            <a href="shop.html">Jacket</a>,
-                                            <a href="shop.html">Blazer</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Qicuk View Modal End -->
+<!--        &lt;!&ndash; Qicuk View Modal Start &ndash;&gt;-->
+<!--        <div class="modal fade product-modal" id="productModal" tabindex="-1" role="dialog" aria-hidden="true">-->
+<!--            <div class="modal-dialog" role="document">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-body">-->
+<!--                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                            <span aria-hidden="true"><i class="flaticon-cross"></i></span>-->
+<!--                        </button>-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-lg-6">-->
+<!--                                <div class="element-carousel slick-vertical-center" data-slick-options='{-->
+<!--                                    "slidesToShow": 1,-->
+<!--                                    "slidesToScroll": 1,-->
+<!--                                    "arrows": true,-->
+<!--                                    "prevArrow": {"buttonClass": "slick-btn slick-prev", "iconClass": "fa fa-angle-double-left" },-->
+<!--                                    "nextArrow": {"buttonClass": "slick-btn slick-next", "iconClass": "fa fa-angle-double-right" }-->
+<!--                                }'>-->
+<!--                                <div class="item">-->
+<!--                                    <figure class="product-gallery__image">-->
+<!--                                        <img src="assets/img/products/product-03-270x300.jpg" alt="Product">-->
+<!--                                        <span class="product-badge sale">Sale</span>-->
+<!--                                    </figure>-->
+<!--                                </div>-->
+<!--                                <div class="item">-->
+<!--                                    <figure class="product-gallery__image">-->
+<!--                                        <img src="assets/img/products/product-04-270x300.jpg" alt="Product">-->
+<!--                                        <span class="product-badge sale">Sale</span>-->
+<!--                                    </figure>-->
+<!--                                </div>-->
+<!--                                <div class="item">-->
+<!--                                    <figure class="product-gallery__image">-->
+<!--                                        <img src="assets/img/products/product-05-270x300.jpg" alt="Product">-->
+<!--                                        <span class="product-badge sale">Sale</span>-->
+<!--                                    </figure>-->
+<!--                                </div>-->
+<!--                                <div class="item">-->
+<!--                                    <figure class="product-gallery__image">-->
+<!--                                        <img src="assets/img/products/product-06-270x300.jpg" alt="Product">-->
+<!--                                        <span class="product-badge sale">Sale</span>-->
+<!--                                    </figure>-->
+<!--                                </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-6">-->
+<!--                                <div class="modal-box product-summary">-->
+<!--                                    <div class="product-navigation text-right mb&#45;&#45;20">-->
+<!--                                        <a href="#" class="prev"><i class="fa fa-angle-double-left"></i></a>-->
+<!--                                        <a href="#" class="next"><i class="fa fa-angle-double-right"></i></a>-->
+<!--                                    </div>-->
+<!--                                    <div class="product-rating d-flex mb&#45;&#45;20">-->
+<!--                                        <div class="star-rating star-four">-->
+<!--                                            <span>Rated <strong class="rating">5.00</strong> out of 5</span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <h3 class="product-title mb&#45;&#45;20">Golden Easy Spot Chair.</h3>-->
+<!--                                    <p class="product-short-description mb&#45;&#45;20">Donec accumsan auctor iaculis. Sed suscipit-->
+<!--                                        arcu ligula, at egestas magna molestie a. Proin ac ex maximus, ultrices justo eget,-->
+<!--                                        sodales orci. Aliquam egestas libero ac turpis pharetra, in vehicula lacus-->
+<!--                                        scelerisque. Vestibulum ut sem laoreet, feugiat tellus at, hendrerit arcu.</p>-->
+<!--                                    <div class="product-price-wrapper mb&#45;&#45;25">-->
+<!--                                        <span class="money">$200.00</span>-->
+<!--                                        <span class="price-separator">-</span>-->
+<!--                                        <span class="money">$400.00</span>-->
+<!--                                    </div>-->
+<!--                                    <form action="#" class="variation-form mb&#45;&#45;20">-->
+<!--                                        <div class="product-size-variations d-flex align-items-center mb&#45;&#45;15">-->
+<!--                                            <p class="variation-label">Size:</p>-->
+<!--                                            <div class="product-size-variation variation-wrapper">-->
+<!--                                                <div class="variation">-->
+<!--                                                    <a class="product-size-variation-btn selected" data-toggle="tooltip"-->
+<!--                                                        data-placement="top" title="S">-->
+<!--                                                        <span class="product-size-variation-label">S</span>-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                                <div class="variation">-->
+<!--                                                    <a class="product-size-variation-btn" data-toggle="tooltip"-->
+<!--                                                        data-placement="top" title="M">-->
+<!--                                                        <span class="product-size-variation-label">M</span>-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                                <div class="variation">-->
+<!--                                                    <a class="product-size-variation-btn" data-toggle="tooltip"-->
+<!--                                                        data-placement="top" title="L">-->
+<!--                                                        <span class="product-size-variation-label">L</span>-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                                <div class="variation">-->
+<!--                                                    <a class="product-size-variation-btn" data-toggle="tooltip"-->
+<!--                                                        data-placement="top" title="XL">-->
+<!--                                                        <span class="product-size-variation-label">XL</span>-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <a href="" class="reset_variations">Clear</a>-->
+<!--                                    </form>-->
+<!--                                    <div class="product-action d-flex flex-sm-row align-items-sm-center flex-column align-items-start mb&#45;&#45;30">-->
+<!--                                        <div class="quantity-wrapper d-flex align-items-center mr&#45;&#45;30 mr-xs&#45;&#45;0 mb-xs&#45;&#45;30">-->
+<!--                                            <label class="quantity-label" for="qty">Quantity:</label>-->
+<!--                                            <div class="quantity">-->
+<!--                                                <input type="number" class="quantity-input" name="qty" id="qty" value="1"-->
+<!--                                                    min="1">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <button type="button" class="btn btn-shape-square btn-size-sm"-->
+<!--                                            onclick="window.location.href='cart.html'">-->
+<!--                                            Add To Cart-->
+<!--                                        </button>-->
+<!--                                    </div>-->
+<!--                                    <div class="product-footer-meta">-->
+<!--                                        <p><span>Category:</span>-->
+<!--                                            <a href="shop.html">Full Sweater</a>,-->
+<!--                                            <a href="shop.html">SweatShirt</a>,-->
+<!--                                            <a href="shop.html">Jacket</a>,-->
+<!--                                            <a href="shop.html">Blazer</a>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        &lt;!&ndash; Qicuk View Modal End &ndash;&gt;-->
 
         <!-- Global Overlay Start -->
         <div class="global-overlay"></div>

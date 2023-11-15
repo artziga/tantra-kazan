@@ -3669,6 +3669,15 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 .social.space-10 .social__link:not(:last-child) {
   margin-right: 10px; }
 
+.social.space-20 .social__link:not(:last-child) {
+  margin-right: 20px; }
+
+.contact-data-container {
+  font-size: 32px;}
+
+.contact-buttons i {
+  font-size: 32px;}
+
 /*****************************
 32 - Components - Table
 *****************************/

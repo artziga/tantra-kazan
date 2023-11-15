@@ -46,7 +46,7 @@ class TherapistProfile(models.Model):
 
     @staticmethod
     def get_absolute_url():
-        return reverse('users:therapist_profile')
+        return reverse('specialists:profile')
 
     def __str__(self):
         return self.user.username

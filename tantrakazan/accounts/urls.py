@@ -3,7 +3,7 @@ from django.urls import path, reverse_lazy
 
 from accounts.forms import UserPasswordResetForm, LoginUserForm, MyPasswordChangeForm
 from accounts.views import RegisterUserCreateView, RegisterSpecialistCreateView, RegistrationDone, user_activate, \
-    MyPasswordResetConfirmView
+    MyPasswordResetConfirmView, MyLoginView
 
 app_name = 'accounts'
 
@@ -12,7 +12,7 @@ urlpatterns = [
     path("specialist_registration/", RegisterSpecialistCreateView.as_view(), name="specialist_registration"),
     path("registration/done", RegistrationDone.as_view(), name="registration_done"),
     path("registration/activate/<str:sign>", user_activate, name="register_activate"),
-    path("login/", views.LoginView.as_view(template_name="accounts/login.html", form_class=LoginUserForm), name="login"),
+    path("login/", MyLoginView.as_view(), name="login"),
     path("logout/", views.LogoutView.as_view(), name="logout"),
     path(
         "password_change/done/",

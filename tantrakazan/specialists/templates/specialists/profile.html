@@ -33,6 +33,32 @@
                                 <p>
                                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                                     {{specialist.therapist_profile.address}}</p>
+                                <div class="row justify-content-center">
+                                    <div class="contact-buttons social space-20 mb--10">
+                                        {% if specialist.therapist_profile.phone_number %}
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                            <i class="fa fa-phone"></i>
+                                            <span class="sr-only">Телефон</span>
+                                        </a>
+                                        {% endif %}
+                                        {% if specialist.therapist_profile.telegram_profile %}
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                            <i class="fa fa-telegram"></i>
+                                            <span class="sr-only">Телеграм</span>
+                                        </a>
+                                        {% endif %}
+                                        {% if specialist.therapist_profile.instagram_profile %}
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                            <i class="fa fa-instagram"></i>
+                                            <span class="sr-only">Instagram</span>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class='contact-data-container'></div>
+                                </div>
+
 
 
                                 <div id="bookmark-result"></div>
@@ -152,6 +178,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             ratingInput.value = rating;
+        });
+    });
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('.social__link').click(function(e) {
+        e.preventDefault();
+        var socialType = $(this).find('i').attr('class').split(' ')[1]; // 'fa-phone', 'fa-telegram', 'fa-instagram'
+
+        $.ajax({
+            type: 'GET',
+            url: '{% url "specialists:get_social_info" %}',
+            data: {
+                social_type: socialType,
+                specialist: {{ specialist.pk }}
+            },
+            success: function(response) {
+                $('.contact-data-container').text(response.info);
+            },
+            error: function(error) {
+                console.log(error);
+            }
         });
     });
 });

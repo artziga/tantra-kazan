@@ -1,5 +1,3 @@
-
-
 <div class="col-lg-7 product-main-image">
     <div class="product-image">
         <div class="product-gallery vertical-slide-nav flex-row-reverse">
@@ -22,7 +20,7 @@
                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                     </button>
                                     {% if user == specialist %}
-                                    <a class="action-btn" href="{% url 'gallery:add_photos' %}">
+                                    <a class="action-btn" href="{% url 'gallery:edit_gallery' %}">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                     </a>
                                     {% endif %}

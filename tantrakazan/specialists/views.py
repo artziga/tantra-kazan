@@ -1,6 +1,8 @@
 import logging
 import os
 
+from django.contrib.auth.views import PasswordChangeView
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
@@ -11,6 +13,7 @@ from django.views.generic import ListView
 from formtools.wizard.views import SessionWizardView
 from star_ratings.models import UserRating
 
+from accounts.forms import MyPasswordChangeForm
 from feedback.forms import ReviewForm
 from feedback.models import Bookmark
 from gallery.forms import AddPhotosForm
@@ -22,6 +25,7 @@ from tantrakazan import settings
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from users.models import TherapistProfile
 from users.views import ProfileView
+from gallery.views import add_avatar, add_photos
 
 FORMS = [
     ('photos', AddPhotosForm),
@@ -70,8 +74,8 @@ class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
 
     def get_form_step_files(self, form):
         if self.steps.current == 'photos':
-            self.add_avatar(form)
-            self.add_photos(form)
+            add_avatar(form, self.request.user, get='photos-avatar')
+            add_photos(form, self.request.user, get='photos-photos')
         return super().get_form_step_files(form)
 
     def done(self, form_list, **kwargs):
@@ -178,7 +182,7 @@ class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
 
 
 class SpecialistProfileDetailView(ProfileView):
-    template_name = 'specialists/specialist_profile.html'
+    template_name = 'specialists/profile.html'
 
     def get_context_data(self, *args, **kwargs):
         context = self.get_user_context(**kwargs)
@@ -204,15 +208,42 @@ class SpecialistProfileDetailView(ProfileView):
         return context
 
     def get_therapist(self):
-        therapist_name = self.kwargs.get('specialist_username')
-        therapist = User.objects.get(username=therapist_name)
-        return therapist
+        specialist_name = self.kwargs.get('specialist_username')
+        specialist = User.objects.get(username=specialist_name)
+        return specialist
 
     @staticmethod
     def get_review_form(specialist):
         review_form = ReviewForm()
         review_form.fields['review_for'].initial = specialist.pk
         return review_form
+
+
+class SpecialistSelfProfileDetailView(SpecialistProfileDetailView):
+    def get_therapist(self):
+        return self.request.user
+
+
+def get_social_info(request):
+    social_type = request.GET.get('social_type')
+    specialist_pk = request.GET.get('specialist')
+    specialist = User.objects.get(pk=specialist_pk).therapist_profile
+    if social_type == 'fa-phone':
+        info = specialist.phone_number
+    elif social_type == 'fa-telegram':
+        info = specialist.telegram_profile
+    elif social_type == 'fa-instagram':
+        info = specialist.instagram_profile
+    else:
+        info = None
+    data = {'info': info}
+
+    return JsonResponse(data)
+
+
+class UserPasswordChangeView(PasswordChangeView):
+    template_name = 'specialists/profile_change_password.html'
+    form_class = MyPasswordChangeForm
 
 
 class SpecialistsListView(DataMixin, FilterFormMixin, ListView):

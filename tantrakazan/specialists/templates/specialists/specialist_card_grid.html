@@ -5,10 +5,14 @@
 <div class="payne-product">
     <div class="product__inner">
         <div class="product__image">
-
             <figure class="product__image--holder">
-                <img src="{{ specialist.photos.first.image.url }}" alt="Специалист">
-
+                {% if user == specialist %}
+                <a href="{% url 'specialists:profile' %}">
+                {% else %}
+                <a href="{% url 'specialists:specialist_profile' specialist.username %}">
+                {% endif %}
+                <img src="{{ specialist.avatar.image.url }}" alt="Специалист">
+                </a>
             </figure>
             {% if user.is_authenticated %}
             <div class="product__action like-button">
