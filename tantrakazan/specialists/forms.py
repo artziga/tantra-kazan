@@ -78,7 +78,7 @@ ORDERINGS = (('-rating__average', 'Рейтинг'),
              ('-therapist_profile__birth_date', '<i class="fa fa-arrow-up" aria-hidden="true">Возраст</i>'),
              ('therapist_profile__birth_date', '<i class="fa fa-arrow-down" aria-hidden="true">Возраст</i>'),
              ('therapist_profile__practice_start_date', 'Опыт'),
-             ('-reviews', 'Количество отзывов'),
+             ('-rating__count', 'Количество отзывов'),
              ('-date_joined', 'Сначала новые'))
 
 

@@ -1,16 +1,16 @@
 from django.contrib.auth import login
-from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfirmView, LoginView
+from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfirmView, LoginView, PasswordChangeView
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 
 from accounts.apps import user_registered
-from accounts.forms import RegisterUserForm, MySetPasswordForm, LoginUserForm
+from accounts.forms import RegisterUserForm, MySetPasswordForm, LoginUserForm, MyPasswordChangeForm
 from main.models import User
 from tantrakazan.utils import DataMixin
 from accounts.utils import signer
-from specialists.views import make_user_a_specialist
+from specialists.utils import make_user_a_specialist
 
 
 class MyLoginView(LoginView):
@@ -73,6 +73,11 @@ def user_activate(request, sign):
     login(request, user)
     goto = 'users:edit_profile' if user.is_therapist else 'users:profile'
     return redirect(goto)
+
+
+class MyPasswordChangeView(PasswordChangeView):
+    success_url = reverse_lazy("accounts:password_change_done")
+    form_class = MyPasswordChangeForm
 
 
 class MyPasswordResetConfirmView(PasswordResetConfirmView):

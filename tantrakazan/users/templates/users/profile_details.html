@@ -3,14 +3,14 @@
 
 {% block profile_info %}
 <div class="tab-pane fade show active" id="dashboard">
-    <p>Привет, <strong>{{ user }}</strong></p>
-    <p>E-mail: {{ user.email }}</p>
-    <p>Зарегестрирован: {{ user.date_joined }}</p>
-    <p>Последний вход: {{ user.last_login }}</p>
-    <img src="{% if avatar %}
-      {{ user.avatar.image.url }}
-      {% else %}
-      {% static 'main/img/others/profile-icon.png' %}
-      {% endif %}" alt="Avatar">
+    <div class="profile-container">
+    <img class="profile-image mr--20" src="{% if avatar %}{{ user.avatar.image.url }}{% else %}{% static 'main/img/others/profile-icon.png' %}{% endif %}" alt="Avatar">
+    <div class="profile-text">
+        <p>Привет, <strong>{{ user }}</strong></p>
+        <p>E-mail: {{ user.email }}</p>
+        <p>Зарегистрирован: {{ user.date_joined }}</p>
+        <p>Последний вход: {{ user.last_login }}</p>
+    </div>
+</div>
 </div>
 {% endblock profile_info %}

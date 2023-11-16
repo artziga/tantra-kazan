@@ -3,14 +3,27 @@
 {% block profile_info %}
     <form method="post" class="form form--account" enctype="multipart/form-data">
         {% csrf_token %}
-        <img src="{{ user.avatar.admin_thumbnail.url }}" alt="Аватар">
-
+        <div class="avatar-container">
+            {% if user.avatar %}
+            {% with photo=user.avatar %}
+            <div class="avatar-image">
+            {% include 'gallery/photo_card.html' %}
+            </div>
+            {% endwith %}
+            {% endif %}
+            <div class="form-block">
                 <div class="col-md-6 mb-sm--20">
                     <div class="form__group">
-                        <label class="form__label">{{ form.avatar.label_tag }} </label>
+                        {% if user.avatar %}
+                        <label class="form__label">Сменить аватар:</label>
+                        {% else %}
+                        <label class="form__label">Загрузить аватар:</label>
+                        {% endif %}
                         {{ form.avatar }}
                     </div>
                 </div>
+            </div>
+        </div>
                 <div class="row mb--20">
                 <div class="col-md-6 mb-sm--20">
                     <div class="form__group">

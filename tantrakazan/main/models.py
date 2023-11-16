@@ -25,7 +25,7 @@ class User(AbstractUser):
     is_therapist = models.BooleanField(verbose_name='Массажист', default=False)
     rating = GenericRelation(Rating, related_name='users', related_query_name='user')
     bookmarks = GenericRelation(Bookmark, related_name='bookmarks')
-    reviews = GenericRelation(Review, related_name='reviews')
+    reviews = GenericRelation(Rating, related_name='reviews')
 
     objects = CustomUserManager()
 

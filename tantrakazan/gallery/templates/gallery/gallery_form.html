@@ -17,10 +17,8 @@
                                     <button type="submit" class="btn btn-size-sm mb--20">Отправить</button>
                                 </form>
                                 <div class="row justify-content-center">
-
                                 {% for photo in photos %}
                                     <div class="col-xl-4 col-sm-6 mb--50">
-                                    <!--    карточка в сетке   -->
                                         {% include 'gallery/photo_card.html' %}
                                      </div>
                                 {% endfor %}

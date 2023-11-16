@@ -27,28 +27,28 @@
                                     Отзывов: {{ specialist.rating.first.count|default:"0" }}
                                 </div>
 
-                                        <div class="table-content table-responsive">
+                                        <div class="table-content table-responsive mb--20">
                                             {% include 'specialists/profile_info.html' %}
                                         </div>
                                 <p>
-                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    <i class="fa fa-map-marker mr--10" aria-hidden="true"></i>
                                     {{specialist.therapist_profile.address}}</p>
                                 <div class="row justify-content-center">
-                                    <div class="contact-buttons social space-20 mb--10">
+                                    <div class="contact-buttons social space-20 mb--20">
                                         {% if specialist.therapist_profile.phone_number %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Телефон">
                                             <i class="fa fa-phone"></i>
                                             <span class="sr-only">Телефон</span>
                                         </a>
                                         {% endif %}
                                         {% if specialist.therapist_profile.telegram_profile %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Телеграм">
                                             <i class="fa fa-telegram"></i>
                                             <span class="sr-only">Телеграм</span>
                                         </a>
                                         {% endif %}
                                         {% if specialist.therapist_profile.instagram_profile %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link">
+                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Instagram">
                                             <i class="fa fa-instagram"></i>
                                             <span class="sr-only">Instagram</span>
                                         </a>
@@ -93,6 +93,13 @@
                                 <div class="tab-content" id="product-tabContent">
                                     <div class="tab-pane fade show active" id="nav-description" role="tabpanel"
                                         aria-labelledby="nav-description-tab">
+                                        {% if user == specialist %}
+                                        <h2>
+                                        <a href="#">
+                                            <i class="fa fa-pencil-square-o mr--10" aria-hidden="true"></i>
+                                        </a>
+                                        </h2>
+                                        {% endif %}
                                         <div class="product-description">
                                             {{ specialist.therapist_profile.description|safe }}
                                         </div>

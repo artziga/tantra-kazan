@@ -1,6 +1,7 @@
 {% extends 'users/profile.html' %}
 
 {% block profile_info %}
+{% csrf_token %}
     {% if favorite_specialists %}
                 <div class="row">
                 {% for specialist in favorite_specialists %}

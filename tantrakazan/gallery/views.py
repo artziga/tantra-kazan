@@ -49,10 +49,11 @@ class EditGallery(DataMixin, FormView):
 
 class PhotoDeleteView(DeleteView):
     model = Photo
-    success_url = reverse_lazy('specialists:profile')
 
     def get_success_url(self):
-        return reverse_lazy('gallery:edit_gallery')
+        if self.request.user.is_therapist:
+            return reverse_lazy('gallery:edit_gallery')
+        return reverse_lazy('users:edit_profile', kwargs={'pk': self.request.user.pk})
 
 
 def make_photo_as_avatar(photo_id):

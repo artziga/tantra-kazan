@@ -13,7 +13,8 @@ from django.views.generic import ListView
 from formtools.wizard.views import SessionWizardView
 from star_ratings.models import UserRating
 
-from accounts.forms import MyPasswordChangeForm
+
+from accounts.views import MyPasswordChangeView
 from feedback.forms import ReviewForm
 from feedback.models import Bookmark
 from gallery.forms import AddPhotosForm
@@ -21,6 +22,7 @@ from gallery.models import Photo
 from listings.models import Listing, BasicService, BasicServicePrice
 from main.models import User
 from specialists.forms import PersonDataForm, SpecialistDataForm, ContactDataForm, AboutForm, SpecialistFilterForm
+from specialists.utils import make_user_a_specialist
 from tantrakazan import settings
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from users.models import TherapistProfile
@@ -45,10 +47,7 @@ FORMS_NAMES = [
 ]
 
 
-def make_user_a_specialist(user):
-    user.is_therapist = True
-    user.save()
-    TherapistProfile.objects.create(user=user)
+
 
 
 def become_a_specialist(request):
@@ -203,7 +202,7 @@ class SpecialistProfileDetailView(ProfileView):
                                                            user_id=self.request.user.pk,
                                                            object_id=specialist.pk).exists()
         context['reviews'] = reviews
-        context['review_form'] = review_form
+        context['form'] = review_form
         context['listings'] = specialist.listings.all()
         return context
 
@@ -241,9 +240,8 @@ def get_social_info(request):
     return JsonResponse(data)
 
 
-class UserPasswordChangeView(PasswordChangeView):
+class SpecialistPasswordChangeView(MyPasswordChangeView):
     template_name = 'specialists/profile_change_password.html'
-    form_class = MyPasswordChangeForm
 
 
 class SpecialistsListView(DataMixin, FilterFormMixin, ListView):

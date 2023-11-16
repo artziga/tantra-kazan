@@ -3675,7 +3675,9 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 .contact-data-container {
   font-size: 32px;}
 
+
 .contact-buttons i {
+  color: #5e6063;
   font-size: 32px;}
 
 /*****************************
@@ -4201,11 +4203,14 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  text-align: center; /* Центрирование текста по горизонтали */
+
+   /* Центрирование текста по горизонтали */
 
 }
 
 .param-name, .param-value, .param-additional {
+  justify-content: center;
+  text-align: center;
   padding: 1%; /* Поля вокруг содержимого ячейки */
 }
 
@@ -4217,7 +4222,7 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   grid-column: 2;
   font-size: 150%;
   color: #5e6063;
-  font-weight: bold; /* Жирный текст для значений */
+  font-weight: bold;
 }
 
 .header-flex-container {
@@ -4290,6 +4295,37 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   order: 2; /* Поместить метки после полей */
   margin-left: 10px; /* Расстояние между меткой и полем, настройте по своему усмотрению */
 }
+
+.profile-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Стиль для изображения */
+.profile-image {
+    width: 250px; /* Задаем ширину изображения */
+    height: auto; /* Поддерживаем пропорции */
+    margin-right: 10px; /* Добавляем немного отступа справа от изображения */
+}
+
+
+.avatar-container {
+    display: flex;
+    align-items: center; /* Центрирование по вертикали */
+}
+
+/* Стиль для изображения */
+.avatar-image {
+    width: 200px; /* Задаем ширину изображения */
+    height: auto; /* Поддерживаем пропорции */
+    margin-right: 10px; /* Добавляем немного отступа справа от изображения */
+}
+
+/* Стиль для блока справа от изображения */
+.form-block {
+    flex-grow: 1; /* Занимает доступное пространство */
+}
+
 
 
 
@@ -4558,6 +4594,9 @@ h1 {
 
 .ml--50 {
   margin-left: 50px; }
+
+.mr--10 {
+  margin-right: 10px; }
 
 .mr--20 {
   margin-right: 20px; }
