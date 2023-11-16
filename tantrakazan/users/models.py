@@ -42,8 +42,7 @@ class TherapistProfile(models.Model):
     instagram_profile = models.CharField(max_length=20, verbose_name='Инстаграм', null=True, blank=True)
     description = models.TextField(verbose_name='О себе', null=True, blank=True)
     is_profile_active = models.BooleanField(default=True)
-    rating = GenericRelation(Rating, related_query_name='therapist')
-
+    rating = GenericRelation(Rating, related_query_name='therapist') #TODO: удалить перед сносом базы
     @staticmethod
     def get_absolute_url():
         return reverse('specialists:profile')
