@@ -10,7 +10,7 @@ aria-labelledby="nav-reviews-tab">
             </li>
             {% endfor %}
         </ul>
-        {% if not is_reviewed %}
+        {% if not is_reviewed and specialist != user %}
         {% include 'feedback/review_form.html' %}
         {% endif %}
     </div>

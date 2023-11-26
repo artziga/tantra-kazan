@@ -7,12 +7,10 @@ urlpatterns = [
 
     path('profile/', views.SpecialistSelfProfileDetailView.as_view(), name='profile'),
     path('become_a_specialist/', views.become_a_specialist, name='become_a_specialist'),
-    path('become_a_specialist/confirm/', views.become_a_specialist_confirmation,
-         name='become_a_specialist_confirmation'),
-    path('delete_a_specialist/', views.become_a_specialist, name='delete_a_specialist'),
-    path('delete_a_specialist/confirm/', views.become_a_specialist_confirmation,
+    path('delete_a_specialist/', views.delete_specialist_profile, name='delete_a_specialist'),
+    path('delete_a_specialist/confirm/', views.delete_a_specialist_confirmation,
          name='delete_a_specialist_confirmation'),
-    path('edit_profile/<int:pk>', views.SpecialistProfileWizard.as_view(), name='edit_profile'),
+    path('edit_profile/<str:username>', views.SpecialistProfileWizard.as_view(), name='edit_profile'),
     path(
         "password_change/", views.SpecialistPasswordChangeView.as_view(), name="change_password"
     ),

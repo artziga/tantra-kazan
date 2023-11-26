@@ -16,7 +16,9 @@
             </figure>
             {% if user.is_authenticated %}
             <div class="product__action like-button">
-                {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
+                {% if user.is_authenticated %}
+                {% like_button user.pk specialist.pk content_type_id specialist.is_bookmarked %}
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -29,9 +31,9 @@
                     {% else %}
                     <a href="{% url 'specialists:specialist_profile' specialist.username %}">
                     {% endif %}
-                        {{ specialist.name }}
+                        {{ specialist.first_name }}
                     </a>
-                    {{ specialist.therapist_profile.age|format_years }}
+                    {{ specialist.therapist_profile.birth_date|years_from_date|format_years }}
                 </h3>
                 </div>
                 <div class="product__price">
@@ -43,9 +45,8 @@
                 <span class="product__rating">
                     {% rating specialist.rating.first.average %}
                 </span>
-                <p>Отзывов: {{ specialist.rating.first.count|default:"0" }}</p>
+                <p>Отзывов: {{ specialist.reviews.count|default:"0" }}</p>
             </div>
-
         </div>
     </div>
 </div>

@@ -7,6 +7,34 @@
 # from listings.models import MassageFor, Feature, BasicService
 # from tantrakazan.settings import AUTH_USER_MODEL as USER
 # from django.urls import reverse
+from django.contrib.auth import models
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import F, OuterRef, Value, BooleanField, Subquery
+
+from feedback.models import Bookmark
+from main.models import User
+
+
+class SpecialistManager(models.UserManager):
+    def active_specialists(self):
+        return self.filter(
+            therapist_profile__is_profile_active=True)
+
+    def specialist_card_info(self, user):
+        qs = self.annotate(
+            min_price=F('therapist_profile__basicserviceprice__home_price'),
+            # TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
+        )
+        if user.is_authenticated:
+            bookmarked_subquery = Bookmark.objects.filter(
+                user=user,
+                content_type=ContentType.objects.get_for_model(User),
+                object_id=OuterRef('pk')
+            ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
+            qs = qs.annotate(
+                is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
+            )
+
 #
 #
 # class TherapistProfile(models.Model):

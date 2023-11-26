@@ -19,24 +19,11 @@
                     <div class="header__col header__center">
                         <nav class="main-navigation d-none d-lg-block">
                             <ul class="mainmenu">
-<!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
-<!--                                            <a href="index.html" class="mainmenu__link">Главная</a>-->
-<!--                                        </li>-->
-                                <li class="mainmenu__item menu-item-has-children position-relative">
+                                <li class="mainmenu__item menu-item position-relative">
+                                    <a href="{% url 'main:index' %}" class="mainmenu__link">Главная</a>
+                                </li>
+                                <li class="mainmenu__item menu-item position-relative">
                                     <a href="{% url 'specialists:specialists' %}" class="mainmenu__link">Специалисты</a>
-                                            <div class="inner-menu">
-                                                <ul class="sub-menu">
-                                                    <li>
-                                                        <a href="{% url 'specialists:specialists' %}?order_by=-rating__average">С наивысшим рейтингом</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'specialists:specialists' %}?order_by=-date_joined">Новые</a>
-                                                    </li>
-<!--                                                    <li>-->
-<!--                                                        <a href="cart.html">Ждут звонка</a>-->
-<!--                                                    </li>-->
-                                                </ul>
-                                            </div>
                                 </li>
 <!--                                        <li class="mainmenu__item menu-item-has-children position-relative">-->
 <!--                                            <a href="#" class="mainmenu__link">Блог</a>-->

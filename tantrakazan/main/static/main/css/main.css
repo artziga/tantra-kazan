@@ -1085,6 +1085,9 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
     margin-left: 5px; }
 
 /*-- Error Text --*/
+.error {
+    color: #ff0606;
+}
 .error h1 {
   font-size: 25rem;
   font-weight: 900;
@@ -2071,6 +2074,8 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
   padding-left: 10px; }
   .form__input--textarea {
     height: 100px; }
+  .form__input--about--textarea {
+    height: 40vh; }
   .form__input.nice-select {
     width: 100%;
     height: 40px; }
@@ -4303,28 +4308,28 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 
 /* Стиль для изображения */
 .profile-image {
-    width: 250px; /* Задаем ширину изображения */
+    width: 150px; /* Задаем ширину изображения */
     height: auto; /* Поддерживаем пропорции */
-    margin-right: 10px; /* Добавляем немного отступа справа от изображения */
 }
 
 
-.avatar-container {
-    display: flex;
-    align-items: center; /* Центрирование по вертикали */
 }
 
-/* Стиль для изображения */
 .avatar-image {
-    width: 200px; /* Задаем ширину изображения */
-    height: auto; /* Поддерживаем пропорции */
-    margin-right: 10px; /* Добавляем немного отступа справа от изображения */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30vh;
 }
 
-/* Стиль для блока справа от изображения */
-.form-block {
-    flex-grow: 1; /* Занимает доступное пространство */
+.avatar-image img {
+    max-height: 70%; /* Замените на ваш желаемый процент */
+    max-width: 100%; /* Зависит от изображения */
+    width: auto;
+    height: auto;
 }
+
+
 
 
 
@@ -4333,93 +4338,47 @@ a, button, .item-overlay, .global-overlay, .scroll-to-top i:before, .slick-dots 
 multistep form
 *****************************/
 
-.steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-  color: darken(black, 33%);
-  height:6rem;
 
-  > .step {
-    position: relative;
-    display: table-cell;
-    text-align: center;
-    font-size: 1rem;
-    color:black;
+.statusbar {
+  max-width:80%;
+  margin: 0 auto;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
 
-    &:before {
-      content: attr(data-step);
-      display: block;
-      margin: 0 auto;
-      background: #ffffff;
-      border:2px solid black;
-      color:black;
-      width: 2rem;
-      height: 2rem;
-      text-align: center;
-      margin-bottom: -4.2rem;
-      line-height: 1.9rem;
-      border-radius: 100%;
-      position: relative;
-      z-index: 1;
-      font-weight:700;
-      font-size:1rem;
-    }
-    &:after {
-      content: '';
-      position: absolute;
-      display: block;
-      background: #e6e6e6;
-      width: 100%;
-      height: 0.125rem;
-      top: 1rem;
-      left: 50%;
-    }
-    &:last-child:after {
-      display: none;
-    }
-    &.is-complete {
-      color:black;
-
-      &:before {
-        content:'\2713';
-        color: black;
-        background:#e6e6e6;
-        border:2px solid black;
-      }
-      &:after {
-        background: #fee0cd;
-      }
-    }
-    &.is-active {
-      font-size:1.5rem;
-
-      &:before {
-        color: black;
-        border:2px solid black;
-        background: #e6e6e6;
-        margin-bottom: -4.9rem;
-      }
-    }
-  }
 }
 
+/* Общие стили для шагов */
+.steps {
+  height: 100%;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+}
 
+/* Стили для каждого шага */
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 3rem;
+  color: #5e6063;
+}
+
+/* Стили для активного шага */
+.is-active {
+  color: black; /* Цвет для активного шага */
+}
 /**
  * Some Generic Styling
  */
 *, *:after, *:before {
   box-sizing: border-box;
 }
-h1 {
-  margin-bottom: 1.5em;
-}
-.steps {
-  margin-bottom: 3em;
-}
+
 
 
 

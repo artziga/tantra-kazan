@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/tantrakazan" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/tantrakazan/media" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/tantrakazan/static/ckeditor/ckeditor/plugins/codesnippet/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

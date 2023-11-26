@@ -38,7 +38,8 @@ urlpatterns = [
     path('feedback/', include('feedback.urls')),
     path('articles/', include('articles.urls')),
     path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag_autocomplete'),
-    path('silk/', include('silk.urls', namespace='silk'))
+    path("__debug__/", include("debug_toolbar.urls")),
+    # path('silk/', include('silk.urls', namespace='silk'))
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -17,38 +17,42 @@
                                 <div class="header-flex-container">
                                 <h3 class="product-title mb--20">{{ specialist }}</h3>
                                     <div class="like-button">
-                                    {% like_button specialist.pk content_type_id is_bookmarked %}
+                                        {% if user.is_authenticated %}
+                                    {% like_button user.pk specialist.pk content_type_id is_bookmarked %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="product-rating d-flex mb--20">
                                     <div class="star-rating {% rating_class specialist.rating.first.average %}">
                                         <span>Rated <strong class="rating">{% rating_class specialist.ratings.first.average %}</strong> out of 5</span>
                                     </div>
-                                    Отзывов: {{ specialist.rating.first.count|default:"0" }}
+                                    Отзывов: {{ reviews.count }}
                                 </div>
 
                                         <div class="table-content table-responsive mb--20">
                                             {% include 'specialists/profile_info.html' %}
                                         </div>
+                                {% if specialist.therapist_profile.address  %}
                                 <p>
                                     <i class="fa fa-map-marker mr--10" aria-hidden="true"></i>
                                     {{specialist.therapist_profile.address}}</p>
+                                {% endif %}
                                 <div class="row justify-content-center">
                                     <div class="contact-buttons social space-20 mb--20">
                                         {% if specialist.therapist_profile.phone_number %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Телефон">
+                                        <a href="#" id="phone_number" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-phone"></i>
                                             <span class="sr-only">Телефон</span>
                                         </a>
                                         {% endif %}
                                         {% if specialist.therapist_profile.telegram_profile %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Телеграм">
+                                        <a href="#" id="telegram_profile" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-telegram"></i>
                                             <span class="sr-only">Телеграм</span>
                                         </a>
                                         {% endif %}
                                         {% if specialist.therapist_profile.instagram_profile %}
-                                        <a href="#" target="_blank" rel="noopener noreferrer" class="social__link" title="Instagram">
+                                        <a href="#" id="instagram_profile" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-instagram"></i>
                                             <span class="sr-only">Instagram</span>
                                         </a>
@@ -96,18 +100,18 @@
                                         {% if user == specialist %}
                                         <h2>
                                         <a href="#">
-                                            <i class="fa fa-pencil-square-o mr--10" aria-hidden="true"></i>
+                                            <i class="fa fa-pencil-square-o mr--10" aria-hidden="true" title="Редактировать"></i>
                                         </a>
                                         </h2>
                                         {% endif %}
                                         <div class="product-description">
-                                            {{ specialist.therapist_profile.description|safe }}
+                                            {{ specialist.therapist_profile.description|linebreaks }}
                                         </div>
                                     </div>
                                         <div class="tab-pane fade" id="nav-map" role="tabpanel"
                                         aria-labelledby="nav-description-tab">
                                         <div id="map" style="width: 100%; height: 65vh;;" >
-                                            {% include 'users/map_single.html' %}
+                                            {% include 'map/map_single.html' %}
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="nav-info" role="tabpanel"
@@ -126,6 +130,7 @@
 
 {% block script %}
 {% csrf_token %}
+{% if specialist != user %}
 <script>
 function sendPostRequest(link) {
     const obj_pk = link.getAttribute("data-obj-pk");
@@ -145,11 +150,6 @@ function sendPostRequest(link) {
     xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 300) {
             const response = JSON.parse(xhr.responseText);
-            console.log("POST запрос выполнен успешно");
-            console.log("Результат: " + response.result);
-            console.log("Количество: " + response.count);
-
-            // Обновите значок на "пустое сердце" или "заполненное сердце" здесь
             const heartIcon = link.querySelector('i.fa');
             if (response.result) {
                 heartIcon.classList.remove('fa-heart-o');
@@ -167,43 +167,36 @@ function sendPostRequest(link) {
 }
 
 </script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('id_score');
 
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const rating = star.getAttribute('data-rating');
-            stars.forEach(s => {
-                if (s.getAttribute('data-rating') <= rating) {
-                    s.classList.remove('fa-star-o');
-                    s.classList.add('fa-star');
-                } else {
-                    s.classList.add('fa-star-o');
-                    s.classList.remove('fa-star');
-                }
-            });
-            ratingInput.value = rating;
-        });
-    });
-});
-</script>
+
+{% endif %}
 <script>
 $(document).ready(function() {
     $('.social__link').click(function(e) {
         e.preventDefault();
-        var socialType = $(this).find('i').attr('class').split(' ')[1]; // 'fa-phone', 'fa-telegram', 'fa-instagram'
+
+        var fieldName = $(this).attr('id');
+        var specialistUsername = "{{ specialist.username }}";
 
         $.ajax({
             type: 'GET',
             url: '{% url "specialists:get_social_info" %}',
             data: {
-                social_type: socialType,
-                specialist: {{ specialist.pk }}
+                specialist: specialistUsername,
+                field_name: fieldName,
+                is_mobile: window.innerWidth <= 768,
             },
             success: function(response) {
-                $('.contact-data-container').text(response.info);
+                var container = $('.contact-data-container');
+
+                if (fieldName === 'phone_number' && window.innerWidth > 768) {
+                    // Для значка телефона на не мобильных устройствах - отобразить информацию как текст
+                    container.text(response.info);
+                } else {
+                    // В остальных случаях - отобразить информацию как ссылку
+                    var link = $('<a>').attr('href', response.href).attr('target', '_blank').append(response.info);
+                    container.html(link);
+                }
             },
             error: function(error) {
                 console.log(error);
@@ -212,4 +205,6 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
 {% endblock script %}

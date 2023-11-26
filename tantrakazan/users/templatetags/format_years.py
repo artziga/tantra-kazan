@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 
 from django import template
@@ -5,9 +6,10 @@ from django import template
 register = template.Library()
 
 
+
 @register.filter
 def years_suffix(value):
-    if value is None:
+    if value is None or value == '':
         return
     if value % 10 == 1 and value % 100 != 11:
         suffix = "год"

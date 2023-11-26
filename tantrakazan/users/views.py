@@ -1,42 +1,23 @@
-import os
+from importlib.resources import _
 
-import six
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordChangeView
-from django.core.files.storage import FileSystemStorage
-from django.core.files.uploadedfile import UploadedFile
-from django.db.models import Count, Case, Q, F, When, PositiveSmallIntegerField, OuterRef, Value, BooleanField, \
-    Subquery, ExpressionWrapper
-from django.shortcuts import redirect, render
+
+from django.db.models import F, OuterRef, Value, BooleanField, Subquery
+from django.http import Http404
 from django.urls import reverse_lazy
-from django.utils.datastructures import MultiValueDict
-from django.utils.html import strip_tags
-from django.utils.safestring import mark_safe
 from django.views.generic import ListView, FormView, TemplateView, UpdateView
-from django.db.utils import IntegrityError
-from formtools.wizard.storage import NoFileStorageConfigured, BaseStorage
-from formtools.wizard.views import SessionWizardView
 import logging
 
-from star_ratings.models import UserRating
-
-from accounts.forms import MyPasswordChangeForm
 from accounts.views import MyPasswordChangeView
-from feedback.forms import ReviewForm, LikeForm
-from feedback.models import LikeDislike, Bookmark
-from gallery.forms import MultiImageUploadForm, AvatarForm
+from feedback.models import Bookmark
+from feedback.views import add_is_bookmarked
+from gallery.forms import AvatarForm
 from gallery.views import add_avatar
-from listings.models import Listing
-from tantrakazan import settings
 from users.forms import EditProfileForm
 from users.models import *
 from main.models import User
 
-from gallery.forms import AddPhotosForm as AFF
-from tantrakazan.utils import DataMixin, FilterFormMixin
-from gallery.photo_processor import CropFace
+from tantrakazan.utils import DataMixin
 from gallery.models import Photo
 
 
@@ -61,7 +42,7 @@ class AddAvatar(LoginRequiredMixin, DataMixin, FormView):
         return super().form_valid(form)
 
 
-class ProfileView(LoginRequiredMixin, DataMixin, TemplateView):
+class ProfileView(DataMixin, TemplateView):
     template_name = 'users/profile_details.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -76,21 +57,12 @@ class Favorite(ListView):
     template_name = 'users/profile_favorite.html'
 
     def get_queryset(self):
+        specialists = User.specialists.specialist_card_info()
+        specialists = add_is_bookmarked(queryset=specialists, user=self.request.user)
         ct = ContentType.objects.get_for_model(User)
         favorite_specialists_pk = (Bookmark.objects.
                                    filter(content_type=ct, user=self.request.user).values_list('object_id', flat=True))
-        favorite_specialists = User.objects.filter(pk__in=favorite_specialists_pk).annotate(
-            min_price=F('therapist_profile__basicserviceprice__home_price'),
-            # TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
-        )
-        bookmarked_subquery = Bookmark.objects.filter(
-            user=self.request.user,
-            content_type=ContentType.objects.get_for_model(User),
-            object_id=OuterRef('pk')
-        ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
-        favorite_specialists = favorite_specialists.annotate(
-            is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
-            )
+        favorite_specialists = specialists.filter(pk__in=favorite_specialists_pk)
         return favorite_specialists
 
     def get_context_data(self, **kwargs):
@@ -105,6 +77,27 @@ class EditProfile(UpdateView):
     template_name = 'users/profile_edit.html'
     form_class = EditProfileForm
     success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        username = self.kwargs.get('username')
+        if not username:
+            raise Http404(
+                _("No %(verbose_name)s found matching the query")
+                % {"verbose_name": queryset.model._meta.verbose_name}
+            )
+        queryset = queryset.filter(username=username)
+        try:
+            # Get the single item from the filtered queryset
+            obj = queryset.get()
+        except queryset.model.DoesNotExist:
+            raise Http404(
+                _("No %(verbose_name)s found matching the query")
+                % {"verbose_name": queryset.model._meta.verbose_name}
+            )
+        return obj
 
     def form_valid(self, form):
         add_avatar(user=self.request.user, form=form)

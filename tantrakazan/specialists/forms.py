@@ -3,6 +3,7 @@ from django.db.models import Q
 
 from listings.models import MassageFor, Feature
 from tantrakazan.utils import Locator
+from users.models import validate_age
 
 
 class PersonDataForm(forms.Form):
@@ -15,7 +16,8 @@ class PersonDataForm(forms.Form):
                                                                          (None, 'Укажите свой пол'), (True, 'Мужчина'),
                                                                          (False, 'Женщина'))))
     birth_date = forms.DateField(label='Дата рождения', required=False,
-                                 widget=forms.DateInput(attrs={'type': 'date', 'class': 'form__input'}))
+                                 widget=forms.DateInput(attrs={'type': 'date', 'class': 'form__input'}),
+                                 validators=[validate_age])
     height = forms.IntegerField(required=False, label='Рост', widget=forms.NumberInput(attrs={'class': 'form__input'}))
     weight = forms.IntegerField(required=False, label='Вес', widget=forms.NumberInput(attrs={'class': 'form__input'}))
 
@@ -41,29 +43,39 @@ class SpecialistDataForm(forms.Form):
 
 
 class AboutForm(forms.Form):
-    description = forms.CharField(required=False, label='О себе', widget=forms.TextInput(
-        attrs={'class': 'form__input--textarea mb--30'}))
+    description = forms.CharField(required=False, label='О себе', widget=forms.Textarea(
+        attrs={'class': 'form__input form__input--about--textarea'}))
 
 
 class ContactDataForm(forms.Form):
     address = forms.CharField(required=False, label='Адрес', widget=forms.TextInput(
-        attrs={'class': 'form__input', 'placeholder': 'Адрес: Улица, д. ХХ', 'id': 'addressInput'}))
+        attrs={'class': 'form__input', 'placeholder': 'Улица, д. ХХ', 'id': 'addressInput'}))
     phone_number = forms.CharField(required=False, label='Телефон', widget=forms.TextInput(
         attrs={'class': 'form__input', 'placeholder': 'Телефон'}))
     telegram_profile = forms.CharField(required=False, label='Телеграм', widget=forms.TextInput(
-        attrs={'class': 'form__input', 'placeholder': 'Телеграм'}))
+        attrs={'class': 'form__input', 'placeholder': 't.me/user'}))
     instagram_profile = forms.CharField(required=False, label='Инстаграм', widget=forms.TextInput(
-        attrs={'class': 'form__input', 'placeholder': 'Инстаграм'}))
+        attrs={'class': 'form__input', 'placeholder': '@user'}))
 
-    def clean(self):
-        cleaned_data = super().clean()
-        address = cleaned_data['address']
-        if address:
-            raw_address = 'Казань, ' + cleaned_data['address']
-            place = Locator(raw_place=raw_address)
-            cleaned_data['address'] = place.location
-            cleaned_data['latitude'] = place.location.point.latitude
-            cleaned_data['longitude'] = place.location.point.longitude
+    def clean_address_data(self, user):
+        cleaned_data = self.cleaned_data
+        current_address = None
+        if user.is_therapist:
+            current_address = user.therapist_profile.address
+        new_address = cleaned_data['address']
+        if new_address:
+            if current_address and new_address == current_address:
+                return
+            else:
+                raw_address = cleaned_data['address']
+                place = Locator(raw_place=raw_address).location()
+                self.cleaned_data['address'] = place
+                self.cleaned_data['latitude'] = place.point.latitude
+                self.cleaned_data['longitude'] = place.point.longitude
+                return
+
+
+
         return cleaned_data
 
 
@@ -120,9 +132,9 @@ class SpecialistFilterForm(forms.Form):
         price = self.cleaned_data.get('price')
         queryset = (queryset.
                     filter(
-                            therapist_profile__gender__in=genders,
-                            therapist_profile__massage_for__slug__in=massage_for
-                            )
+            therapist_profile__gender__in=genders,
+            therapist_profile__massage_for__slug__in=massage_for
+        )
                     .distinct())
         if price:
             price_filter = Q(min_price__gte=price_range[price][0], min_price__lte=price_range[price][1])

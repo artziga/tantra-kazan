@@ -8,7 +8,7 @@ def get_menu(user):
     if user.is_therapist:
         menu = {
             user.username: reverse_lazy('specialists:profile'),
-            'Редактировать профиль': reverse_lazy('specialists:edit_profile', kwargs={'pk': user.pk}),
+            'Редактировать профиль': reverse_lazy('specialists:edit_profile', kwargs={'username': user.username}),
             'Сменить пароль': reverse_lazy('specialists:change_password'),
             'Выйти': reverse_lazy('accounts:logout')
         }
@@ -16,7 +16,7 @@ def get_menu(user):
         menu = {
             user.username: reverse_lazy('users:profile'),
             'Избранное': reverse_lazy('users:favorite'),
-            'Редактировать профиль': reverse_lazy('users:edit_profile', kwargs={'pk': user.pk}),
+            'Редактировать профиль': reverse_lazy('users:edit_profile', kwargs={'username': user.username}),
             'Сменить пароль': reverse_lazy('users:change_password'),
             'Выйти': reverse_lazy('accounts:logout')
         }

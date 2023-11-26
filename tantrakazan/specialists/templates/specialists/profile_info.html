@@ -5,9 +5,9 @@
       <div class="param-name">Пол</div>
           <div class="param-value">
                {% if specialist.therapist_profile.gender is True %}
-                <i class="fa fa-mars" aria-hidden="true"></i>
+                <i class="fa fa-mars" aria-hidden="true" title="Мужчина"></i>
                {% elif specialist.therapist_profile.gender is False %}
-                <i class="fa fa-venus" aria-hidden="true"></i>
+                <i class="fa fa-venus" aria-hidden="true" title="Женщина"></i>
                {% endif %}
           </div>
               {% if specialist.therapist_profile.age %}
@@ -29,7 +29,7 @@
       <div class="param-name">Массаж для</div>
       <div class="param-value">
           {% for massage_for in specialist.therapist_profile.massage_for.all %}
-            <i class="fa {{massage_for.icon}}" aria-hidden="true"></i>
+            <i class="fa {{massage_for.icon}}" aria-hidden="true" title="{{ massage_for.massage_for }}"></i>
           {% endfor %}
       </div>
       <div class="param-name">Цена дома</div>

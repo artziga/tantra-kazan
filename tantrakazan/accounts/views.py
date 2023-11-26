@@ -14,11 +14,17 @@ from specialists.utils import make_user_a_specialist
 
 
 class MyLoginView(LoginView):
-    template_name = "accounts/login.html"
+    template_name = "forms/simple_form.html"
     form_class = LoginUserForm
 
     def get_success_url(self):
         return reverse_lazy('specialists:profile') if self.request.user.is_therapist else reverse_lazy('users:profile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_label'] = 'Вход'
+        context['title'] = 'Вход'
+        return context
 
 
 class RegisterUserCreateView(DataMixin, CreateView):

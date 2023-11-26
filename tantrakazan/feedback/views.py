@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -14,9 +15,25 @@ from django.views import View
 
 from feedback.forms import ReviewForm, LikeForm
 from feedback.models import Review, LikeDislike, Bookmark
-from main.models import User
+from django.db.models import F, OuterRef, Value, BooleanField, Subquery
+
+User = get_user_model()
 
 logger = logging.getLogger(__name__)
+
+
+def add_is_bookmarked(queryset, user):
+    if user and user.is_authenticated:
+        bookmarked_subquery = Bookmark.objects.filter(
+            user=user,
+            content_type=ContentType.objects.get_for_model(User),
+            object_id=OuterRef('pk')
+        ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
+        queryset = queryset.annotate(
+            is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
+        )
+
+    return queryset
 
 
 class ReviewIntegrityError(Exception):
@@ -101,7 +118,7 @@ class BookmarkView(LoginRequiredMixin, View):
         )
 
 
-class PutLikeView(LoginRequiredMixin,  View):
+class PutLikeView(LoginRequiredMixin, View):
     def post(self, request, from_user):
         form = LikeForm(self.request.POST)
         if form.is_valid():

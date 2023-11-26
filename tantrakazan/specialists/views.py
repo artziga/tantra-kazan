@@ -3,26 +3,28 @@ import os
 
 from django.contrib.auth.views import PasswordChangeView
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
 from django.db.models import F, OuterRef, Value, BooleanField, Subquery
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView
 from formtools.wizard.views import SessionWizardView
 from star_ratings.models import UserRating
 
-
 from accounts.views import MyPasswordChangeView
 from feedback.forms import ReviewForm
 from feedback.models import Bookmark
-from gallery.forms import AddPhotosForm
+from feedback.views import add_is_bookmarked
+from gallery.forms import AddPhotosForm, AvatarForm
 from gallery.models import Photo
 from listings.models import Listing, BasicService, BasicServicePrice
 from main.models import User
 from specialists.forms import PersonDataForm, SpecialistDataForm, ContactDataForm, AboutForm, SpecialistFilterForm
-from specialists.utils import make_user_a_specialist
+from specialists.mixins import SpecialistOnlyMixin, specialist_only
+from specialists.utils import make_user_a_specialist, delete_specialist
 from tantrakazan import settings
 from tantrakazan.utils import DataMixin, FilterFormMixin
 from users.models import TherapistProfile
@@ -30,7 +32,7 @@ from users.views import ProfileView
 from gallery.views import add_avatar, add_photos
 
 FORMS = [
-    ('photos', AddPhotosForm),
+    ('avatar', AvatarForm),
     ("person_data", PersonDataForm),
     ("therapist_data", SpecialistDataForm),
     ("contact_data", ContactDataForm),
@@ -38,43 +40,54 @@ FORMS = [
 
 ]
 FORMS_NAMES = [
-
-    "Общие данные",
-    "Профессиональные данные",
-    "Контактные данные",
-    "О себе",
-    "Фото",
+    '<i class="fa-li fa fa-id-badge"></i>',
+    '<i class="fa-li fa fa-address-card-o" aria-hidden="true"></i>',
+    '<i class="fa-li fa fa-leaf" aria-hidden="true"></i>',
+    '<i class="fa-li fa fa-phone-square" aria-hidden="true"></i>',
+    '<i class="fa-li fa fa-file-text-o" aria-hidden="true"></i>'
 ]
 
-
-
+TEMPLATES = {'avatar': 'forms/wizard_form_avatar.html'}
 
 
 def become_a_specialist(request):
     return render(request, template_name='specialists/become_a_specialist_confirmation.html')
 
 
-def become_a_specialist_confirmation(request):
+@specialist_only
+def delete_specialist_profile(request):
+    return render(request, template_name='specialists/delete_specialist_profile.html')
+
+
+@specialist_only
+def delete_a_specialist_confirmation(request):
     user = request.user
-    make_user_a_specialist(user)
-    return redirect('specialists:edit_profile')
+    delete_specialist(user)
+    return redirect('users:profile')
 
 
-class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
+class SpecialistProfileWizard(DataMixin, SessionWizardView):
     form_list = FORMS
-    template_name = 'specialists/wizard_form.html'
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'photos'))
+
+    def process_step(self, form):
+        if self.steps.current == 'contact_data':
+            form.clean_address_data(user=self.request.user)
+        return super().process_step(form)
+
+    def get_template_names(self):
+        return TEMPLATES.get(self.steps.current, 'forms/wizard_form.html')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Анкета')
         context['steps'] = FORMS_NAMES
+        context['not_delete'] = True
         return dict(list(context.items()) + list(context_def.items()))
 
     def get_form_step_files(self, form):
-        if self.steps.current == 'photos':
-            add_avatar(form, self.request.user, get='photos-avatar')
-            add_photos(form, self.request.user, get='photos-photos')
+        if self.steps.current == 'avatar':
+            add_avatar(form, self.request.user, get='avatar-avatar')
         return super().get_form_step_files(form)
 
     def done(self, form_list, **kwargs):
@@ -82,33 +95,22 @@ class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
         user = self.request.user
         user.first_name = cleaned_data.pop('first_name', '')
         user.last_name = cleaned_data.pop('last_name', '')
-        self.set_price({
-            'home_price': cleaned_data.pop('home_price', ''),
-            'on_site_price': cleaned_data.pop('on_site_price', '')
-        })
         massage_for_set = cleaned_data.pop('massage_for', [])
+        cleaned_data.pop('avatar')
+        home_price = cleaned_data.pop('home_price', '')
+        on_site_price = cleaned_data.pop('on_site_price', '')
+        if not user.is_therapist:
+            make_user_a_specialist(user)
         tp, created = TherapistProfile.objects.update_or_create(user=user, defaults=cleaned_data)
+        self.set_price({
+            'home_price': home_price,
+            'on_site_price': on_site_price
+        })
         tp.massage_for.set(massage_for_set)
         user.save()
         tp.save()
-        logging.info("Wizard is done")
-        return redirect('users:profile')
-
-    def add_avatar(self, form):
-        avatar = form.files.get('photos-avatar')
-        if avatar:
-            current_avatar = Photo.objects.filter(user=self.request.user, is_avatar=True)
-            if current_avatar.exists():
-                current_avatar = current_avatar.first()
-                current_avatar.is_avatar = False
-                current_avatar.save()
-            Photo.objects.create(image=avatar, user=self.request.user, is_avatar=True)
-
-    def add_photos(self, form):
-        photos = form.files.getlist('photos-photos')
-        if photos:
-            for photo in photos:
-                Photo.objects.create(image=photo, user=self.request.user)
+        logging.info(f"Заполнена анкета пользователем {user}")
+        return redirect('gallery:edit_gallery')
 
     def set_price(self, data):
         bs = BasicService.objects.get(pk=1)
@@ -122,62 +124,63 @@ class SpecialistProfileWizard(LoginRequiredMixin, DataMixin, SessionWizardView):
     def get_form_initial(self, step):
         initial_dict = {}
         user = self.request.user
-        if step == 'photos':
-            initial_dict = {}
-        elif step == 'person_data':
-            profile_data = TherapistProfile.objects.filter(user=user).values(
-                'gender',
-                'birth_date',
-                'height',
-                'weight'
-            ).first()
-            if profile_data:
-                initial_dict = {
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'gender': profile_data['gender'],
-                    'height': profile_data['height'],
-                    'weight': profile_data['weight'],
-                }
-                bd = profile_data['birth_date']
-                if bd:
-                    initial_dict['birth_date'] = bd.isoformat()
-        elif step == 'therapist_data':
-            profile_data = TherapistProfile.objects.filter(user=user).values(
-                'practice_start_date',
-                'massage_for',
-            ).first()
-            mf = TherapistProfile.objects.filter(user=user).values_list('massage_for', flat=True).all()
-            if mf:
-                initial_dict['massage_for'] = list(mf)
-            if profile_data:
-                psd = profile_data.get('practice_start_date')
-                if psd:
-                    initial_dict['practice_start_date'] = psd.isoformat()
-            bs = BasicService.objects.get(pk=1)
-            prices = BasicServicePrice.objects.filter(
-                service=bs,
-                specialist=TherapistProfile.objects.get(user=self.request.user)
-            ).values('home_price', 'on_site_price').first()
-            if prices:
-                initial_dict.update(prices)
-        elif step == 'contact_data':
-            initial_dict = TherapistProfile.objects.filter(user=user).values(
-                'address',
-                'phone_number',
-                'telegram_profile',
-                'instagram_profile',
-            ).first()
-        elif step == 'about':
-            description = TherapistProfile.objects.filter(user=user).values(
-                'description',
-            ).first()
-            formatted_description = mark_safe(description['description'])
-            initial_dict['description'] = formatted_description
-        else:
-            raise KeyError(f'Такой анкеты нет. Передано {step}, ожидается одно из {FORMS}')
-        logging.debug(initial_dict)
-        return initial_dict
+        if TherapistProfile.objects.filter(user=user).exists():
+            if step == 'avatar':
+                initial_dict = {}
+            elif step == 'person_data':
+                profile_data = TherapistProfile.objects.filter(user=user).values(
+                    'gender',
+                    'birth_date',
+                    'height',
+                    'weight'
+                ).first()
+                if profile_data:
+                    initial_dict = {
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'gender': profile_data['gender'],
+                        'height': profile_data['height'],
+                        'weight': profile_data['weight'],
+                    }
+                    bd = profile_data['birth_date']
+                    if bd:
+                        initial_dict['birth_date'] = bd.isoformat()
+            elif step == 'therapist_data':
+                profile_data = TherapistProfile.objects.filter(user=user).values(
+                    'practice_start_date',
+                    'massage_for',
+                ).first()
+                mf = TherapistProfile.objects.filter(user=user).values_list('massage_for', flat=True).all()
+                if mf:
+                    initial_dict['massage_for'] = list(mf)
+                if profile_data:
+                    psd = profile_data.get('practice_start_date')
+                    if psd:
+                        initial_dict['practice_start_date'] = psd.isoformat()
+                bs = BasicService.objects.get(pk=1)
+                prices = BasicServicePrice.objects.filter(
+                    service=bs,
+                    specialist=TherapistProfile.objects.get(user=self.request.user)
+                ).values('home_price', 'on_site_price').first()
+                if prices:
+                    initial_dict.update(prices)
+            elif step == 'contact_data':
+                initial_dict = TherapistProfile.objects.filter(user=user).values(
+                    'address',
+                    'phone_number',
+                    'telegram_profile',
+                    'instagram_profile',
+                ).first()
+            elif step == 'about':
+                description = TherapistProfile.objects.filter(user=user).values(
+                    'description',
+                ).first()
+                formatted_description = description['description']
+                initial_dict['description'] = formatted_description
+            else:
+                raise KeyError(f'Такой анкеты нет. Передано {step}, ожидается одно из {FORMS}')
+            logging.debug(initial_dict)
+            return initial_dict
 
 
 class SpecialistProfileDetailView(ProfileView):
@@ -208,7 +211,8 @@ class SpecialistProfileDetailView(ProfileView):
 
     def get_therapist(self):
         specialist_name = self.kwargs.get('specialist_username')
-        specialist = User.objects.get(username=specialist_name)
+        specialist = get_object_or_404(User, username=specialist_name)
+        # specialist = User.objects.get(username=specialist_name)
         return specialist
 
     @staticmethod
@@ -218,29 +222,60 @@ class SpecialistProfileDetailView(ProfileView):
         return review_form
 
 
-class SpecialistSelfProfileDetailView(SpecialistProfileDetailView):
+class SpecialistSelfProfileDetailView(SpecialistOnlyMixin, SpecialistProfileDetailView):
     def get_therapist(self):
         return self.request.user
 
 
-def get_social_info(request):
-    social_type = request.GET.get('social_type')
-    specialist_pk = request.GET.get('specialist')
-    specialist = User.objects.get(pk=specialist_pk).therapist_profile
-    if social_type == 'fa-phone':
-        info = specialist.phone_number
-    elif social_type == 'fa-telegram':
-        info = specialist.telegram_profile
-    elif social_type == 'fa-instagram':
-        info = specialist.instagram_profile
-    else:
-        info = None
-    data = {'info': info}
+def format_tel(tel: str) -> str:
+    return tel
 
+
+def format_inst(inst: str) -> str:
+    return '@' + inst
+
+
+def get_social_info(request):
+    field_name = request.GET.get('field_name')
+    is_mobile = True if request.GET.get('is_mobile') == 'true' else False
+    specialist_username = request.GET.get('specialist')
+    specialist = User.objects.get(username=specialist_username).therapist_profile
+
+    try:
+        contact_data = getattr(specialist, field_name)
+        field_mapping = {
+            'phone_number':
+                {'info':
+                     f"{contact_data[0]} {contact_data[1:4]} {contact_data[4:7]}-{contact_data[7:9]}-{contact_data[9:11]}",
+                 'href': f'tel:{contact_data}'},
+            'telegram_profile': {'info': contact_data, 'href': f'https://t.me/{contact_data}'},
+            'instagram_profile': {'info': f'@{contact_data}', 'href': f'https://www.instagram.com/{contact_data}'},
+            'whatsapp': {'info': contact_data, 'href': f'https://wa.me/{contact_data}'},
+        }
+        info = field_mapping[field_name]['info']
+        href = field_mapping[field_name]['href']
+    except AttributeError:
+        info = None
+        href = None
+    # Словарь для формирования ссылок в зависимости от типа соцсети
+
+    # field_info = field_mapping.get(field_name, {'info_key': None, 'href_prefix': None})
+    # info_key = field_info['info_key']
+    # href_prefix = field_info['href_prefix']
+    #
+    # try:
+    #     info = escape(getattr(specialist, info_key)) if info_key else None
+    #     href = href_prefix + escape(getattr(specialist, field_name)) if href_prefix else None
+    # except AttributeError:
+    #     info = None
+    #     href = None
+
+    data = {'info': info, 'href': href}
+    print(data)
     return JsonResponse(data)
 
 
-class SpecialistPasswordChangeView(MyPasswordChangeView):
+class SpecialistPasswordChangeView(SpecialistOnlyMixin, MyPasswordChangeView):
     template_name = 'specialists/profile_change_password.html'
 
 
@@ -253,24 +288,14 @@ class SpecialistsListView(DataMixin, FilterFormMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context_def = self.get_user_context(title='Специалисты')
-        context['filter_form'] = SpecialistFilterForm(initial=self.request.GET)
+        context['filter_form'] = SpecialistFilterForm(self.request.GET)
         context['content_type_id'] = ContentType.objects.get_for_model(User).pk
         return {**context, **context_def}
 
     def get_queryset(self):
-        specialists = User.objects.annotate(
-            min_price=F('therapist_profile__basicserviceprice__home_price'),
-            # TODO: сейчас всегда берётся цена дома, нужно сделать чтобы выбиралась наименьшая из дома/на выезде
-        )
-        if self.request.user.is_authenticated:
-            bookmarked_subquery = Bookmark.objects.filter(
-                user=self.request.user,
-                content_type=ContentType.objects.get_for_model(User),
-                object_id=OuterRef('pk')
-            ).values('user').annotate(is_bookmarked=Value(True, output_field=BooleanField())).values('is_bookmarked')
-            specialists = specialists.annotate(
-                is_bookmarked=Subquery(bookmarked_subquery, output_field=BooleanField())
-            )
+        specialists = User.specialists.specialist_card_info()
+        specialists = add_is_bookmarked(queryset=specialists, user=self.request.user)
+
         form = SpecialistFilterForm(self.request.GET)
         if form.is_valid():
             queryset = form.filter(specialists)

@@ -2,7 +2,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <h3 class="reply-title">Оставить отзыв</h3>
-                    <form method="post" action="{% url 'feedback:add_comment' %}" class="form pr--30">
+                    <form id="review-form" method="post" action="{% url 'feedback:add_comment' %}" class="form pr--30">
                         {% csrf_token %}
                         {{form.review_for}}
                         <div class="form__output">
@@ -11,7 +11,11 @@
                             </div>
                         </div>
                         <div class="form__group mb--10">
-                            <label class="form__label d-block mb--10">{{form.score.label}}</label>
+                            <label class="form__label d-block mb--10">{{form.score.label}}
+                            {% if form.text.field.required %}
+                            <span class="required">*</span>
+                            {% endif %}</label>
+                            </label>
                             {{form.score}}
                         </div>
                         {% if form.score.errors %}
@@ -24,7 +28,10 @@
                         </div>
                         {% endif %}
                         <div class="form__group mb--10">
-                            <label class="form__label d-block mb--10">{{form.text.label}}</label>
+                            <label class="form__label d-block mb--10">{{form.text.label}}
+                            {% if form.text.field.required %}
+                            <span class="required">*</span>
+                            {% endif %}</label>
                             {{form.text }}
                         </div>
                         {% if form.text.errors %}

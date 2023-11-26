@@ -39,10 +39,12 @@
                 <i class="fa fa-map-marker" aria-hidden="true"></i>
                 {{specialist.therapist_profile.address}}</p>
             <p class="product__short-description">
-                    {{specialist.therapist_profile.description|safe|linebreaksbr|truncatechars:250}}</p>
+                    {{specialist.therapist_profile.description|linebreaksbr|truncatechars:250}}</p>
             {% if user.is_authenticated %}
             <div class="d-flex product__list-action like-button">
-                {% like_button specialist.pk content_type_id specialist.is_bookmarked %}
+                {% if user.is_authenticated %}
+                {% like_button user.pk specialist.pk content_type_id specialist.is_bookmarked %}
+                {% endif %}
             </div>
             {% endif %}
         </div>

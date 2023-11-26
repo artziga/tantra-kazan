@@ -2,6 +2,6 @@
 Вы зарегистрировались на сайте "Tantra-Kazan".
 Вам необходимо выполнить активацию, чтобы подтвердить свою личность.
 Для этого пройдите, пожалуйста, по ссылке
-{{ host }}{% url 'accounts:register_activate' sign=sign %}/
+{{ host }}{% url 'accounts:register_activate' sign=sign %}
 С уважением, администрация сайта "Tantra-Kazan".
 

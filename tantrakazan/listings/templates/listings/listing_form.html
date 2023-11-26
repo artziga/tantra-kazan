@@ -22,7 +22,10 @@
                     </ul>
                   {% endif %}
                     <div class="form__group mb--20">
-                        <label class="form__label">{{ form.title.label_tag }}</label>
+                        <label class="form__label">{{ form.title.label_tag }}
+                        {% if form.title.field.required %}
+                        <span class="required">*</span>
+                        {% endif %}</label>
                         {{ form.title }}
                     </div>
                   {% if form.description.errors %}
@@ -33,7 +36,10 @@
                     </ul>
                   {% endif %}
                     <div class="form__group mb--20">
-                        <label class="form__label">{{ form.description.label_tag }}</label>
+                        <label class="form__label">{{ form.description.label_tag }}
+                        {% if form.description.field.required %}
+                        <span class="required">*</span>
+                        {% endif %}</label>
                         {{ form.description }}
                     </div>
                   {% if form.price.errors %}
@@ -44,7 +50,10 @@
                     </ul>
                   {% endif %}
                     <div class="form__group mb--20">
-                        <label class="form__label">{{ form.price.label_tag }}</label>
+                        <label class="form__label">{{ form.price.label_tag }}
+                        {% if form.price.field.required %}
+                        <span class="required">*</span>
+                        {% endif %}</label>
                         {{ form.price }}
                     </div>
                   {% if form.hours.errors %}
@@ -54,7 +63,10 @@
                       {% endfor %}
                     </ul>
                   {% endif %}
-                    <label class="form__label mb--10">Продолжительность:</label>
+                    <label class="form__label mb--10">Продолжительность:
+                    {% if form.hours.field.required or form.minutes.field.required %}
+                        <span class="required">*</span>
+                        {% endif %}</label>
                     <div class="duration__form__group">
                     <div class="form__group mb--20 mr--20">
                         {{ form.hours }}

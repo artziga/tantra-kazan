@@ -9,7 +9,7 @@ from star_ratings.models import Rating
 
 from feedback.models import Review, Bookmark
 from gallery.models import Photo
-from main.managers import CustomUserManager
+from main.managers import CustomUserManager, SpecialistsManager
 
 
 class User(AbstractUser):
@@ -25,9 +25,10 @@ class User(AbstractUser):
     is_therapist = models.BooleanField(verbose_name='Массажист', default=False)
     rating = GenericRelation(Rating, related_name='users', related_query_name='user')
     bookmarks = GenericRelation(Bookmark, related_name='bookmarks')
-    reviews = GenericRelation(Rating, related_name='reviews')
+    reviews = GenericRelation(Rating, related_name='users')
 
     objects = CustomUserManager()
+    specialists = SpecialistsManager()
 
     def __str__(self):
         if self.first_name or self.last_name:

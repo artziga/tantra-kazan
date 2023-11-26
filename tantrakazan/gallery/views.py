@@ -2,7 +2,7 @@ import logging
 import os
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import FormView, CreateView, DetailView, UpdateView, DeleteView, ListView
@@ -57,7 +57,7 @@ class PhotoDeleteView(DeleteView):
 
 
 def make_photo_as_avatar(photo_id):
-    photo = Photo.objects.get(pk=photo_id)
+    photo = get_object_or_404(Photo, id=photo_id)
     photo.make_as_avatar()
 
 
@@ -67,7 +67,7 @@ def change_avatar(request, pk):
     except ObjectDoesNotExist:
         make_photo_as_avatar(photo_id=pk)
         return redirect('gallery:edit_gallery')
-    new_avatar = Photo.objects.get(pk=pk)
+    new_avatar = get_object_or_404(Photo, id=pk)
     context = {'current_avatar': current_avatar, 'new_avatar': new_avatar}
     return render(request, template_name='gallery/change_avatar_confirmation.html', context=context)
 

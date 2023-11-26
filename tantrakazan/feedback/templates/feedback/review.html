@@ -26,7 +26,7 @@
         {% if user == review.user %}
         <div class="review__icons">
             <a href="{% url 'feedback:delete_review' specialist.pk %}">
-            <i class="fa fa-trash" aria-hidden="true"></i>
+            <i class="fa fa-trash" aria-hidden="true" title="Удалить"></i>
             </a>
         </div>
         {% endif %}

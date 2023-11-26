@@ -25,12 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nlf8)g#8524xwloam1$9yx27z_s4w*-xeh=1q-n=kvtgiyfq%i'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+INTERNAL_IPS = ["127.0.0.1"]
+
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://10bc-176-52-96-141.ngrok-free.app']
 
 # Application definition
 
@@ -44,7 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    "debug_toolbar",
     'formtools',
+    'corsheaders',
     'imagekit',
     'taggit',
     'star_ratings',
@@ -53,13 +58,13 @@ INSTALLED_APPS = [
     'autoslug',
     'articles.apps.ArticlesConfig',
     'accounts.apps.AccountsConfig',
-    'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'specialists.apps.SpecialistsConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
     'feedback.apps.FeedbackConfig',
-    'silk',
+    # 'silk',
+    'main.apps.MainConfig',
     ]
 
 MIDDLEWARE = [
@@ -70,7 +75,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
+
 
 ]
 
@@ -179,6 +187,7 @@ LOGGING = {
 
 
 YANDEX_GEOCODER_API_KEY = os.getenv('YANDEX_GEOCODER_API_KEY')
+YANDEX_GEOSUGGEST_API_KEY = os.getenv('YANDEX_GEOSUGGEST_API_KEY')
 
 STAR_RATINGS_STAR_HEIGHT = 30
 STAR_RATINGS_STAR_WIDTH = STAR_RATINGS_STAR_HEIGHT
@@ -217,7 +226,7 @@ CKEDITOR_CONFIGS = {
             # ]},
         ],
         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
-        'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
+        'toolbarGroups': [{'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
         'height': 291,
         'width': '100%',
         'filebrowserWindowHeight': 725,
