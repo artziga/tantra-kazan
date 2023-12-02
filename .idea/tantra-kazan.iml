@@ -6,6 +6,8 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/tantrakazan/app/media" />
       <excludeFolder url="file://$MODULE_DIR$/tantrakazan/app/static/ckeditor/ckeditor/plugins/codesnippet/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/tantrakazan/app/static/star-ratings/js/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/tantrakazan/app/static/vendor/select2/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

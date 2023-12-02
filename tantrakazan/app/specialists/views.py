@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 from formtools.wizard.views import SessionWizardView
 from star_ratings.models import UserRating
 
@@ -27,7 +27,6 @@ from users.views import ProfileView
 from gallery.views import add_avatar
 
 User = get_user_model()
-
 
 FORMS = [
     ('avatar', AvatarForm),
@@ -193,7 +192,7 @@ def get_social_info(request):
         field_mapping = {
             'phone_number':
                 {'info':
-                     f"{contact_data[0]} {contact_data[1:4]} {contact_data[4:7]}-{contact_data[7:9]}-{contact_data[9:11]}",
+                 f"{contact_data[:2]} {contact_data[2:5]} {contact_data[5:8]}-{contact_data[8:10]}-{contact_data[10:12]}",
                  'href': f'tel:{contact_data}'},
             'telegram_profile': {'info': contact_data, 'href': f'https://t.me/{contact_data}'},
             'instagram_profile': {'info': f'@{contact_data}', 'href': f'https://www.instagram.com/{contact_data}'},
