@@ -1,14 +1,14 @@
-from main.models import User
-from django.db.models import Count
+from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, ListView, FormView
+from django.views.generic import CreateView, UpdateView, ListView
 
-from dal import autocomplete
 
 from listings.forms import CreateOfferForm
-from listings.models import Listing, Tag
-from tantrakazan.utils import DataMixin
+from listings.models import Listing
+from config.utils import DataMixin
+
+User = get_user_model()
 
 
 class OfferCreateView(DataMixin, CreateView):
@@ -19,7 +19,7 @@ class OfferCreateView(DataMixin, CreateView):
 
     def form_valid(self, form):
         listing = form.save(commit=False)
-        listing.therapist = self.request.user
+        listing.specialist = self.request.user
         listing.duration = form.cleaned_data['duration']
         listing.save()
         return super().form_valid(form)

@@ -3,9 +3,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/tantrakazan" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/tantrakazan/media" />
+      <sourceFolder url="file://$MODULE_DIR$/tantrakazan/app" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/tantrakazan/static/ckeditor/ckeditor/plugins/codesnippet/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/tantrakazan/app/media" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

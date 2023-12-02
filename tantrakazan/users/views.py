@@ -1,6 +1,8 @@
 from importlib.resources import _
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 
 from django.db.models import F, OuterRef, Value, BooleanField, Subquery
 from django.http import Http404
@@ -15,10 +17,11 @@ from gallery.forms import AvatarForm
 from gallery.views import add_avatar
 from users.forms import EditProfileForm
 from users.models import *
-from main.models import User
 
-from tantrakazan.utils import DataMixin
+from config.utils import DataMixin
 from gallery.models import Photo
+
+User = get_user_model()
 
 
 class AddAvatar(LoginRequiredMixin, DataMixin, FormView):

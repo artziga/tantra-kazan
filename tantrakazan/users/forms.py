@@ -1,6 +1,7 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
-from main.models import User
+User = get_user_model()
 
 
 class EditProfileForm(forms.ModelForm):

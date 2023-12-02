@@ -45,5 +45,5 @@ class CreateOfferForm(autocomplete.FutureModelForm):
 
     class Meta:
         model = Listing
-        exclude = ['therapist', 'duration', 'tags']
+        exclude = ['specialist', 'duration', 'tags']
         widgets = {}

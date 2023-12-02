@@ -19,11 +19,11 @@ from django.contrib import admin
 from django.urls import path, include
 import django.contrib.auth.urls
 
-from tantrakazan import settings
+from config import settings
 from main import views
 from django.conf.urls.static import static
 
-from tantrakazan.utils import TagAutocomplete
+from config.utils import TagAutocomplete
 
 urlpatterns = [
     path('admin/', admin.site.urls),

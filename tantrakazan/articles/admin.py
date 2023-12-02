@@ -17,4 +17,4 @@ from articles.models import Article
 #     form = ArticleAdminForm
 
 
-admin.site.register(Article)
+# admin.site.register(Article)

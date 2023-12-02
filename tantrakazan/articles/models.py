@@ -7,7 +7,7 @@ from django.urls import reverse
 from pytils.translit import slugify
 from taggit.managers import TaggableManager
 
-from tantrakazan import settings
+from config import settings
 
 
 class Article(models.Model):

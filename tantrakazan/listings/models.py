@@ -4,7 +4,7 @@ import arrow
 
 from taggit.models import Tag
 
-from main.models import User
+from users.models import User
 from django.db import models
 
 from taggit.managers import TaggableManager
@@ -22,7 +22,7 @@ class BasicServicePrice(models.Model):
     service = models.ForeignKey(BasicService,
                                 on_delete=models.CASCADE,
                                 )
-    specialist = models.ForeignKey('users.TherapistProfile', on_delete=models.CASCADE, null=True)
+    specialist = models.ForeignKey('specialists.SpecialistProfile', on_delete=models.CASCADE, null=True)
     home_price = models.PositiveSmallIntegerField(verbose_name='Приём у себя', null=True)
     on_site_price = models.PositiveSmallIntegerField(verbose_name='Выезд на дом', null=True)
 
@@ -41,11 +41,11 @@ class MassageFor(models.Model):
 
 
 class Listing(models.Model):
-    therapist = models.ForeignKey(User,
-                                  on_delete=models.CASCADE,
-                                  related_name='listings',
-                                  related_query_name='listing',
-                                  verbose_name='Массажист')
+    specialist = models.ForeignKey(User,
+                                   on_delete=models.CASCADE,
+                                   related_name='listings',
+                                   related_query_name='listing',
+                                   verbose_name='Массажист')
     title = models.CharField(max_length=50, verbose_name='Название')
     tags = TaggableManager()
     description = models.TextField(verbose_name='Описание', null=True)

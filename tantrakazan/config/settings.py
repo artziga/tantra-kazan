@@ -33,7 +33,7 @@ DEBUG = True
 INTERNAL_IPS = ["127.0.0.1"]
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://10bc-176-52-96-141.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://7575-176-52-96-141.ngrok-free.app']
 
 # Application definition
 
@@ -82,7 +82,7 @@ MIDDLEWARE = [
 
 ]
 
-ROOT_URLCONF = 'tantrakazan.urls'
+ROOT_URLCONF = 'config.urls'
 
 CACHE_MIDDLEWARE_SECONDS = 0
 
@@ -102,7 +102,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tantrakazan.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -149,7 +149,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = []
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-AUTH_USER_MODEL = 'main.User'
+AUTH_USER_MODEL = 'users.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

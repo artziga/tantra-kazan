@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfirmView, LoginView, PasswordChangeView
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,10 +7,11 @@ from django.views.generic import TemplateView, CreateView
 
 from accounts.apps import user_registered
 from accounts.forms import RegisterUserForm, MySetPasswordForm, LoginUserForm, MyPasswordChangeForm
-from main.models import User
-from tantrakazan.utils import DataMixin
+from config.utils import DataMixin
 from accounts.utils import signer
 from specialists.utils import make_user_a_specialist
+
+User = get_user_model()
 
 
 class MyLoginView(LoginView):
@@ -18,7 +19,7 @@ class MyLoginView(LoginView):
     form_class = LoginUserForm
 
     def get_success_url(self):
-        return reverse_lazy('specialists:profile') if self.request.user.is_therapist else reverse_lazy('users:profile')
+        return reverse_lazy('specialists:profile') if self.request.user.is_specialist else reverse_lazy('users:profile')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,7 +78,7 @@ def user_activate(request, sign):
     user.is_activated = True
     user.save()
     login(request, user)
-    goto = 'users:edit_profile' if user.is_therapist else 'users:profile'
+    goto = 'users:edit_profile' if user.is_specialist else 'users:profile'
     return redirect(goto)
 
 
@@ -92,4 +93,4 @@ class MyPasswordResetConfirmView(PasswordResetConfirmView):
     post_reset_login = True
 
     def get_success_url(self):
-        return reverse_lazy("specialists:profile") if self.request.user.is_therapist else reverse_lazy("users:profile")
+        return reverse_lazy("specialists:profile") if self.request.user.is_specialist else reverse_lazy("users:profile")

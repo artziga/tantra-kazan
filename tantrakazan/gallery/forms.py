@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from multiupload.fields import MultiImageField
 from django.core.validators import validate_image_file_extension
 from gallery.models import Photo
+from specialists.mixins import AddUserMixin
 
 
 def validate_image_files_extension(value):
@@ -14,8 +15,12 @@ def validate_image_files_extension(value):
             raise ValidationError('Допустимы только файлы с расширениями jpg, jpeg, png и gif.')
 
 
-class AvatarForm(forms.Form):
+class AvatarForm(AddUserMixin, forms.Form):
     avatar = forms.ImageField(label='Аватар', required=False, widget=forms.ClearableFileInput())
+
+    @staticmethod
+    def get_initial(user):
+        return {}
 
 
 class MultiImageUploadForm(forms.Form):

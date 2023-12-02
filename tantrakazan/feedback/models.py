@@ -6,7 +6,8 @@ from django.db import models
 from star_ratings.models import Rating, UserRating
 
 from feedback.managers import LikeDislikeManager
-from tantrakazan import settings
+from config import settings
+
 
 
 class BaseComment(models.Model):
@@ -40,9 +41,6 @@ class Review(models.Model):
         related_name='review',
         related_query_name='review',
     )
-
-    def __del__(self):
-        pass
 
 
 class Bookmark(models.Model):

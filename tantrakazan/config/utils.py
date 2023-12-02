@@ -5,13 +5,13 @@ from geopy import Point
 from taggit.models import Tag
 from gallery.models import Photo
 
-from tantrakazan.settings import YANDEX_GEOCODER_API_KEY as API_KEY, YANDEX_GEOSUGGEST_API_KEY as GEOSUGGEST_KEY
+from config.settings import YANDEX_GEOCODER_API_KEY as API_KEY, YANDEX_GEOSUGGEST_API_KEY as GEOSUGGEST_KEY
 
 menu = [
-    {'title': 'Связаться', 'url_name': 'users:therapists'},
+    {'title': 'Связаться', 'url_name': 'users:specialist'},
     {'title': 'Статьи', 'url_name': 'listings:listings'},
     {'title': 'Услуги', 'url_name': 'listings:listings'},
-    {'title': 'Специалисты', 'url_name': 'users:therapists'},
+    {'title': 'Мастера', 'url_name': 'users:specialist'},
     {'title': 'Главная', 'url_name': 'main:home'},
 ]
 
@@ -22,16 +22,16 @@ class DataMixin:
     def get_user_context(self, **kwargs):
         user_menu = menu.copy()
         user = self.request.user
-        create_therapist_profile_button = {
+        create_specialist_profile_button = {
             'title': 'Зарегестрироваться как массажист',
         }
         if user.is_authenticated:
-            if not user.is_therapist:
-                create_therapist_profile_button['url_name'] = 'users:become_a_therapist'
-                user_menu.insert(0, create_therapist_profile_button)
+            if not user.is_specialist:
+                create_specialist_profile_button['url_name'] = 'users:become_a_specialist'
+                user_menu.insert(0, create_specialist_profile_button)
         else:
-            create_therapist_profile_button['url_name'] = 'accounts:therapist_registration'
-            user_menu.insert(0, create_therapist_profile_button)
+            create_specialist_profile_button['url_name'] = 'accounts:specialist_registration'
+            user_menu.insert(0, create_specialist_profile_button)
         context = kwargs
         context['menu'] = user_menu
         context['API_KEY'] = API_KEY

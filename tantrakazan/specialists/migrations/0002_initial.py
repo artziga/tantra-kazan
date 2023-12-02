@@ -10,14 +10,14 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('specialists', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('gallery', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='photo',
+            model_name='specialistprofile',
             name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='photos', related_query_name='photo', to=settings.AUTH_USER_MODEL),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='specialist_profile', related_query_name='specialist_profile', to=settings.AUTH_USER_MODEL),
         ),
     ]

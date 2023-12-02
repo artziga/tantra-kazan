@@ -32,26 +32,26 @@
                                         <div class="table-content table-responsive mb--20">
                                             {% include 'specialists/profile_info.html' %}
                                         </div>
-                                {% if specialist.therapist_profile.address  %}
+                                {% if specialist.specialist_profile.address  %}
                                 <p>
                                     <i class="fa fa-map-marker mr--10" aria-hidden="true"></i>
-                                    {{specialist.therapist_profile.address}}</p>
+                                    {{specialist.specialist_profile.address}}</p>
                                 {% endif %}
                                 <div class="row justify-content-center">
                                     <div class="contact-buttons social space-20 mb--20">
-                                        {% if specialist.therapist_profile.phone_number %}
+                                        {% if specialist.specialist_profile.phone_number %}
                                         <a href="#" id="phone_number" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-phone"></i>
                                             <span class="sr-only">Телефон</span>
                                         </a>
                                         {% endif %}
-                                        {% if specialist.therapist_profile.telegram_profile %}
+                                        {% if specialist.specialist_profile.telegram_profile %}
                                         <a href="#" id="telegram_profile" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-telegram"></i>
                                             <span class="sr-only">Телеграм</span>
                                         </a>
                                         {% endif %}
-                                        {% if specialist.therapist_profile.instagram_profile %}
+                                        {% if specialist.specialist_profile.instagram_profile %}
                                         <a href="#" id="instagram_profile" target="_blank" rel="noopener noreferrer" class="social__link">
                                             <i class="fa fa-instagram"></i>
                                             <span class="sr-only">Instagram</span>
@@ -83,7 +83,7 @@
                                         <span>Программы</span>
                                     </a>
                                     {% endif %}
-                                    {% if specialist.therapist_profile.address %}
+                                    {% if specialist.specialist_profile.address %}
                                     <a class="nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-map" role="tab"
                                         aria-selected="true">
                                         <span>На карте</span>
@@ -105,7 +105,7 @@
                                         </h2>
                                         {% endif %}
                                         <div class="product-description">
-                                            {{ specialist.therapist_profile.description|linebreaks }}
+                                            {{ specialist.specialist_profile.description|linebreaks }}
                                         </div>
                                     </div>
                                         <div class="tab-pane fade" id="nav-map" role="tabpanel"

@@ -7,6 +7,7 @@ from datetime import datetime
 from PIL import Image
 from autoslug import AutoSlugField
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
 from django.db.models.fields.files import FieldFile
@@ -15,7 +16,7 @@ from django.dispatch import receiver
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, ResizeToFit, Thumbnail, SmartResize, ResizeCanvas
 
-from tantrakazan.settings import AUTH_USER_MODEL as USER
+from config.settings import AUTH_USER_MODEL as User
 from django.db import models
 from django.urls import reverse
 from django.utils.encoding import force_str, filepath_to_uri, smart_str
@@ -25,7 +26,8 @@ from gallery.mangers import GalleryQuerySet, PhotoQuerySet
 from gallery.photo_processor import CropFaceProcessor, get_square_borders
 from sorl.thumbnail import ImageField
 
-from tantrakazan.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT
+
 
 LATEST_LIMIT = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', None)
 SAMPLE_SIZE = getattr(settings, 'PHOTOLOGUE_GALLERY_LATEST_LIMIT', 3)
@@ -63,7 +65,7 @@ class BaseImage(models.Model):
             return 'no-name'
 
     user = models.ForeignKey(
-        USER,
+        User,
         on_delete=models.CASCADE,
         null=True,
         blank=True,

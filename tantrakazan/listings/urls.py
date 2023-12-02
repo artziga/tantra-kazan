@@ -1,6 +1,6 @@
 from django.urls import path
 from listings import views
-from tantrakazan.utils import TagAutocomplete
+from config.utils import TagAutocomplete
 
 app_name = 'listings'
 

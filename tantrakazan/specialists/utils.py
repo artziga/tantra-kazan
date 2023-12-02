@@ -1,16 +1,16 @@
 from django.core.mail import send_mail
 
 from gallery.models import Photo
-from tantrakazan.settings import DEFAULT_FROM_EMAIL
-from users.models import TherapistProfile
+from config.settings import DEFAULT_FROM_EMAIL
+from specialists.models import SpecialistProfile
 
 
 def make_user_a_specialist(user):
-    user.is_therapist = True
+    user.is_specialist = True
     user.save()
-    TherapistProfile.objects.create(user=user)
+    SpecialistProfile.objects.create(user=user)
     subject = 'Новый массажист ожидает подтверждения'
-    count = TherapistProfile.objects.filter(is_profile_active=False).count()
+    count = SpecialistProfile.objects.filter(is_profile_active=False).count()
     message = (f'Зарегистрирован новый массажист.'
                f' Он ожидает подтверждения своего профиля.\nВсего профилей для подтверждения: {count}')
     from_email = DEFAULT_FROM_EMAIL
@@ -20,9 +20,9 @@ def make_user_a_specialist(user):
 
 
 def delete_specialist(user):
-    user.is_therapist = False
+    user.is_specialist = False
     user.save()
-    specialist_profile = TherapistProfile.objects.get(user=user)
+    specialist_profile = SpecialistProfile.objects.get(user=user)
     photos = Photo.objects.filter(user=user, is_avatar=False)
     photos.delete()
     specialist_profile.delete()

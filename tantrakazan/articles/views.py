@@ -6,7 +6,7 @@ from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
 from articles.forms import ArticleForm
 from articles.models import Article
-from tantrakazan.utils import DataMixin
+from config.utils import DataMixin
 
 
 class ArticleDetailView(LoginRequiredMixin, DataMixin, DetailView):

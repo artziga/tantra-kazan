@@ -117,7 +117,7 @@
             </div>
             <div class="user_option user_option-lg">
               {% if request.user.is_authenticated %}
-              {% if request.user.is_therapist %}
+              {% if request.user.is_specialist %}
               <a href="{% url 'users:profile' %}">
                 {% if user.avatar %}
               <img src="{{ user.avatar.mini_thumbnail.url }}" width="50" height="50" alt="" class="rounded-image">

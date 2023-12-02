@@ -1,49 +1,22 @@
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
 from listings.models import Listing
 from main.forms import ContactUsForm
-from main.models import User
 
 from django.db.models import Q
-from django.views.generic import ListView, TemplateView, FormView
+from django.views.generic import TemplateView, FormView
 
-from tantrakazan.settings import DEFAULT_FROM_EMAIL
-from tantrakazan.utils import DataMixin
+from config.settings import DEFAULT_FROM_EMAIL
+from config.utils import DataMixin
+
+User = get_user_model()
 
 
 def index(request):
     return render(request, 'main/index.html')
-
-
-class SearchView(DataMixin, TemplateView):
-    template_name = 'main/search_results.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context_def = self.get_user_context(title='Результаты поиска')
-        context['relevant_therapists'] = self.get_users()
-        context['relevant_listings'] = self.get_listings()
-        return dict(list(context.items()) + list(context_def.items()))
-
-    def get_users(self):
-        key = self.request.GET['search']
-        therapists = User.objects.filter(is_therapist=True)
-        relevant_therapists = therapists.filter(
-            Q(username__icontains=key) |
-            Q(first_name__icontains=key) |
-            Q(last_name__icontains=key)
-        )
-        return relevant_therapists
-
-    def get_listings(self):
-        key = self.request.GET['search']
-        relevant_listings = Listing.objects.filter(
-            Q(title__icontains=key)
-        )
-        return relevant_listings
 
 
 class ContactUsView(FormView):
@@ -52,8 +25,8 @@ class ContactUsView(FormView):
     extra_context = {
         'button_label': 'Отправить',
         'title': 'Обратная связь'
-                     }
-    success_url = reverse_lazy('specialists:specialistsmi')
+    }
+    success_url = reverse_lazy('specialists:specialists')
 
     def form_valid(self, form):
         subject = 'Новое обращение'

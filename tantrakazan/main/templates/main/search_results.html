@@ -9,13 +9,13 @@
 
 <section class="health_section layout_padding-left layout_padding">
     <div class="container-fluid">
-        {% if not relevant_therapists and not relevant_listings%}
+        {% if not relevant_specialist and not relevant_listings%}
         <h1>По вашему запросу результатов нет</h1>
         {% endif %}
 
-        {% if relevant_therapists %}
-        <h1>Специалисты</h1>
-      {% for therapist in relevant_therapists %}
+        {% if relevant_specialist %}
+        <h1>Мастера</h1>
+      {% for specialist in relevant_specialists %}
         {% include 'users/profile_card.html' %}
         {% endfor %}
         {% endif %}

@@ -14,7 +14,7 @@
                               <form method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-size-sm">Да, удалить</button>
-                                  {% if user.is_therapist %}
+                                  {% if user.is_specialist %}
                                 <a class="btn btn-size-sm" href="{% url 'gallery:edit_gallery' %}">Нет</a>
                                   {% else %}
                                 <a class="btn btn-size-sm" href="{% url 'users:edit_profile' user.pk %}">Нет</a>

@@ -7,7 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import FormView, CreateView, DetailView, UpdateView, DeleteView, ListView
 from gallery.forms import AddPhotosForm
-from tantrakazan.utils import DataMixin
+from config.utils import DataMixin
 from gallery.models import Photo
 from datetime import datetime
 from unidecode import unidecode
@@ -51,7 +51,7 @@ class PhotoDeleteView(DeleteView):
     model = Photo
 
     def get_success_url(self):
-        if self.request.user.is_therapist:
+        if self.request.user.is_specialist:
             return reverse_lazy('gallery:edit_gallery')
         return reverse_lazy('users:edit_profile', kwargs={'pk': self.request.user.pk})
 

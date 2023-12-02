@@ -4,9 +4,9 @@ MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
 ),
 
 myPlacemark = new ymaps.Placemark(
-    {{specialist.therapist_profile.point}},
+    {{specialist.specialist_profile.point}},
     {
-        hintContent: '{{ specialist.therapist_profile.address }}',
+        hintContent: '{{ specialist.specialist_profile.address }}',
         balloonContent: '{{ specialist }}',
 
     },
