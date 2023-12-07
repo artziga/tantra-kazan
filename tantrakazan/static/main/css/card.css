@@ -1,0 +1,172 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-card {
+  position: relative;
+  display: flex;
+  width: 80%;
+  min-height: 300px;
+  max-height: 450px;
+  background-color: #f0f0f0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  margin-bottom: 2%;
+}
+
+.contact-left {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Выравниваем содержимое по центру вертикально */
+  align-items: center;
+  padding: 1%;
+  background-color: #fee0cd;
+  z-index: 2;
+}
+
+.contact-name {
+  font-size: 28px;
+  margin-bottom: 1%;
+}
+
+.contact-btn-container {
+  width: 100%; /* Растягиваем контейнер кнопок на всю ширину .contact-left */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Выравниваем кнопки по центру вертикально */
+  align-items: center;
+  margin-top: auto; /* Отталкиваем кнопки от верхней части .contact-left */
+}
+
+.contact-btn {
+  width: 70%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #fee8db;
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.contact-btn:hover {
+  background-color: #ffb07c;
+  color: white;
+}
+
+.contact-card .contact-left img {
+  width: 80%;
+  border-radius: 50%;
+  margin-bottom: 2%; /* Отступ сверху для разделения фото и имени пользователя */
+}
+
+
+
+
+.contact-right {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 70%;
+    height: 100%;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 18px; /* Увеличили размер шрифта */
+  }
+
+  .contact-right table {
+    width: 100%; /* Занимаем всю ширину контейнера */
+    text-align: center; /* Выравниваем текст по центру ячеек */
+  }
+
+  .contact-right th,
+  .contact-right td {
+    padding: 10px;
+  }
+
+.contact-description {
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 70%;
+  height: 100%;
+  padding: 20px;
+  font-size: 14px;
+  background-color: #fee0cd;
+  transition: left 0.5s ease, opacity 0.5s ease;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-card:hover .contact-right {
+  left: 50;
+}
+
+.contact-card:hover .contact-description {
+  left: 30%;
+  opacity: 1;
+}
+
+.contact-card:hover {
+  transform: scale(1.1);
+}
+
+  .top-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+  }
+
+  .rating p {
+    margin-right: 10px;
+  }
+
+.about-list {
+  padding-top: 10px;
+}
+.about-list .media {
+  padding: 5px 0;
+}
+.about-list label {
+  color: #20247b;
+  font-weight: 600;
+  width: 88px;
+  margin: 0;
+  position: relative;
+}
+.about-list label:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 11px;
+  width: 1px;
+  height: 12px;
+  background: #20247b;
+  -moz-transform: rotate(15deg);
+  -o-transform: rotate(15deg);
+  -ms-transform: rotate(15deg);
+  -webkit-transform: rotate(15deg);
+  transform: rotate(15deg);
+  margin: auto;
+  opacity: 0.5;
+}
+.about-list p {
+  margin: 0;
+  font-size: 15px;
+}
