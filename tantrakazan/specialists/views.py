@@ -199,7 +199,7 @@ def get_social_info(request):
         field_mapping = {
             'phone_number':
                 {'info':
-                     f"{contact_data[0]} {contact_data[1:4]} {contact_data[4:7]}-{contact_data[7:9]}-{contact_data[9:11]}",
+                     f"{contact_data[:2]} {contact_data[2:5]} {contact_data[5:8]}-{contact_data[8:10]}-{contact_data[10:12]}",
                  'href': f'tel:{contact_data}'},
             'telegram_profile': {'info': contact_data, 'href': f'https://t.me/{contact_data}'},
             'instagram_profile': {'info': f'@{contact_data}', 'href': f'https://www.instagram.com/{contact_data}'},
