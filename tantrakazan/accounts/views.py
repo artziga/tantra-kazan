@@ -15,7 +15,7 @@ User = get_user_model()
 
 
 class MyLoginView(LoginView):
-    template_name = "forms/simple_form.html"
+    template_name = "accounts/login.html"
     form_class = LoginUserForm
 
     def get_success_url(self):

@@ -28,12 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv('SECRET_KEY'))
+DEBUG = bool(os.getenv('DEBUG'))
 
 INTERNAL_IPS = ["127.0.0.1"]
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://7575-176-52-96-141.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://8b9f-176-52-77-43.ngrok-free.app']
 
 # Application definition
 

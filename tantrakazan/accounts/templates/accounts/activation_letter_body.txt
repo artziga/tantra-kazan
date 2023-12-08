@@ -1,7 +1,7 @@
 Уважаемый {{ user.username }} !
-Вы зарегистрировались на сайте "Tantra-Kazan".
+Вы зарегистрировались на сайте <a href='tantra-massage.pro' target="_blank">tantra-massage.pro</a>.
 Вам необходимо выполнить активацию, чтобы подтвердить свою личность.
 Для этого пройдите, пожалуйста, по ссылке
 {{ host }}{% url 'accounts:register_activate' sign=sign %}
-С уважением, администрация сайта "Tantra-Kazan".
+С уважением, администрация сайта <a href='http://tantra-massage.pro/' target="_blank">tantra-massage.pro</a>.
 

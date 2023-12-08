@@ -9,9 +9,21 @@
                 <ul class="sub-menu">
                     {% for title, url in menu.items %}
                     <li>
-                        <a href="{{ url }}">{{ title }}</a>
+                        {% if title == 'Выйти' %}
+                            <li>
+                                <form id="logout-form" method="post" action="{{ url }}">
+                                    {% csrf_token %}
+                                    <a href="#" onclick="document.getElementById('logout-form').submit();">{{ title }}</a>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ url }}">{{ title }}</a>
+                            </li>
+                        {% endif %}
                     </li>
                     {% endfor %}
+
                 </ul>
             </div>
         </li>
