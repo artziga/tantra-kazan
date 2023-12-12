@@ -1,13 +1,10 @@
-from datetime import datetime
-
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from star_ratings.models import Rating, UserRating
+from star_ratings.models import UserRating
 
 from feedback.managers import LikeDislikeManager
 from config import settings
-
 
 
 class BaseComment(models.Model):

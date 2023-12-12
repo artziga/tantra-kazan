@@ -45,7 +45,6 @@ class Listing(models.Model):
                                    related_query_name='listing',
                                    verbose_name='Массажист')
     title = models.CharField(max_length=50, verbose_name='Название')
-    tags = TaggableManager()
     description = models.TextField(verbose_name='Описание', null=True)
     duration = models.DurationField(verbose_name='Продолжительность')
     price = models.PositiveSmallIntegerField(verbose_name='Цена')

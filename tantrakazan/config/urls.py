@@ -22,7 +22,6 @@ from config import settings
 from main import views
 from django.conf.urls.static import static
 
-from config.utils import TagAutocomplete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,8 +34,6 @@ urlpatterns = [
     path('listings/', include('listings.urls')),
     path('gallery/', include('gallery.urls')),
     path('feedback/', include('feedback.urls')),
-    path('articles/', include('articles.urls')),
-    path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag_autocomplete'),
     path("__debug__/", include("debug_toolbar.urls")),
     # path('silk/', include('silk.urls', namespace='silk'))
 

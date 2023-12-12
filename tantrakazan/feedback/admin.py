@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django import forms
 from star_ratings import get_star_ratings_rating_model
 from star_ratings.admin import RatingAdmin, UserRatingAdmin
 from star_ratings.models import UserRating

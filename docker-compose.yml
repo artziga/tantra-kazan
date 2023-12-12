@@ -6,10 +6,29 @@ services:
       context: .
       dockerfile: ./tantrakazan/Dockerfile
     container_name: web-app-testdjango
+    depends_on:
+      - db
     command: ./tantrakazan/entrypoint.sh
     volumes:
       - ./tantrakazan:/home/tantrakazan
     ports:
       - "8000:8000"
     env_file:
-      - tantrakazan/.env.dev
+      - .env
+
+  db:
+    image: postgres:14-alpine
+    container_name: db-tantrakazan
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  postgres_data:

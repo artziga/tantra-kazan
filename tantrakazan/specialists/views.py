@@ -107,7 +107,6 @@ class SpecialistProfileWizard(DataMixin, SessionWizardView):
         on_site_price = cleaned_data.pop('on_site_price', '')
         if not user.is_specialist:
             make_user_a_specialist(user)
-        print(cleaned_data)
         tp, created = SpecialistProfile.objects.update_or_create(user=user, defaults=cleaned_data)
         self.set_price({
             'home_price': home_price,
@@ -129,11 +128,12 @@ class SpecialistProfileWizard(DataMixin, SessionWizardView):
         )
 
     def get_form_initial(self, step):
-        forms = dict(FORMS)
-        form = forms[step]
-        initial = form.get_initial(self.request.user)
+        if self.request.user.is_specialist:
+            forms = dict(FORMS)
+            form = forms[step]
+            initial = form.get_initial(self.request.user)
 
-        return initial
+            return initial
 
 
 class SpecialistProfileDetailView(ProfileView):

@@ -15,11 +15,12 @@ from dotenv import load_dotenv
 
 from django.urls import reverse_lazy
 
-
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+dotenv_path = os.path.join(BASE_DIR.parent, ".env.dev")
+
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -33,38 +34,33 @@ DEBUG = bool(os.getenv('DEBUG'))
 INTERNAL_IPS = ["127.0.0.1"]
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://8b9f-176-52-77-43.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://9b70-176-52-77-43.ngrok-free.app']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'dal',
-    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "debug_toolbar",
     'formtools',
-    'corsheaders',
     'imagekit',
-    'taggit',
     'star_ratings',
     'ckeditor',
     'ckeditor_uploader',
     'autoslug',
-    'articles.apps.ArticlesConfig',
-    'accounts.apps.AccountsConfig',
     'users.apps.UsersConfig',
+    'accounts.apps.AccountsConfig',
     'specialists.apps.SpecialistsConfig',
     'listings.apps.ListingsConfig',
     'gallery.apps.GalleryConfig',
     'feedback.apps.FeedbackConfig',
-    # 'silk',
     'main.apps.MainConfig',
-    ]
+    'corsheaders',
+    "debug_toolbar",
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,7 +73,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
-
 
 ]
 
@@ -107,11 +102,27 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("DB_NAME", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": 'django.db.backends.postgresql',
+#         "NAME": 'tantradb',
+#         "USER": 'tantraadmin',
+#         "PASSWORD": 'tantrasuper',
+#         "HOST": 'localhost',
+#         "PORT": '5432',
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -184,7 +195,6 @@ LOGGING = {
     },
 }
 
-
 YANDEX_GEOCODER_API_KEY = os.getenv('YANDEX_GEOCODER_API_KEY')
 YANDEX_GEOSUGGEST_API_KEY = os.getenv('YANDEX_GEOSUGGEST_API_KEY')
 
@@ -201,7 +211,7 @@ CKEDITOR_CONFIGS = {
             ['Source', '-', 'Bold', 'Italic']
         ],
         'toolbar_YourCustomToolbarConfig': [
-                       '/',
+            '/',
             {'name': 'basicstyles',
              'items': ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat']},
             {'name': 'paragraph',
@@ -225,7 +235,7 @@ CKEDITOR_CONFIGS = {
             # ]},
         ],
         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
-        'toolbarGroups': [{'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
+        'toolbarGroups': [{'name': 'document', 'groups': ['mode', 'document', 'doctools']}],
         'height': 291,
         'width': '100%',
         'filebrowserWindowHeight': 725,
@@ -234,7 +244,7 @@ CKEDITOR_CONFIGS = {
         'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
         'tabSpaces': 4,
         'extraPlugins': ','.join([
-            'uploadimage', # the upload image feature
+            'uploadimage',  # the upload image feature
             # your extra plugins here
             'div',
             'autolink',
@@ -251,4 +261,3 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
-

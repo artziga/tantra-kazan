@@ -5,11 +5,16 @@ ENV PYTHONUNBUFFERED 1
 
 #RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
-#RUN pip install --upgrade pip
+RUN pip install --upgrade pip
 # Установка poetry
 RUN python -m pip install --no-cache-dir poetry
 
-RUN apt-get update && apt-get install -y \
+RUN apt update && \
+    apt install -y \
+    libpq-dev \
+    gcc \
+    python3-dev \
+    musl-dev \
     libgl1-mesa-glx \
     build-essential \
     libffi-dev \

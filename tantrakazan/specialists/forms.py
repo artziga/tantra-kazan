@@ -130,7 +130,7 @@ class ContactDataForm(AddUserMixin, forms.Form):
         cleaned_data = self.cleaned_data
         current_address = None
         if self.user.is_specialist:
-            current_address = self.user.specialist.address
+            current_address = self.user.specialist_profile.address
         new_address = cleaned_data['address']
         if new_address:
             if current_address and new_address == current_address:

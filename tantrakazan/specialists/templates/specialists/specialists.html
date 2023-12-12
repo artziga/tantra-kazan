@@ -9,6 +9,54 @@
             <div class="shop-page-wrapper ptb--80">
                 <div class="container">
                     <div class="row">
+                        <div class="col-xl-3 col-lg-4 order-lg-1">
+                            <aside class="shop-sidebar">
+                                    <div class="shop-widget mb--40">
+                                        <h3 class="widget-title mb--25">Пол</h3>
+                                        <ul class="widget-list category-list">
+                                            {% for field in filter_form.gender %}
+                                            <li class="category-title">
+
+                                                {{ field }}
+                                                <span class="category-title">
+                                                {{ field.label }}
+                                                </span>
+                                                    <i class="fa fa-angle-double-right"></i>
+                                            </li>
+                                            {% endfor %}
+
+
+                                        <div class="shop-widget mb--40">
+                                        <h3 class="widget-title mb--25">Для кого массаж</h3>
+                                        <ul class="widget-list category-list">
+                                            {% for field in filter_form.massage_for %}
+                                            <li class="category-title">
+                                                {{ field }}
+                                                <span class="category-title">
+                                                {{ field.label }}
+                                                </span>
+                                                    <i class="fa fa-angle-double-right"></i>
+                                            </li>
+                                            {% endfor %}
+                                    <div class="shop-widget mb--40">
+                                        <h3 class="widget-title mb--25">Цена</h3>
+                                        <ul class="widget-list price-list">
+                                            {% for field in filter_form.price %}
+                                            <li>
+                                                    {{ field }}
+                                                    <strong class="font-weight-medium">{{ field.label }}</strong>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                <button class="btn btn-size-sm mb--10" type="submit">Показать</button>
+                                            <a href="{% url 'specialists:specialists' %}" class="btn btn-size-sm mb--10">Cбросить</a>
+                                </form>
+
+
+
+                            </aside>
+                        </div>
                         <div class="col-xl-9 col-lg-8 order-lg-2 mb-md--50">
                             <div class="shop-toolbar mb--50">
                                 <div class="row align-items-center">
@@ -58,54 +106,7 @@
                             {% include 'main/pagination.html' %}
                         </div>
 
-                        <div class="col-xl-3 col-lg-4 order-lg-1">
-                            <aside class="shop-sidebar">
-                                    <div class="shop-widget mb--40">
-                                        <h3 class="widget-title mb--25">Пол</h3>
-                                        <ul class="widget-list category-list">
-                                            {% for field in filter_form.gender %}
-                                            <li class="category-title">
 
-                                                {{ field }}
-                                                <span class="category-title">
-                                                {{ field.label }}
-                                                </span>
-                                                    <i class="fa fa-angle-double-right"></i>
-                                            </li>
-                                            {% endfor %}
-
-
-                                        <div class="shop-widget mb--40">
-                                        <h3 class="widget-title mb--25">Для кого массаж</h3>
-                                        <ul class="widget-list category-list">
-                                            {% for field in filter_form.massage_for %}
-                                            <li class="category-title">
-                                                {{ field }}
-                                                <span class="category-title">
-                                                {{ field.label }}
-                                                </span>
-                                                    <i class="fa fa-angle-double-right"></i>
-                                            </li>
-                                            {% endfor %}
-                                    <div class="shop-widget mb--40">
-                                        <h3 class="widget-title mb--25">Цена</h3>
-                                        <ul class="widget-list price-list">
-                                            {% for field in filter_form.price %}
-                                            <li>
-                                                    {{ field }}
-                                                    <strong class="font-weight-medium">{{ field.label }}</strong>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                <button class="btn btn-size-sm mb--10" type="submit">Показать</button>
-                                            <a href="{% url 'specialists:specialists' %}" class="btn btn-size-sm mb--10">Cбросить</a>
-                                </form>
-
-
-
-                            </aside>
-                        </div>
                     </div>
                 </div>
             </div>

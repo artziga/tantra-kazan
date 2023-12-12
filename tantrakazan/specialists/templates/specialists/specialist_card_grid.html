@@ -43,7 +43,7 @@
             </div>
             <div class="product__info--right">
                 <span class="product__rating">
-                    {% rating specialist.rating.first.average %}
+                    {{ specialist.specialist_profile.birth_date|years_from_date|format_years }}
                 </span>
                 <p>Отзывов: {{ specialist.reviews.count|default:"0" }}</p>
             </div>
