@@ -9,8 +9,6 @@ services:
     depends_on:
       - db
     command: ./tantrakazan/entrypoint.sh
-    volumes:
-      - ./tantrakazan:/home/tantrakazan
     ports:
       - "8000:8000"
     env_file:

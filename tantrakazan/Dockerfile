@@ -11,6 +11,7 @@ RUN python -m pip install --no-cache-dir poetry
 
 RUN apt update && \
     apt install -y \
+    netcat-openbsd \
     libpq-dev \
     gcc \
     python3-dev \
@@ -31,5 +32,6 @@ COPY ./poetry.lock .
 
 # Установка зависимостей
 RUN poetry install
+
 
 COPY ./tantrakazan ./tantrakazan
