@@ -42,8 +42,8 @@ CROP_ANCHOR_CHOICES = (
 #
 logger = logging.getLogger('gallery.models')
 
-IMAGE_DIR = 'img/albums'
-IMAGE_DIR_FOR_THUMB = 'media/img/albums'
+IMAGE_DIR = 'img/'
+IMAGE_DIR_FOR_THUMB = 'media/img/'
 
 
 def get_storage_path(instance, filename: str) -> str:
